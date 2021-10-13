@@ -1,2 +1,2 @@
 # low-level-experiments
-A low-level experiments mostly in C
+A few low-level experiments mostly in C
