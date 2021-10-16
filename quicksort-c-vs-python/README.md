@@ -1,15 +1,9 @@
 py ./quicksort.py
 
-\>\>\> Pure python: 5.140 sec
+\>>> Pure python: 5.140 sec<br/>\>>> list.sort(): 0.537 sec<br/>\>>> Numpy.sort(): 0.091 sec
 
-\>\>\> list.sort(): 0.537 sec
+<br/>
 
-\>\>\> Numpy.sort(): 0.091 sec
+gcc quicksort.c -o quicksort -O3<br/>./quicksort 
 
-
-cgc quicksort.c -o quicksort -O3
-
-./quicksort 
-
-\>\>\> 0.133 sec
-
+\>>> 0.133 sec
