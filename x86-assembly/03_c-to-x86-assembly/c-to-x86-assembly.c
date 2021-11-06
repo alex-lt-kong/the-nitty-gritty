@@ -6,4 +6,4 @@ int main() {
   return 0;
 }
 
-// gcc -S c-to-x86-assembly.c -masm=intel
+// gcc -O0 -S c-to-x86-assembly.c -masm=intel 
