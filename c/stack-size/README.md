@@ -1,4 +1,4 @@
-stack-size11:
+* stack-size11:
 
 .......
 
@@ -16,7 +16,7 @@ Segmentation fault
 
 
 
-stack-size2:
+* stack-size2:
 
 .......
 
@@ -34,7 +34,7 @@ Segmentation fault
 
 
 
-stack-size3:
+* stack-size3:
 
 .......
 
