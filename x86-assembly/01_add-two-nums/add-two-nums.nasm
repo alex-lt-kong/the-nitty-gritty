@@ -1,3 +1,6 @@
+; nasm -f elf32 add-two-nums.nasm -o add-two-nums.o
+; ld -m elf_i386 add-two-nums.o -o add-two-nums
+
 global _start
 _start:
   mov eax, 1
