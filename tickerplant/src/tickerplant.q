@@ -2,9 +2,25 @@
 .z.ws:{value x};
 .z.wc: {delete from `subs where handle=x};
 
-/* table definitions */
+/* table definitions start */
 trade:flip `time`sym`price`size!"nsfi"$\:();
 quote:flip `time`sym`bid`ask!"nsff"$\:();
+/ 
+These two statements are a bit too much for beginners...
+\: represents each left and $ is casting.
+So for the line "nsfi"$\:() it is actually casting an empty list with every type
+on the left (hence each left) so that it creates a list of that specific type.
+You can use .Q.s1 to view the string representation of the object.
+q).Q.s1 "nsfi"$\:()
+"(`timespan$();`symbol$();`float$();`int$())"
+
+bang (!) is used to create a dictionay with the keys on the left and values on
+the right with the correct length of list. Then flipping a dict will turn it into a tbl.
+
+So the big picture here is that we defined two empty tables with specific column
+names and types.
+\
+/* table definitions end */
 upd:insert;
 
 /* subs table to keep track of current subscriptions */

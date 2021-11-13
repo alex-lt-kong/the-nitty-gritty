@@ -13,13 +13,14 @@ q("h:neg hopen `:localhost:9527;")
 tickers = ["HSBC", "IBM", "BABA"]
 count = 0
 while True:
-  q.sendSync(
+  print(q.sendSync(
     """{[bidPrice;askPrice]
         h(`upd;`quote;(.z.N;`HSBC;bidPrice;askPrice));}
     """,
     random.random()*100,
     -random.random()*100
-  )
-  time.sleep(100)
+  ))
+  time.sleep(1)
+  
 
 q.close()
