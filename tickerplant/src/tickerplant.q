@@ -22,6 +22,10 @@ names and types.
 \
 /* table definitions end */
 upd:insert;
+/ Here upd is basically just an alias of the built-in function (called an 
+/ "operator" in q's terminology). The issue it solves is that, insert, 
+/ as a built-in operator, cannot be passed as the first item by reference over a
+/ handle. So we pass upd instead to circumvent this limit.
 
 /* subs table to keep track of current subscriptions */
 subs:2!flip `handle`func`params!"is*"$\:();
