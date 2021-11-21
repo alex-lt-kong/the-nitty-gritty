@@ -10,6 +10,8 @@ print(q)
 print(f'IPC version: {q.protocol_version}. Is connected: {q.is_connected()}')
 
 q("h:neg hopen `:localhost:9527;")
+# if hopen connects to the remote server successfully, it returns a function
+# and we store the function to an arbitrary variable h
 tickers = ["HSBC", "IBM", "BABA"]
 count = 0
 while True:
