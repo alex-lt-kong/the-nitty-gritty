@@ -53,6 +53,7 @@ sub:{`subs upsert(.z.w;x;enlist y)};
 pub:{ 
 	row:(0!subs)[x]; 
 	(neg row[`handle]) .j.j (value row[`func])[row[`params]]
+	/ .j.j: convert a K object into its JSON representation.
  };
 
 /* trigger refresh every 100ms */

@@ -13,7 +13,7 @@ til count countries
 
 show "we can print one row like this:"
 countries 0
-countries 1
+countries [1]
 countries 2
 
 show_count_func:{show x}
