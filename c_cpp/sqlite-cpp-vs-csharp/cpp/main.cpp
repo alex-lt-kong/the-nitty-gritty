@@ -51,6 +51,7 @@ int insertStudents(sqlite3 *dbPtr, Student students[], int studentCount) {
   
   char *errMsg = 0;
   string sql = "BEGIN TRANSACTION;INSERT INTO 'StudentTable' ('Id', 'Name', 'Score', 'PartyAffilication', 'Remark') VALUES";
+  // In C++, strings are mutable, so no fancy classes such as StringBuildr are needed.
   int retval = -1;
   for (int i = 0; i < studentCount; i++) {
     sql += "(null, '" + students[i].name + "', ";

@@ -1,0 +1,72 @@
+{
+  "format": 1,
+  "restore": {
+    "C:\\Users\\mamsds\\Documents\\repos\\low-level-experiments\\c_cpp\\sqlite-cpp-vs-csharp\\csharp\\csharp.csproj": {}
+  },
+  "projects": {
+    "C:\\Users\\mamsds\\Documents\\repos\\low-level-experiments\\c_cpp\\sqlite-cpp-vs-csharp\\csharp\\csharp.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\Users\\mamsds\\Documents\\repos\\low-level-experiments\\c_cpp\\sqlite-cpp-vs-csharp\\csharp\\csharp.csproj",
+        "projectName": "csharp",
+        "projectPath": "C:\\Users\\mamsds\\Documents\\repos\\low-level-experiments\\c_cpp\\sqlite-cpp-vs-csharp\\csharp\\csharp.csproj",
+        "packagesPath": "C:\\Users\\mamsds\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\mamsds\\Documents\\repos\\low-level-experiments\\c_cpp\\sqlite-cpp-vs-csharp\\csharp\\obj\\",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "C:\\Users\\mamsds\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net6.0"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net6.0": {
+            "targetAlias": "net6.0",
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net6.0": {
+          "targetAlias": "net6.0",
+          "dependencies": {
+            "SQLite": {
+              "target": "Package",
+              "version": "[3.13.0, )"
+            },
+            "System.Data.SQLite": {
+              "target": "Package",
+              "version": "[1.0.115.5, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.100\\RuntimeIdentifierGraph.json"
+        }
+      }
+    }
+  }
+}
