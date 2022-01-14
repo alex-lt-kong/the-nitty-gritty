@@ -54,10 +54,12 @@ int insertStudents(sqlite3 *dbPtr, Student students[], int studentCount) {
   // In C++, strings are mutable, so no fancy classes such as StringBuildr are needed.
   int retval = -1;
   for (int i = 0; i < studentCount; i++) {
-    sql += "(null, '" + students[i].name + "', " + to_string(students[i].score) + ", '" + students[i].partyAffilication + "', '" + students[i].remark + "')";  
-    if (i < studentCount - 1) sql += ",";
-    else sql += ";COMMIT;";
-   }
+    sql += "(null, '" + students[i].name + "', " + 
+            to_string(students[i].score) + ", '" + students[i].partyAffilication + 
+           "', '" + students[i].remark + "'),";
+  }
+  sql.pop_back();
+  sql += ";COMMIT;";
    
   retval = sqlite3_exec(dbPtr, sql.c_str(), NULL, 0, &errMsg); 
   if (retval != SQLITE_OK) {
