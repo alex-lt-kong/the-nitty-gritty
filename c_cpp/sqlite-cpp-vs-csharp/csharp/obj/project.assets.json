@@ -1211,11 +1211,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\mamsds\\Documents\\repos\\low-level-experiments\\c_cpp\\sqlite-cpp-vs-csharp\\csharp\\csharp.csproj",
+      "projectUniqueName": "C:\\cygwin64\\home\\mamsds\\repo\\low-level-experiments\\c_cpp\\sqlite-cpp-vs-csharp\\csharp\\csharp.csproj",
       "projectName": "csharp",
-      "projectPath": "C:\\Users\\mamsds\\Documents\\repos\\low-level-experiments\\c_cpp\\sqlite-cpp-vs-csharp\\csharp\\csharp.csproj",
+      "projectPath": "C:\\cygwin64\\home\\mamsds\\repo\\low-level-experiments\\c_cpp\\sqlite-cpp-vs-csharp\\csharp\\csharp.csproj",
       "packagesPath": "C:\\Users\\mamsds\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\mamsds\\Documents\\repos\\low-level-experiments\\c_cpp\\sqlite-cpp-vs-csharp\\csharp\\obj\\",
+      "outputPath": "C:\\cygwin64\\home\\mamsds\\repo\\low-level-experiments\\c_cpp\\sqlite-cpp-vs-csharp\\csharp\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\mamsds\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -1268,7 +1268,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.100\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.101\\RuntimeIdentifierGraph.json"
       }
     }
   }

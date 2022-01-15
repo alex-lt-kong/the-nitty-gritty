@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "ocI85J7TibQvQXxsRo0b8B2RUAp6aVg0WgTAgKb4LrRqcV9EproGzH4sdhoQR/RnjrxVuPOhafecfSEgGC1Nuw==",
+  "dgSpecHash": "GnK274GGLBTDq2/hgEGt9CyondTtQ7aiV26s8b9MC0XrkhjvmW8Rxo5bO1m0CLPnsuOPo3imFQowU25m+7K3Ag==",
   "success": true,
-  "projectFilePath": "C:\\Users\\mamsds\\Documents\\repos\\low-level-experiments\\c_cpp\\sqlite-cpp-vs-csharp\\csharp\\csharp.csproj",
+  "projectFilePath": "C:\\cygwin64\\home\\mamsds\\repo\\low-level-experiments\\c_cpp\\sqlite-cpp-vs-csharp\\csharp\\csharp.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\mamsds\\.nuget\\packages\\entityframework\\6.4.4\\entityframework.6.4.4.nupkg.sha512",
     "C:\\Users\\mamsds\\.nuget\\packages\\microsoft.csharp\\4.7.0\\microsoft.csharp.4.7.0.nupkg.sha512",

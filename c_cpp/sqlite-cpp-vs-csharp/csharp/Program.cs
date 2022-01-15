@@ -27,10 +27,10 @@ class TestClass {
         StringBuilder sql = new StringBuilder("BEGIN TRANSACTION;INSERT INTO 'StudentTable' ('Id', 'Name', 'Score', 'PartyAffilication', 'Remark') VALUES");
         for (int i = 0; i < students.Length; i++)
         {
-            sql.Append("(null, '" + students[i].name + "', " + students[i].score.ToString() + ", '" + students[i].partyAffilication + "', " + "'" + students[i].remark + "')");
-            if (i < students.Length - 1) sql.Append(",");
-            else sql.Append(";COMMIT;");
+            sql.Append("(null, '" + students[i].name + "', " + students[i].score.ToString() + ", '" + students[i].partyAffilication + "', " + "'" + students[i].remark + "'),");
         }
+        sql.Remove(sql.Length - 1, 1);
+        sql.Append(";COMMIT;");
         using (SQLiteConnection conn = new SQLiteConnection("Data Source=db.sqlite;Version=3;"))
             using (SQLiteCommand cmd = conn.CreateCommand())
             {
@@ -57,16 +57,22 @@ class TestClass {
 
     static void Main(string[] args) {
         TestClass.createEmptyTable();
-        int itemCount = 100_000;
+        int iterCount = 25;
+        int itemCount = 1000_000;
+        long averageElapsedMs = 0;
         Student[] students = new Student[itemCount];
-        for (int i = 0; i < itemCount; i++) {
-            students[i] = TestClass.randomlyGenerateNewStudent();
+        for (int i = 0; i < iterCount; i++) { 
+            for (int j = 0; j < itemCount; j++) {
+                students[j] = TestClass.randomlyGenerateNewStudent();
+            }
+            Stopwatch watch = new Stopwatch();
+            watch.Start();
+            TestClass.insertStudents(students);
+            watch.Stop();
+            averageElapsedMs += watch.ElapsedMilliseconds;
+            Console.WriteLine($"{i}-th: {watch.ElapsedMilliseconds:n0}ms");
         }
-        Stopwatch watch = new Stopwatch();
-        watch.Start();
-        TestClass.insertStudents(students);
-        watch.Stop();
-        Console.WriteLine($"{watch.ElapsedMilliseconds}ms");
+        Console.WriteLine($"Average: {averageElapsedMs / iterCount:n0}ms");
     }
 
 }
