@@ -1,6 +1,7 @@
 ## Environment
-Operating System: Windows 10 Pro 64-bit VM over Linux host
-Processor: Intel Core Processor (Skylake, IBRS) (2 CPUs), ~2.3GHz
+
+Operating System: Windows 10 Pro 64-bit VM over Linux host\
+Processor: Intel Core Processor (Skylake, IBRS) (2 CPUs), ~2.3GHz\
 Memory: 8192MB RAM
 
 ## C++
