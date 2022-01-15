@@ -25,37 +25,58 @@ def quick_sort(arr, li, hi):
         quick_sort(arr, li, pi-1)
         quick_sort(arr, pi+1, hi)
 
-fp = open('quicksort.in', 'r')
-arr = []
-lines = fp.readlines()
-for line in lines:
-  arr.append(int(line))
-fp.close()
+def read_numbers(i):
+  fp = open(f'quicksort.in{i}', 'r')
+  arr = []
+  lines = fp.readlines()
+  for line in lines:
+    arr.append(int(line))
+  fp.close()
+  return arr
 
-arr_copy = arr.copy()
+print('Pure Python:')
+iter_count = 10
+average_elapsed_ms = 0
+for i in range(iter_count):  
+  arr = read_numbers(i)
 
-start = time.time()
-quick_sort(arr_copy, 0, len(arr_copy) - 1)
-print(f"Pure python: {time.time() - start:.3f} sec")
-fp = open('quicksort.out.py-pure', 'w')
-for i in range(len(arr_copy)):
-  fp.write(str(arr_copy[i]) + ", ")
-fp.close()
+  start = time.time()
+  quick_sort(arr, 0, len(arr) - 1)
+  end = time.time()
+  average_elapsed_ms += (end - start)
+  print(f"{i}-th iteration: {(end - start) * 1000:,.0f} ms")
+  fp = open(f'quicksort.py.out{i}', 'w')
+  for i in range(len(arr)):
+    fp.write(str(arr[i]) + ", ")
+  fp.close()
+print(f"Average: {average_elapsed_ms * 1000 / iter_count:,.0f}ms")
 
-arr_copy = arr.copy()
-start = time.time()
-arr_copy.sort()
-print(f"list.sort(): {time.time() - start:.3f} sec")
-fp = open('quicksort.out.py-stdlib', 'w')
-for i in range(len(arr_copy)):
-  fp.write(str(arr_copy[i]) + ", ")
-fp.close()
+print('list.sort():')
+average_elapsed_ms = 0
+for i in range(iter_count):
+  arr = read_numbers(i)
+  start = time.time()
+  arr.sort()
+  end = time.time()
+  average_elapsed_ms += (end - start)
+  print(f"{i}-th iteration: {(end - start) * 1000:,.0f} ms")
+  fp = open(f'quicksort.list-sort.out{i}', 'w')
+  for i in range(len(arr)):
+    fp.write(str(arr[i]) + ", ")
+  fp.close()
+print(f"Average: {average_elapsed_ms * 1000 / iter_count:,.0f}ms")
 
-arr_copy = np.array(arr.copy())
-start = time.time()
-arr_copy = np.sort(arr_copy)
-print(f"Numpy.sort(): {time.time() - start:.3f} sec")
-fp = open('quicksort.out.py-numpy', 'w')
-for i in range(len(arr_copy)):
-  fp.write(str(arr_copy[i]) + ", ")
-fp.close()
+print('numpy.sort():')
+average_elapsed_ms = 0
+for i in range(iter_count):
+  arr = read_numbers(i)
+  start = time.time()
+  arr = np.sort(arr)
+  end = time.time()
+  average_elapsed_ms += (end - start)
+  print(f"{i}-th iteration: {(end - start) * 1000:,.0f} ms")
+  fp = open(f'quicksort.numpy-sort.out{i}', 'w')
+  for i in range(len(arr)):
+    fp.write(str(arr[i]) + ", ")
+  fp.close()
+print(f"Average: {average_elapsed_ms * 1000 / iter_count:,.0f}ms")
