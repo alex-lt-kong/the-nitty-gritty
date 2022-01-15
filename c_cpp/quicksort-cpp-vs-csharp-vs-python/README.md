@@ -1,4 +1,9 @@
-## C++ (Windows 10 VM)
+## Environment
+Operating System: Windows 10 Pro 64-bit VM over Linux host
+Processor: Intel Core Processor (Skylake, IBRS) (2 CPUs), ~2.3GHz
+Memory: 8192MB RAM
+
+## C++
 
 0-th iteration: 97ms\
 1-th iteration: 94ms\
@@ -12,7 +17,7 @@
 9-th iteration: 124ms\
 Average: 95ms
 
-## C# (Same Windows 10 VM)
+## C#
 
 0-th iteration: 131ms\
 1-th iteration: 127ms\
@@ -26,46 +31,46 @@ Average: 95ms
 9-th iteration: 195ms\
 Average: 162ms
 
-## Python (Debian VM)
+## Python
 
-### Pure Python:
+### Pure Python
 
-0-th iteration: 4,757 ms\
-1-th iteration: 4,925 ms\
-2-th iteration: 4,790 ms\
-3-th iteration: 4,945 ms\
-4-th iteration: 4,735 ms\
-5-th iteration: 4,996 ms\
-6-th iteration: 4,930 ms\
-7-th iteration: 4,928 ms\
-8-th iteration: 4,810 ms\
-9-th iteration: 4,853 ms\
-Average: 4,867ms
+0-th iteration: 5,010 ms\
+1-th iteration: 6,177 ms\
+2-th iteration: 8,114 ms\
+3-th iteration: 6,728 ms\
+4-th iteration: 6,599 ms\
+5-th iteration: 6,647 ms\
+6-th iteration: 7,109 ms\
+7-th iteration: 6,811 ms\
+8-th iteration: 6,588 ms\
+9-th iteration: 7,461 ms\
+Average: 6,725ms
 
 ### list.sort()
 
-0-th iteration: 563 ms\
-1-th iteration: 559 ms\
-2-th iteration: 544 ms\
-3-th iteration: 551 ms\
-4-th iteration: 644 ms\
-5-th iteration: 536 ms\
-6-th iteration: 549 ms\
-7-th iteration: 550 ms\
-8-th iteration: 554 ms\
-9-th iteration: 548 ms\
-Average: 560ms
+0-th iteration: 764 ms\
+1-th iteration: 758 ms\
+2-th iteration: 774 ms\
+3-th iteration: 799 ms\
+4-th iteration: 815 ms\
+5-th iteration: 757 ms\
+6-th iteration: 779 ms\
+7-th iteration: 795 ms\
+8-th iteration: 795 ms\
+9-th iteration: 767 ms\
+Average: 780ms
 
 ### numpy.sort()
 
-0-th iteration: 183 ms\
-1-th iteration: 181 ms\
-2-th iteration: 178 ms\
-3-th iteration: 175 ms\
-4-th iteration: 177 ms\
-5-th iteration: 180 ms\
-6-th iteration: 176 ms\
-7-th iteration: 176 ms\
-8-th iteration: 179 ms\
-9-th iteration: 180 ms\
-Average: 178ms
+0-th iteration: 270 ms\
+1-th iteration: 247 ms\
+2-th iteration: 247 ms\
+3-th iteration: 310 ms\
+4-th iteration: 264 ms\
+5-th iteration: 256 ms\
+6-th iteration: 252 ms\
+7-th iteration: 240 ms\
+8-th iteration: 263 ms\
+9-th iteration: 240 ms\
+Average: 259ms
