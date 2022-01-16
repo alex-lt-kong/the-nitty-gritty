@@ -9,6 +9,7 @@ int main(){
     
     ifstream in("main.in", ios::binary | ios::ate);
     //size_t size = in.tellg();
+    cout << in.tellg() << endl;
     size_t size = 10;
     char *buffer = new char[size];
     int pos = 0;
