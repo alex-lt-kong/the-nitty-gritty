@@ -1,6 +1,6 @@
 #include <QCoreApplication>
 #include <iostream>
-#include <sqlite/sqlite3.h>
+#include <sqlite3.h>
 #include <string>
 #include <time.h>
 #include <chrono>
