@@ -1,2 +1,2 @@
-# low-level-experiments
-A few low-level experiments mostly in C/C++ and x86 assembly
+# The Nitty-Gritty
+A few experiments about technical details.
