@@ -22,6 +22,8 @@ myPromise
 // a try...catch block in sync code. Bear in mind that synchronous try...catch
 // won't work in async code.
 
+// However, while asynchronous functions are everywhere in Javascript, it is,
+// just like Python, single-threaded.
 
 console.log('The line AFTER the Promise() runs at:  ', new Date(Date.now()).toISOString());
 
