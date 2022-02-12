@@ -13,3 +13,11 @@ new Promise((resolve, reject) => {
 
 
 console.log('The line AFTER the Promise() runs at:  ', new Date(Date.now()).toISOString());
+
+/*
+> node 1_promise-not-async-by-itself.js 
+The line BEFORE the Promise() runs at:  2022-02-12T09:45:47.710Z
+writeFileSync() finishes at:            2022-02-12T09:45:58.242Z
+The line AFTER the Promise() runs at:   2022-02-12T09:45:58.242Z
+
+*/

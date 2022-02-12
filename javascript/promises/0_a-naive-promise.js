@@ -1,5 +1,15 @@
 /*
-Promises are one way to deal with asynchronous code, without getting stuck in callback hell.
+  Promises are one way to deal with asynchronous code, without getting stuck in
+  callback hell, such as the following pseudo-code of pizza handling:
+
+  chooseToppings(function(toppings) {
+  placeOrder(toppings, function(order) {
+    collectOrder(order, function(pizza) {
+      eatPizza(pizza);
+    }, failureCallback);
+  }, failureCallback);
+}, failureCallback);
+
 */
 
 let done = true;
