@@ -36,7 +36,7 @@ class NaiveDict {
 }
 
 var myArray = ['Jan', 'Feb', 'Mar', 'Apr', 'May'];
-var myDict = new NaiveDict(true);
+var myDict = new NaiveDict(false);
 
 async function longOperation() {
 
@@ -48,7 +48,7 @@ async function longOperation() {
   myDict.show();
 }
 
-for (let i = 0; i < 100; i ++) {
+for (let i = 0; i < 10; i ++) {
   longOperation();
 }
 
