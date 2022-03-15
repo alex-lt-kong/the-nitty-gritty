@@ -18,8 +18,8 @@ async function longOperation(id, enableAwait) {
   console.log(id, dict);  
 }
 
-for (var i = 0; i < 10000; i ++) {
-  longOperation(i, true);
+for (var i = 0; i < 10; i ++) {
+  longOperation(i, false);
 }
 console.log('done');
 
