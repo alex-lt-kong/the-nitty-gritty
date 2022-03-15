@@ -7,19 +7,19 @@ async function longOperation(id, enableAwait) {
   if (dict[randomElement] == null) {
     dict[randomElement] = 0;
   }
-  if (enableAwait) {  
+  if (enableAwait) {
     dict[randomElement] = await dict[randomElement] + 1; 
   }
   else { 
     dict[randomElement] = dict[randomElement] + 1;
   }
-  await new Promise(r => setTimeout(r, Math.random()));
+  console.log(id, dict);
+  await new Promise(r => setTimeout(r, Math.random() * 1000));
   dict[randomElement] = dict[randomElement] - 1;
-  console.log(id, dict);  
+  console.log(id, dict);
 }
 
 for (var i = 0; i < 10; i ++) {
   longOperation(i, false);
 }
-console.log('done');
 
