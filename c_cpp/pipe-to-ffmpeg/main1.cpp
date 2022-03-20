@@ -11,20 +11,23 @@ int main() {
     bool result;
     VideoCapture cap = VideoCapture();
 
-    result = cap.open("rtsp://");
+    result = cap.open("/dev/video0");
     if (result == false) { cout << "Failed to open, returned." << endl; return 1;}
     
+    cap.set(CAP_PROP_FRAME_WIDTH, 1280);
+    cap.set(CAP_PROP_FRAME_HEIGHT, 720);
+    cap.set(CAP_PROP_FPS, 30);
+    cap.set(CAP_PROP_FOURCC, VideoWriter::fourcc('M', 'J', 'P', 'G'));
+    
     FILE *output;
-    output = popen ("/usr/bin/ffmpeg -y -f rawvideo -pixel_format bgr24 -video_size 1920x1080 -framerate 10 -i pipe:0 -vcodec h264 ./test.mp4", "w");                                           
+    output = popen ("/usr/bin/ffmpeg -y -f rawvideo -pixel_format bgr24 -video_size 1280x720 -framerate 30 -i pipe:0 ./main1.mp4 2> ./main1.log", "w");
     Mat frame;                                                               
-    std::ios::sync_with_stdio(false);                                        
+    
     int count = 0;
-    while (cap.read(frame)) {                                                
-        for (size_t i = 0; i < frame.dataend - frame.datastart; i++) 
-     //      std::cout << frame.data[i];
-           fwrite(&frame.data[i], sizeof(frame.data[i]), 1, output);
+    while (cap.read(frame)) {                                                       
+        fwrite(frame.data, 1, frame.dataend - frame.datastart, output);       
         count ++;
-        if (count > 100) { break; }                                   
+        if (count > 300) { break; }                                   
     }  
     pclose(output);                                                                      
     return 0;                                                                
