@@ -1,0 +1,1 @@
+g++ -fPIC -I/usr/include/python3.9 hello.cpp -shared -o hello.so -lboost_python39 -O3
