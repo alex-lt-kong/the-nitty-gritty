@@ -1,5 +1,5 @@
 To Babelify the source code `index.src.js` to `index.js` use the following
-js script.
+js script according to the link https://github.com/babel/babelify.
 ```
 var fs = require("fs");
 var browserify = require("browserify");
