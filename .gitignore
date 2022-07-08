@@ -4,6 +4,8 @@
 # Python virtual environment
 .venv/
 venv/
+# mypy cache
+.mypy_cache
 
 # === Visual Studio ===
 ## Ignore Visual Studio temporary files, build results, and

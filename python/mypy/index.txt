@@ -1,0 +1,14 @@
+Mypy Type Check Coverage Summary
+================================
+
+Script: index
+
++------------------+-------------------+--------+
+| Module           | Imprecision       | Lines  |
++------------------+-------------------+--------+
+| function-pointer |   0.00% imprecise | 13 LOC |
+| json-object      |   0.00% imprecise | 31 LOC |
+| simple-example   |   0.00% imprecise |  9 LOC |
++------------------+-------------------+--------+
+| Total            |   0.00% imprecise | 53 LOC |
++------------------+-------------------+--------+
