@@ -1,6 +1,9 @@
 # === custom rules ===
 
 *.out
+# Python virtual environment
+.venv/
+venv/
 
 # === Visual Studio ===
 ## Ignore Visual Studio temporary files, build results, and
@@ -111,12 +114,7 @@ ipch/
 *.aps
 *.ncb
 *.opendb
-*.opensdf
-*.sdf
-*.cachefile
-*.VC.db
-*.VC.VC.opendb
-
+*.opensdf吉
 # Visual Studio profiler
 *.psess
 *.vsp
