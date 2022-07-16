@@ -14,7 +14,7 @@
 
 
       Module['onRuntimeInitialized'] = () =>{
-        const number = 10000000;
+        const number = 10;
         startTime = performance.now();
         _wCount(number)
         console.log("Counts ", number, " in Time:", Math.round(performance.now() - startTime)/1000, " seconds");
