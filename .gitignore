@@ -9,9 +9,12 @@ venv/
 
 # auto-generated wasm files
 wasm/*/*.js
-wasm/*/*.html
+wasm/01*/*.html
+wasm/02*/*.html
+wasm/03*/*.html
 wasm/*/*.wasm
-!wasm/04_function-call-with-params/main.html
+
+
 
 # === Visual Studio ===
 ## Ignore Visual Studio temporary files, build results, and

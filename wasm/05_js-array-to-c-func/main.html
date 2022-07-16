@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>Calling C Function from javascript</title>
+  </head>
+  <body>
+    <h1>Calling C Function from javascript</h1>
+    <!-- <p id="js_time" > JS</p> -->
+    <p id="wasm_time" >WASM : Check Console</p>
+
+    <script src="main.js"></script>
+    <script>
+      const sizeOfInt32 = 4;
+      // Takes an Int32Array, copies it to the heap and returns a pointer
+      function arrayToPtr(array) {
+        const ptr = _malloc(array.length * sizeOfInt32); // _malloc() is a function exposed from wasm side.
+        HEAP32.set(array, ptr / sizeOfInt32);
+        // HEAP32 is a variable from Emscripten's memory model:
+        // https://emscripten.org/docs/porting/emscripten-runtime-environment.html#emscripten-memory-model
+        return ptr; // typeof ptr === 'number';
+      }
+
+      // Takes a pointer and  array length, and returns a Int32Array from the heap
+      function ptrToArray(ptr, length) {
+        let array = new Int32Array(length);
+        const pos = ptr / sizeOfInt32;
+        array.set(HEAP32.subarray(pos, pos + length));
+        return array;
+      }
+
+      Module['onRuntimeInitialized'] = () => {
+        //  ccall(name of C function, return type, argument types, arguments);
+  
+        let inArray = new Int32Array([22, 3, 9527, 44, -123, 65536, 0, -666, 66, 999]);
+        console.log(`inArray:`, inArray);
+        bubbleSort = cwrap('bubble_sort', null, ['number', 'number']);
+        const outArray = ptrToArray(bubbleSort(arrayToPtr(inArray), inArray.length), inArray.length);
+        console.log(`outArray:`, outArray);
+      }
+
+
+    </script>
+  </body>
+</html>
