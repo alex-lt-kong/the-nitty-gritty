@@ -14,25 +14,25 @@
 
 
       Module['onRuntimeInitialized'] = () =>{
-        const number = 10;
+        //  ccall(name of C function, return type, argument types, arguments);
+        const a = 10;
         startTime = performance.now();
-        _wCount(number)
-        console.log("Counts ", number, " in Time:", Math.round(performance.now() - startTime)/1000, " seconds");
-        // console.log("Memory location of string/ char pointer: ", _greetX());
-        // console.log("Content at Memory location ",  _greetX(), " :" , ccall('greetX','string'));
+        _wCount(a)
+        console.log("Counts ", a, " in Time:", Math.round(performance.now() - startTime)/1000, " seconds");
+        // console.log("Memory location of string/ char pointer: ", _hello_world());
+        // console.log("Content at Memory location ",  _hello_world(), " :" , ccall('hello_world','string'));
 
         // Passing argument to function using ccall function
-        let wCountRetVal = ccall('wCount', 'number', ['number'], [number])
+        let wCountRetVal = ccall('wCount', 'number', ['number'], [a])
         console.log("Passing parameter successfull: ", wCountRetVal);
 
         // passing string to c function
-        let name = 'Ajay'
-        console.log("Passing String argument: ", ccall('greetX', 'string', ['string'], [name]));
+        let name = 'ak'
+        console.log("Passing String argument: ", ccall('hello_world', 'string', ['string'], [name]));
 
 
         // creating a wrap to greet function to make call simplified
-        const wGreet = cwrap('greetX', 'string', ['string']);
-
+        const wGreet = cwrap('hello_world', 'string', ['string']);
         console.log("After wrapping with cwrap: ", wGreet(' kumar')); //hello Ajay Kumar because ajay were passed previously
       }
 

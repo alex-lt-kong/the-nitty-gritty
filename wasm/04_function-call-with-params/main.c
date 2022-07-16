@@ -7,8 +7,8 @@ int main(){
 }
 
 
-char * greetX(char * name){
-  char * greetingMessage = "hello ";
+char* hello_world(char* name){
+  char * greetingMessage = "hello world!";
   strcat(greetingMessage, name);
 
   return greetingMessage;
