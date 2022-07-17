@@ -7,9 +7,6 @@ venv/
 # mypy cache
 .mypy_cache
 
-# auto-generated wasm files
-
-
 
 # === Visual Studio ===
 ## Ignore Visual Studio temporary files, build results, and
