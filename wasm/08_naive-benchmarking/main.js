@@ -70,6 +70,6 @@ for (let i = 0; i < ITER; ++i) {
 }
 const average = (array) => array.reduce((a, b) => a + b) / array.length;
 console.log(`Results in milliseconds:`);
-console.log(`quickSort in JS:    ${results.js}, average: ${average(results.js)}`);
-console.log(`quickSort in Wasm:  ${results.wasm}, average: ${average(results.wasm)}`);
-console.log(`Array.sort() in V8: ${results.v8}, average: ${average(results.v8)}`);
+console.log(`quickSort in JS:    ${results.js}, avg: ${average(results.js)}`);
+console.log(`quickSort in Wasm:  ${results.wasm}, avg: ${average(results.wasm)}`);
+console.log(`Array.sort() in V8: ${results.v8}, avg: ${average(results.v8)}`);
