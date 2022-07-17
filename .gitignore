@@ -8,11 +8,6 @@ venv/
 .mypy_cache
 
 # auto-generated wasm files
-wasm/*/*.js
-wasm/01*/*.html
-wasm/02*/*.html
-wasm/03*/*.html
-wasm/*/*.wasm
 
 
 
