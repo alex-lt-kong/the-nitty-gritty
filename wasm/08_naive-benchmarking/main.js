@@ -39,7 +39,7 @@ results = {
   wasm: [],
   js: []
 }
-const ITER = 10;
+const ITER = 16;
 const SIZE = 2 * 1024 * 1024;
 let inArray = new Int32Array(SIZE);
 for (let i = 0; i < ITER; ++i) {

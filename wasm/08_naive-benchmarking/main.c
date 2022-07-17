@@ -4,12 +4,13 @@
 #include <time.h>
 #include "func.c"
 
+#define ITER 16
+
 int main(void) {
   const size_t SIZE = 1024 * 1024 * 2;   
-  const int ITER = 10;
   srand(time(NULL));
   int* in_array = calloc(SIZE, sizeof(int));
-  int results[10] = {0};
+  int results[ITER] = {0};
   struct timeval tv;
   for (int i = 0; i < ITER; ++i) {
     printf("%d-it iteration...\n", i);
@@ -33,6 +34,6 @@ int main(void) {
     avg += results[i];
     printf("%d,", results[i]);
   }
-  printf(" average: %d\n", avg / ITER);
+  printf(" avg: %d\n", avg / ITER);
   return 0;
 } 
