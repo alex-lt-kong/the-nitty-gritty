@@ -1,6 +1,12 @@
 
-#include<stdio.h>
+#include <stdio.h>
+#ifdef EMSCRIPTEN
+#include "emscripten.h"
+#endif
 
+#ifdef EMSCRIPTEN
+EMSCRIPTEN_KEEPALIVE
+#endif
 int partition(int* arr, int lo, int hi) {
   int pivot = arr[hi];
   int pos = lo - 1;
@@ -18,6 +24,9 @@ int partition(int* arr, int lo, int hi) {
   return pos + 1;
 }
 
+#ifdef EMSCRIPTEN
+EMSCRIPTEN_KEEPALIVE
+#endif
 int* quick_sort(int* arr, int lo, int hi) {
   if (lo < hi) { 
     int pi = partition(arr, lo, hi); 
@@ -28,19 +37,4 @@ int* quick_sort(int* arr, int lo, int hi) {
     quick_sort(arr, pi + 1, hi); 
   }
   return arr;
-}
-
-int main(){
-  printf("Welcome to the Amazing world of WASM!\n");
-  int arr[] = {3, 1, 4, 1, 5, 9, 2, 6, 5, 3, 5, 9};
-  int arr_len = sizeof(arr) / sizeof(arr[0]);
-  for (int i = 0; i < arr_len; ++i) {
-    printf("%d, ", arr[i]);
-  }
-  printf("\n");
-  quick_sort(arr, 0, arr_len-1);
-  for (int i = 0; i < arr_len; ++i) {
-    printf("%d, ", arr[i]);
-  }
-  printf("\n");
 }

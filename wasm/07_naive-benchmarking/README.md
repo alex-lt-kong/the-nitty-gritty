@@ -1,1 +1,0 @@
-* `emcc main.c -s WASM=1 -s EXPORTED_FUNCTIONS='['_malloc', '_main', '_quick_sort']' -s EXPORTED_RUNTIME_METHODS=["cwrap"] -O3 -o main.js`
