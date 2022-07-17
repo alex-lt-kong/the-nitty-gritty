@@ -27,33 +27,6 @@ void quadratic_func(unsigned int* arr, size_t arr_len) {
   }
 }
 
-__attribute__((optimize("no-tree-vectorize")))
-void add_one_vectorization_off(unsigned int* arr, size_t arr_len) {
-  add_one_func(arr, arr_len);
-}
-
-void add_one_vectorization_on(unsigned int* arr, size_t arr_len) {
-  add_one_func(arr, arr_len);
-}
-
-__attribute__((optimize("no-tree-vectorize")))
-void linear_vectorization_off(unsigned int* arr, size_t arr_len) {
-  linear_func(arr, arr_len);
-}
-
-void linear_vectorization_on(unsigned int* arr, size_t arr_len) {
-  linear_func(arr, arr_len);
-}
-
-__attribute__((optimize("no-tree-vectorize")))
-void quadratic_vectorization_off(unsigned int* arr, size_t arr_len) {
-  quadratic_func(arr, arr_len);
-}
-
-void quadratic_vectorization_on(unsigned int* arr, size_t arr_len) {
-  quadratic_func(arr, arr_len);
-}
-
 int main() {
   const size_t SIZE = 64 * 1024 * 1024;
   const unsigned int ITER = 128;
@@ -66,20 +39,14 @@ int main() {
   }
 
   void (*funcs[])() = {
-    add_one_vectorization_off,
-    add_one_vectorization_on,
-    linear_vectorization_off,
-    linear_vectorization_on,
-    quadratic_vectorization_off,
-    quadratic_vectorization_on
+    add_one_func,
+    linear_func,
+    quadratic_func
   };
   char func_names[][64] = {
-    "add_one_vectorization_off",
-    "add_one_vectorization_on",
-    "linear_vectorization_off",
-    "linear_vectorization_on",
-    "quadratic_vectorization_off",
-    "quadratic_vectorization_on"
+    "add_one_func",
+    "linear_func",
+    "quadratic_func"
   };
   for (int i = 0; i < sizeof(funcs)/sizeof(funcs[0]); ++i) {
     printf("%s:\n", func_names[i]);
