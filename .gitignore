@@ -518,8 +518,6 @@ compile_commands.json
 
 # === Qt ===
 
-.vscode
-
 # Prerequisites
 *.d
 
