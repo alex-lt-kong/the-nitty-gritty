@@ -1,2 +1,2 @@
 # The Nitty-Gritty
-A few experiments on programming languages' technical details.
+A few experiments on technical details of programming languages/technologies.
