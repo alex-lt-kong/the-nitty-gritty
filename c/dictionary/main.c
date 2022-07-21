@@ -11,5 +11,6 @@ int main() {
     printf("%s\n", lookup("foo")->defn);    
     printf("%s\n", lookup("pi")->defn);    
     printf("%s\n", lookup("foo")->defn);
+    printf("%s\n", lookup("foo")->defn);
     return 0;
 }
