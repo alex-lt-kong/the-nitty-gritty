@@ -7,7 +7,7 @@ int sum(int a, int b) {
 int sum_them_all(int* arr, int arr_len) {
     int sum = 0;
     for (int i = 0; i < arr_len; ++i) {
-        sum += arr[i];
+        sum = sum + arr[i];
     }
     return sum;
 }
