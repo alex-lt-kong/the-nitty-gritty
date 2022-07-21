@@ -17,6 +17,7 @@
 0x0000000000000041 <+32>:	lea    rdx,[rax*4+0x0]
 ; lea: load effective address. My initial understanding is that it is similar to mov, just we can have expression
 ; inside []. For mov, we can't have rax*4 this kind of expression.
+; the RAX register is used for return values in functions
 0x0000000000000049 <+40>:	mov    rax,QWORD PTR [rbp-0x18]
 0x000000000000004d <+44>:	add    rax,rdx
 0x0000000000000050 <+47>:	mov    eax,DWORD PTR [rax]
