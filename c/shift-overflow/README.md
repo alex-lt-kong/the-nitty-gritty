@@ -1,0 +1,1 @@
+* In a word, per C standard,the result is undefined if the right operand is negative, or greater than or equal to the number of bits in the left expression’s type.
