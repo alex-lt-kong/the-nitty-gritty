@@ -1,4 +1,4 @@
-main.out: main.c
+main.out: main.c func.c
 	gcc main.c -Og -g -o main.out
 	
 clear:
