@@ -1,6 +1,6 @@
 * `apt install libmpg123-dev libao-dev`
 
-* To use a USB sound card:
+* To use a USB sound card (https://stackoverflow.com/questions/44395231/how-to-play-audio-via-a-usb-sound-card-using-c-libao-alsa-on-raspberry-pi):
 `~/.asoundrc`
 ``` 
 pcm.!default {
