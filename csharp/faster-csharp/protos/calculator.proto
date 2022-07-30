@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "io.grpc.test.my";
+option java_outer_classname = "MyTestProto";
+option objc_class_prefix = "HLW";
+
+package mytest;
+
+// The greeting service definition.
+service Calculator {
+  // Sends a greeting
+  rpc add (CalculatorRequest) returns (CalculatorReply) {}
+  rpc minus (CalculatorRequest) returns (CalculatorReply) {}
+}
+
+// The request message containing the user's name.
+message CalculatorRequest {
+  double num1 = 1;
+  double num2 = 2;
+  // 1 and 2 here are field numbers, not default values lol.
+}
+
+// The response message containing the greetings
+message CalculatorReply {
+  double result = 1;
+}
