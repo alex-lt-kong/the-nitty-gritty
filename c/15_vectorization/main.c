@@ -4,34 +4,35 @@
 #include <time.h>
 
 // unsigned int never overflows, which is exactly what we need
-void add_one_func(unsigned int* arr, size_t arr_len) {
+void add_one_func(unsigned int* arr, unsigned int* results, size_t arr_len) {
   for (int i = 0; i < arr_len; ++i) {
-    arr[i] += 1;
+    results[i] = arr[i] + 1;
   }
 }
 
-void linear_func(unsigned int* arr, size_t arr_len) {
+void linear_func(unsigned int* arr, unsigned int* results, size_t arr_len) {
   unsigned int a = rand() % 1024;
   unsigned int b = rand() % 1024;
   for (int i = 0; i < arr_len; ++i) {
-    arr[i] = a * arr[i] + b;
+    results[i] = a * arr[i] + b;
   }
 }
 
-void quadratic_func(unsigned int* arr, size_t arr_len) {
+void quadratic_func(unsigned int* arr, unsigned int* results, size_t arr_len) {
   unsigned int a = rand() % 1024;
   unsigned int b = rand() % 1024;
   unsigned int c = rand() % 1024;
   for (int i = 0; i < arr_len; ++i) {
-    arr[i] = a * arr[i] * arr[i] + b * arr[i] + c;
+    results[i] = a * arr[i] * arr[i] + b * arr[i] + c;
   }
 }
 
 int main() {
   const size_t SIZE = 64 * 1024 * 1024;
   const unsigned int ITER = 128;
-  unsigned int* arr = calloc(SIZE, sizeof(unsigned int));
-  unsigned long long* results = (unsigned long long*)calloc(ITER, sizeof(unsigned long long));
+  unsigned int* arr = malloc(SIZE * sizeof(unsigned int));
+  unsigned int* results = calloc(SIZE, sizeof(unsigned int));
+  unsigned long long* elapsed_times = (unsigned long long*)calloc(ITER, sizeof(unsigned long long));
   srand(time(NULL));
   struct timeval tv;
   for (int i = 0; i < SIZE; ++i) {
@@ -53,21 +54,22 @@ int main() {
     for (int j = 0; j < ITER; ++j) {
       gettimeofday(&tv, NULL);
       unsigned long long start_time = (unsigned long long)(tv.tv_sec) * 1000 + (unsigned long long)(tv.tv_usec) / 1000;
-      (*funcs[i])(arr, SIZE);
+      (*funcs[i])(arr, results, SIZE);
       gettimeofday(&tv, NULL);
       unsigned long long end_time = (unsigned long long)(tv.tv_sec) * 1000 + (unsigned long long)(tv.tv_usec) / 1000;
-      results[j] = end_time - start_time;
-      printf("%llums,", results[j]);
+      elapsed_times[j] = end_time - start_time;
+      printf("%llums,", elapsed_times[j]);
       if ((j + 1) % 32 == 0 && j + 1 < ITER) { printf("\n"); }
     }
     printf("\n");
-    unsigned int avg_result = 0;
+    unsigned int avg_et = 0;
     for (int j = 0; j < ITER; ++j) {
-      avg_result += results[j];
+      avg_et += elapsed_times[j];
     }
-    printf("Average: %lu\n\n", avg_result / ITER);
+    printf("Average: %lu\n\n", avg_et / ITER);
   }
   free(arr);
   free(results);
+  free(elapsed_times);
   return 0;
 }

@@ -1,3 +1,24 @@
+# Vectorization
+
+Vectorization is a huge topic... 
+[A Guide to Vectorization with Intel C++ Compilers](https://www.intel.com/content/dam/develop/external/us/en/documents/compilerautovectorizationguide.pdf) (the Guide)
+could be a starting point for beginners.
+
+## Install Intel's C++ compiler
+
+* Install both the `base kit` and the `HPC kit` from: https://www.intel.com/content/www/us/en/developer/articles/news/free-intel-software-developer-tools.html
+
+* Follow the steps to configure the environment: https://www.intel.com/content/www/us/en/develop/documentation/get-started-with-intel-oneapi-hpc-linux/top.html
+
+* `~/intel/oneapi/setvars.sh` does not seem to work properly on my machine, the absolute path of the compiler should be at
+`/opt/intel/oneapi/compiler/latest/linux/bin/intel64/icc`. Note that the same compiler is called `icl` on Windows
+and `icc` on Linux.
+
+* The `-vec-report` option documented in the Guide  seems obsolete as of 2022, use `-qopt-report -qopt-report-phase=vec`
+instead.
+
+## Results
+* `gcc`
 ```
 # ./main-vec-on.out 
 add_one_func:
