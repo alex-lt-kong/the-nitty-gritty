@@ -6,6 +6,9 @@ could be a starting point for beginners.
 
 ## Install Intel's C++ compiler
 
+* `gcc` supports auto vectorization as well. However, since the Guide uses Intel's own compiler, here we also document
+how to install and use it.
+
 * Install both the `base kit` and the `HPC kit` from: https://www.intel.com/content/www/us/en/developer/articles/news/free-intel-software-developer-tools.html
 
 * Follow the steps to configure the environment: https://www.intel.com/content/www/us/en/develop/documentation/get-started-with-intel-oneapi-hpc-linux/top.html
@@ -14,7 +17,7 @@ could be a starting point for beginners.
 `/opt/intel/oneapi/compiler/latest/linux/bin/intel64/icc`. Note that the same compiler is called `icl` on Windows
 and `icc` on Linux.
 
-* The `-vec-report` option documented in the Guide  seems obsolete as of 2022, use `-qopt-report -qopt-report-phase=vec`
+* The `-vec-report` option documented in the Guide seems obsolete as of 2022, use `-qopt-report -qopt-report-phase=vec`
 instead.
 
 ## Results
