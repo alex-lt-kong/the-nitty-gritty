@@ -7,3 +7,56 @@ icc, vectorization off: Average: 111ms, std: 19.272556
 gcc, vectorization on:  Average: 102ms, std: 13.690416
 gcc, vectorization off: Average: 114ms, std: 20.553469
 ```
+
+* But how can we be sure if vectorization is really on? Need to dig into assembly code.
+```
+gdb ./main-icc-on.out
+set disassembly-flavor intel
+layout split
+break main.c:11
+run
+n
+n
+n...
+```
+```
+ 0x4014f6 <main+550>     movdqu xmm4,XMMWORD PTR [r9+rsi*4]
+ 0x4014fc <main+556>     movdqa xmm5,xmm3
+ 0x401500 <main+560>     pmuludq xmm5,xmm4
+ 0x401504 <main+564>     psrlq  xmm4,0x20
+ 0x401509 <main+569>     pmuludq xmm4,xmm2
+ 0x40150d <main+573>     pand   xmm5,xmm0
+ 0x401511 <main+577>     psllq  xmm4,0x20 
+ 0x401516 <main+582>     por    xmm5,xmm4 
+ 0x40151a <main+586>     add    eax,0x4
+>0x40151d <main+589>     paddd  xmm5,xmm1 
+ 0x401521 <main+593>     movntdq XMMWORD PTR [r8+rsi*4],xmm5
+ 0x401527 <main+599>     add    rsi,0x4
+ 0x40152b <main+603>     cmp    rax,rdx
+ 0x40152e <main+606>     jb     0x4014f6 <main+550> 
+```
+* What are `MMX` instructions? https://en.wikipedia.org/wiki/MMX_(instruction_set)
+* How about mnemonics such as `pand`? https://docs.oracle.com/cd/E18752_01/html/817-5477/eojdc.html
+```
+gdb ./main-icc-no.out
+set disassembly-flavor intel
+layout split
+break main.c:11
+run
+n
+n
+n...
+```
+```
+ 0x4013d0 <main+256>     mov    r8d,DWORD PTR [r10+rcx*8]
+ 0x4013d4 <main+260>     inc    esi
+>0x4013d6 <main+262>     mov    r9d,DWORD PTR [r10+rcx*8+0x4]
+ 0x4013db <main+267>     imul   r8d,r14d
+ 0x4013df <main+271>     imul   r9d
+ 0x4013e3 <main+275>     add    r8d,eax
+ 0x4013e6 <main+278>     add    r9d,eax
+ 0x4013e9 <main+281>     mov    DWORD PTR [rbx+rcx*8],r8d
+ 0x4013ed <main+285>     mov    DWORD PTR [rbx+rcx*8+0x4],r9d
+ 0x4013f2 <main+290>     inc    rcx
+ 0x4013f5 <main+293>     cmp    esi,0x4000000
+ ```
