@@ -9,6 +9,8 @@ could be a starting point for beginners.
 * `gcc` supports auto vectorization as well. However, since the Guide uses Intel's own compiler, here we also document
 how to install and use it.
 
+* Also, experiments appear to show that `gcc` is not as good as `icc` in terms of vectorization.
+
 * Install both the `base kit` and the `HPC kit` from: https://www.intel.com/content/www/us/en/developer/articles/news/free-intel-software-developer-tools.html
 
 * Follow the steps to configure the environment: https://www.intel.com/content/www/us/en/develop/documentation/get-started-with-intel-oneapi-hpc-linux/top.html

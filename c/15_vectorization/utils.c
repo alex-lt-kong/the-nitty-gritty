@@ -1,5 +1,11 @@
 #include "utils.h"
 
+unsigned long long get_timestamp_now() {
+    struct timeval tv;
+    gettimeofday(&tv, NULL);
+    return (unsigned long long)(tv.tv_sec) * 1000 + (unsigned long long)(tv.tv_usec) / 1000;
+}
+
 double standard_deviation(unsigned long long* arr, size_t arr_len) {
     if (arr_len <= 0) {
         fprintf(stderr, "arr_len must be greater than 0\n");
