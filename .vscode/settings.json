@@ -4,6 +4,7 @@
     "python.linting.enabled": true,
     "makefile.extensionOutputFolder": "./.vscode",
     "files.associations": {
-        "string.h": "c"
+        "string.h": "c",
+        "time.h": "c"
     }
 }

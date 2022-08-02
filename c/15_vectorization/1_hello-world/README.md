@@ -1,3 +1,5 @@
+# Hello World
+
 * The very first attempt to show how vectorization can make a difference
 
 * Results:
@@ -8,16 +10,22 @@ gcc, vectorization on:  Average: 102ms, std: 13.690416
 gcc, vectorization off: Average: 114ms, std: 20.553469
 ```
 
+## Disassembled code
+
 * But how can we be sure if vectorization is really on? Need to dig into assembly code.
+
+### Vectorized versions
+
+#### icc
 ```
 gdb ./main-icc-on.out
 set disassembly-flavor intel
 layout split
 break main.c:11
 run
-n
-n
-n...
+ni
+ni
+ni...
 ```
 ```
  0x4014f6 <main+550>     movdqu xmm4,XMMWORD PTR [r9+rsi*4]
@@ -35,17 +43,52 @@ n...
  0x40152b <main+603>     cmp    rax,rdx
  0x40152e <main+606>     jb     0x4014f6 <main+550> 
 ```
+
+#### gcc
+
+```
+gdb ./main-gcc-on.out
+set disassembly-flavor intel
+layout split
+break main.c:11
+run
+ni
+ni
+ni...
+```
+```
+ 0x5555555551e0 <main+240>       movdqu xmm0,XMMWORD PTR [r13+rax*1+0x0]
+ 0x5555555551e7 <main+247>       movdqu xmm1,XMMWORD PTR [r13+rax*1+0x0]
+ 0x5555555551ee <main+254>       psrlq  xmm0,0x20
+ 0x5555555551f3 <main+259>       pmuludq xmm1,xmm3
+ 0x5555555551f7 <main+263>       pmuludq xmm0,xmm4
+ 0x5555555551fb <main+267>       pshufd xmm1,xmm1,0x8
+ 0x555555555200 <main+272>       pshufd xmm0,xmm0,0x8
+ 0x555555555205 <main+277>       punpckldq xmm1,xmm0 
+ 0x555555555209 <main+281>       paddd  xmm1,xmm2
+ 0x55555555520d <main+285>       movups XMMWORD PTR [rbp+rax*1+0x0],xmm1
+>0x555555555212 <main+290>       add    rax,0x10
+ 0x555555555216 <main+294>       cmp    rax,0x20000000
+ 0x55555555521c <main+300>       jne    0x5555555551e0 <main+240>
+
+```
 * What are `MMX` instructions? https://en.wikipedia.org/wiki/MMX_(instruction_set)
 * How about mnemonics such as `pand`? https://docs.oracle.com/cd/E18752_01/html/817-5477/eojdc.html
+* One can notice that both `icc` and `gcc` use SIMD instructions extensively to vectorize the loop. However, `icc`
+outperforms `gcc` by a large margin--`gcc`'s vectorization barely makes any difference (compared with its own
+non-vectorized version).
+
+### Non-vectorized versions
+
 ```
 gdb ./main-icc-no.out
 set disassembly-flavor intel
 layout split
 break main.c:11
 run
-n
-n
-n...
+ni
+ni
+ni...
 ```
 ```
  0x4013d0 <main+256>     mov    r8d,DWORD PTR [r10+rcx*8]

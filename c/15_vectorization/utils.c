@@ -15,10 +15,10 @@ double standard_deviation(unsigned long long* arr, size_t arr_len) {
     for(size_t i = 0; i < arr_len; ++i) {
         sum += (double)arr[i];        
     }    
-    mean = sum / arr_len;
+    mean = sum / (double)arr_len;
     for(size_t i = 0; i < arr_len; ++i) {
-        std += pow(arr[i] - mean, 2);
+        std += pow((double)arr[i] - mean, 2);
     }
         
-    return sqrt(std / arr_len);
+    return sqrt(std / (double)arr_len);
 }
