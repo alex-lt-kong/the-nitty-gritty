@@ -1,19 +1,11 @@
 #include <stdio.h>
-#include <stdlib.h>
 #include <time.h>
 
 #include "../utils.h"
+#include "func.h"
 
-#define SIZE 134217728 // 1238 * 1024 * 1024
+#define SIZE 134217728 // 128 * 1024 * 1024
 #define ITER 128
-
-void linear_func(unsigned int* arr, unsigned int* results, size_t arr_len) {
-  unsigned int a = rand() % 1024;
-  unsigned int b = rand() % 1024;
-  for (int i = 0; i < arr_len; ++i) {
-    results[i] = a * arr[i] + b;
-  }
-}
 
 int main() {
   unsigned int* arr = malloc(SIZE * sizeof(unsigned int));
