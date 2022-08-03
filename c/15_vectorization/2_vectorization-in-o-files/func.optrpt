@@ -24,3 +24,34 @@ LOOP BEGIN at func.c(8,3)
 <Remainder loop for vectorization>
 LOOP END
 ===========================================================================
+
+Begin optimization report for: linear_func_int8(uint8_t *, uint8_t *, size_t)
+
+    Report from: Vector optimizations [vec]
+
+
+LOOP BEGIN at func.c(16,3)
+<Peeled loop for vectorization, Multiversioned v1>
+LOOP END
+
+LOOP BEGIN at func.c(16,3)
+<Multiversioned v1>
+   remark #15300: LOOP WAS VECTORIZED
+LOOP END
+
+LOOP BEGIN at func.c(16,3)
+<Alternate Alignment Vectorized Loop, Multiversioned v1>
+LOOP END
+
+LOOP BEGIN at func.c(16,3)
+<Remainder loop for vectorization, Multiversioned v1>
+LOOP END
+
+LOOP BEGIN at func.c(16,3)
+<Multiversioned v2>
+LOOP END
+
+LOOP BEGIN at func.c(16,3)
+<Remainder, Multiversioned v2>
+LOOP END
+===========================================================================
