@@ -11,3 +11,8 @@ icc, vectorization off: Average: 68ms, std: 8.910338
 gcc, vectorization on:  Average: 24ms, std: 2.606763
 gcc, vectorization off: Average: 72ms, std: 13.794717
 ```
+
+* Unlike `1_hello-world`, `gcc` does appear to vectorize correctly in this experiment--although it is still
+not as good as `icc`.
+
+* Vectorized versions are not only faster--they are also more stable judging from a smaller standard deviation.
