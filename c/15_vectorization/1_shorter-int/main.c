@@ -1,6 +1,6 @@
 #include <stdio.h>
-#include <stdint.h>
 #include <stdlib.h>
+#include <stdint.h>
 #include <time.h>
 
 #include "../utils.h"
@@ -8,17 +8,17 @@
 #define SIZE 134217728 // 1238 * 1024 * 1024
 #define ITER 128
 
-void linear_func(uint32_t* arr, uint32_t* results, size_t arr_len) {
-  uint32_t a = rand() % 1024;
-  uint32_t b = rand() % 1024;
+void linear_func(uint8_t* arr, uint8_t* results, size_t arr_len) {
+  uint8_t a = rand() % 1024;
+  uint8_t b = rand() % 1024;
   for (int i = 0; i < arr_len; ++i) {
     results[i] = a * arr[i] + b;
   }
 }
 
 int main() {
-  uint32_t* arr = malloc(SIZE * sizeof(uint32_t));
-  uint32_t* results = malloc(SIZE * sizeof(uint32_t));
+  uint8_t* arr = malloc(SIZE * sizeof(uint8_t));
+  uint8_t* results = malloc(SIZE * sizeof(uint8_t));
   double* elapsed_times = malloc(ITER * sizeof(double));
   srand(time(NULL));
   for (int i = 0; i < SIZE; ++i) {
@@ -33,7 +33,7 @@ int main() {
     // we pick and print one element from results, so that even the smartest compiler cant optimize my loop away.
   }
   printf("\n");
-  uint32_t avg_et = 0;
+  unsigned int avg_et = 0;
   for (int j = 0; j < ITER; ++j) {
       avg_et += elapsed_times[j];
   }
