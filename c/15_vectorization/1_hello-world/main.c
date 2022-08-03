@@ -17,8 +17,8 @@ void linear_func(unsigned int* arr, unsigned int* results, size_t arr_len) {
 
 int main() {
   unsigned int* arr = malloc(SIZE * sizeof(unsigned int));
-  unsigned int* results = calloc(SIZE, sizeof(unsigned int));
-  unsigned long long* elapsed_times = (unsigned long long*)calloc(ITER, sizeof(unsigned long long));
+  unsigned int* results = malloc(SIZE * sizeof(unsigned int));
+  double* elapsed_times = malloc(ITER * sizeof(double));
   srand(time(NULL));
   for (int i = 0; i < SIZE; ++i) {
     arr[i] = rand() % SIZE;
@@ -36,7 +36,7 @@ int main() {
   for (int j = 0; j < ITER; ++j) {
       avg_et += elapsed_times[j];
   }
-  printf("Average: %lums, std: %lf\n", avg_et / ITER, standard_deviation(elapsed_times, ITER));
+  printf("Average: %lums, std: %lf\n", avg_et / ITER, standard_deviation(elapsed_times, ITER, true));
   
   free(arr);
   free(results);

@@ -6,7 +6,7 @@ unsigned long long get_timestamp_now() {
     return (unsigned long long)(tv.tv_sec) * 1000 + (unsigned long long)(tv.tv_usec) / 1000;
 }
 
-double standard_deviation(unsigned long long* arr, size_t arr_len) {
+double standard_deviation(double* arr, size_t arr_len, bool is_sample) {
     if (arr_len <= 0) {
         fprintf(stderr, "arr_len must be greater than 0\n");
         return -1;
@@ -15,10 +15,10 @@ double standard_deviation(unsigned long long* arr, size_t arr_len) {
     for(size_t i = 0; i < arr_len; ++i) {
         sum += (double)arr[i];        
     }    
-    mean = sum / (double)arr_len;
+    mean = sum / arr_len;
     for(size_t i = 0; i < arr_len; ++i) {
-        std += pow((double)arr[i] - mean, 2);
+        std += pow(arr[i] - mean, 2);
     }
         
-    return sqrt(std / (double)arr_len);
+    return sqrt(std / (is_sample ? (arr_len - 1) : arr_len));
 }
