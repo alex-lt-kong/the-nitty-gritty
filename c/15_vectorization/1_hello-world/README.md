@@ -2,7 +2,9 @@
 
 * The very first attempt to show how vectorization can make a difference
 
-* The structure of `main.c` has been carefully designed to avoid memory I/O bottleneck per: https://stackoverflow.com/questions/18159455/why-vectorizing-the-loop-does-not-have-performance-improvement
+* The structure of `main.c` has been carefully designed to avoid memory I/O bottleneck according to:
+[this link](https://stackoverflow.com/questions/18159455/why-vectorizing-the-loop-does-not-have-performance-improvement)
+and [this link](https://stackoverflow.com/questions/30313600/why-does-my-8m-l3-cache-not-provide-any-benefit-for-arrays-larger-than-1m?noredirect=1&lq=1)
 
 * Results:
 ```
