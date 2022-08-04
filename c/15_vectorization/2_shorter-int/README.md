@@ -1,4 +1,4 @@
-# Hello World
+# Short integers
 
 * Vectorization with `uint_8` instead of `uint_32` can boost the performance even further--Intel's SIMD registers
 (XMM0–XMM7) are 128-bit wide, they can accommodate up to 16 `uint_8` variables but 4 `uint_32` variables only.

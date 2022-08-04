@@ -2,7 +2,7 @@ main: main.c func.o utils.o
 	icc main.c func-icc-on.o utils.o -o main-icc-on.out -g -O3 -lm 
 	icc main.c func-icc-no.o utils.o -o main-icc-no.out -g -O3 -lm -no-vec
 	gcc main.c func-gcc-on.o utils.o -o main-gcc-on.out -g -O3 -lm
-	gcc main.c func-gcc-on.o utils.o -o main-icc-no.out -g -O3 -lm -fno-tree-vectorize
+	gcc main.c func-gcc-no.o utils.o -o main-gcc-no.out -g -O3 -lm -fno-tree-vectorize
 
 utils.o: ../utils.c ../utils.h
 	icc -fpic -c ../utils.c -O3 -fpic
