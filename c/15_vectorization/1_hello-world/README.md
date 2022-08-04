@@ -2,12 +2,14 @@
 
 * The very first attempt to show how vectorization can make a difference
 
+* The structure of `main.c` has been carefully designed to avoid memory I/O bottleneck per: https://stackoverflow.com/questions/18159455/why-vectorizing-the-loop-does-not-have-performance-improvement
+
 * Results:
 ```
-icc, vectorization on:  Average: 66ms, std: 16.943430
-icc, vectorization off: Average: 111ms, std: 19.272556
-gcc, vectorization on:  Average: 102ms, std: 13.690416
-gcc, vectorization off: Average: 114ms, std: 20.553469
+icc, vectorization on:  3199.74ms
+icc, vectorization off: 4400.41ms
+gcc, vectorization on:  2610.16ms
+gcc, vectorization off: 4861.70ms
 ```
 
 ## Disassembled code
@@ -16,61 +18,100 @@ gcc, vectorization off: Average: 114ms, std: 20.553469
 
 ### Vectorized versions
 
-#### icc
-```
-gdb ./main-icc-on.out
-set disassembly-flavor intel
-layout split
-break main.c:11
-run
-ni
-ni
-ni...
-```
-```
- 0x4014f6 <main+550>     movdqu xmm4,XMMWORD PTR [r9+rsi*4]
- 0x4014fc <main+556>     movdqa xmm5,xmm3
- 0x401500 <main+560>     pmuludq xmm5,xmm4
- 0x401504 <main+564>     psrlq  xmm4,0x20
- 0x401509 <main+569>     pmuludq xmm4,xmm2
- 0x40150d <main+573>     pand   xmm5,xmm0
- 0x401511 <main+577>     psllq  xmm4,0x20 
- 0x401516 <main+582>     por    xmm5,xmm4 
- 0x40151a <main+586>     add    eax,0x4
->0x40151d <main+589>     paddd  xmm5,xmm1 
- 0x401521 <main+593>     movntdq XMMWORD PTR [r8+rsi*4],xmm5
- 0x401527 <main+599>     add    rsi,0x4
- 0x40152b <main+603>     cmp    rax,rdx
- 0x40152e <main+606>     jb     0x4014f6 <main+550> 
-```
-
 #### gcc
 
+`gdb -batch -ex 'file ./main-gcc-on.out' -ex 'disassemble /m linear_func' | cut -d " " -f 5-`
 ```
-gdb ./main-gcc-on.out
-set disassembly-flavor intel
-layout split
-break main.c:11
-run
-ni
-ni
-ni...
+...
+results[i] = a * arr[i] + b;
+<+88>:  movdqu (%rdx,%rax,1),%xmm0
+<+93>:  movdqu (%rdx,%rax,1),%xmm1
+<+98>:  psrlq  $0x20,%xmm0
+<+103>: pmuludq %xmm2,%xmm1
+<+107>: pmuludq %xmm3,%xmm0
+<+111>: pshufd $0x8,%xmm1,%xmm1
+<+116>: pshufd $0x8,%xmm0,%xmm0
+<+121>: punpckldq %xmm0,%xmm1
+<+125>: movdqa %xmm1,%xmm0
+<+129>: paddd  %xmm4,%xmm0
+<+133>: movups %xmm0,(%rcx,%rax,1)
+<+159>: mov    (%rdx,%rax,4),%r9d
+<+163>: imul   %edi,%r9d
+<+167>: add    %esi,%r9d
+<+170>: mov    %r9d,(%rcx,%rax,4)
+<+186>: mov    (%rdx,%r9,4),%r10d
+<+195>: imul   %edi,%r10d
+<+199>: add    %esi,%r10d
+<+202>: mov    %r10d,(%rcx,%r9,4)
+<+211>: imul   (%rdx,%rax,4),%edi
+<+215>: add    %edi,%esi
+<+217>: mov    %esi,(%rcx,%rax,4)
+<+240>: mov    (%rdx,%rax,1),%r9d
+<+244>: imul   %edi,%r9d
+<+248>: add    %esi,%r9d
+<+251>: mov    %r9d,(%rcx,%rax,1)
+...
 ```
-```
- 0x5555555551e0 <main+240>       movdqu xmm0,XMMWORD PTR [r13+rax*1+0x0]
- 0x5555555551e7 <main+247>       movdqu xmm1,XMMWORD PTR [r13+rax*1+0x0]
- 0x5555555551ee <main+254>       psrlq  xmm0,0x20
- 0x5555555551f3 <main+259>       pmuludq xmm1,xmm3
- 0x5555555551f7 <main+263>       pmuludq xmm0,xmm4
- 0x5555555551fb <main+267>       pshufd xmm1,xmm1,0x8
- 0x555555555200 <main+272>       pshufd xmm0,xmm0,0x8
- 0x555555555205 <main+277>       punpckldq xmm1,xmm0 
- 0x555555555209 <main+281>       paddd  xmm1,xmm2
- 0x55555555520d <main+285>       movups XMMWORD PTR [rbp+rax*1+0x0],xmm1
->0x555555555212 <main+290>       add    rax,0x10
- 0x555555555216 <main+294>       cmp    rax,0x20000000
- 0x55555555521c <main+300>       jne    0x5555555551e0 <main+240>
 
+#### icc
+
+`gdb -batch -ex 'file ./main-icc-on.out' -ex 'disassemble /m linear_func' | cut -d " " -f 5-`
+```
+...
+results[i] = a * arr[i] + b;
+<+19>:  mov    %rcx,%rax
+<+30>:  sub    %rdx,%rax
+<+38>:  neg    %rax
+<+128>: mov    (%rdx,%r10,4),%r12d
+<+135>: imul   %edi,%r12d
+<+139>: add    %esi,%r12d
+<+142>: mov    %r12d,(%rcx,%r10,4)
+<+159>: mov    %r11d,%r9d
+<+162>: lea    (%rdx,%r11,4),%r10
+<+188>: movdqa %xmm3,%xmm2
+<+197>: psrlq  $0x20,%xmm2
+<+202>: movdqu 0x393e(%rip),%xmm0        # 0x405010
+<+210>: movdqu (%rdx,%r11,4),%xmm4
+<+216>: movdqa %xmm3,%xmm5
+<+224>: pmuludq %xmm4,%xmm5
+<+228>: psrlq  $0x20,%xmm4
+<+233>: pmuludq %xmm2,%xmm4
+<+237>: pand   %xmm0,%xmm5
+<+241>: psllq  $0x20,%xmm4
+<+246>: por    %xmm4,%xmm5
+<+250>: paddd  %xmm1,%xmm5
+<+254>: movdqu %xmm5,(%rcx,%r11,4)
+<+284>: movdqa %xmm3,%xmm2
+<+293>: psrlq  $0x20,%xmm2
+<+298>: movdqu 0x38de(%rip),%xmm0        # 0x405010
+<+306>: movdqu (%rdx,%r11,4),%xmm4
+<+312>: movdqa %xmm3,%xmm5
+<+316>: pmuludq %xmm4,%xmm5
+<+320>: psrlq  $0x20,%xmm4
+<+325>: pmuludq %xmm2,%xmm4
+<+329>: pand   %xmm0,%xmm5
+<+333>: psllq  $0x20,%xmm4
+<+338>: por    %xmm4,%xmm5
+<+346>: paddd  %xmm1,%xmm5
+<+350>: movdqu %xmm5,(%rcx,%r11,4)
+<+378>: mov    (%rdx,%r10,4),%eax
+<+385>: imul   %edi,%eax
+<+388>: add    %esi,%eax
+<+390>: mov    %eax,(%rcx,%r10,4)
+<+420>: movslq %r9d,%r9
+<+423>: mov    (%rdx,%r9,8),%eax
+<+427>: imul   %edi,%eax
+<+430>: add    %esi,%eax
+<+432>: mov    %eax,(%rcx,%r9,8)
+<+436>: mov    0x4(%rdx,%r9,8),%r11d
+<+441>: imul   %edi,%r11d
+<+445>: add    %esi,%r11d
+<+448>: mov    %r11d,0x4(%rcx,%r9,8)
+<+481>: mov    (%rdx,%rax,4),%edx
+<+484>: imul   %edx,%edi
+<+487>: add    %edi,%esi
+<+489>: mov    %esi,(%rcx,%rax,4)
+...
 ```
 * What are `MMX` instructions? https://en.wikipedia.org/wiki/MMX_(instruction_set)
 * How about mnemonics such as `pand`? https://docs.oracle.com/cd/E18752_01/html/817-5477/eojdc.html
@@ -80,26 +121,105 @@ non-vectorized version).
 
 ### Non-vectorized versions
 
+#### gcc
+
+`gdb -batch -ex 'file ./main-gcc-no.out' -ex 'disassemble /m linear_func' | cut -d " " -f 5-`
+
 ```
-gdb ./main-icc-no.out
-set disassembly-flavor intel
-layout split
-break main.c:11
-run
-ni
-ni
-ni...
-```
-```
- 0x4013d0 <main+256>     mov    r8d,DWORD PTR [r10+rcx*8]
- 0x4013d4 <main+260>     inc    esi
->0x4013d6 <main+262>     mov    r9d,DWORD PTR [r10+rcx*8+0x4]
- 0x4013db <main+267>     imul   r8d,r14d
- 0x4013df <main+271>     imul   r9d
- 0x4013e3 <main+275>     add    r8d,eax
- 0x4013e6 <main+278>     add    r9d,eax
- 0x4013e9 <main+281>     mov    DWORD PTR [rbx+rcx*8],r8d
- 0x4013ed <main+285>     mov    DWORD PTR [rbx+rcx*8+0x4],r9d
- 0x4013f2 <main+290>     inc    rcx
- 0x4013f5 <main+293>     cmp    esi,0x4000000
+...
+results[i] = a * arr[i] + b;
+<+16>:  mov    (%r9,%rax,1),%edx
+<+20>:  imul   %edi,%edx
+<+23>:  add    %esi,%edx
+<+25>:  mov    %edx,(%rcx,%rax,1)
+...
  ```
+
+#### icc
+
+`gdb -batch -ex 'file ./main-icc-no.out' -ex 'disassemble /m linear_func' | cut -d " " -f 5-`
+
+```
+...
+results[i] = a * arr[i] + b;
+<+19>:  mov    %rcx,%rax
+<+30>:  sub    %rdx,%rax
+<+38>:  neg    %rax
+<+71>:  movslq %r10d,%rax
+<+77>:  shl    $0x5,%rax
+<+81>:  mov    (%rdx,%rax,1),%r11d
+<+85>:  imul   %edi,%r11d
+<+89>:  add    %esi,%r11d
+<+92>:  mov    %r11d,(%rcx,%rax,1)
+<+96>:  mov    0x4(%rdx,%rax,1),%r11d
+<+101>: imul   %edi,%r11d
+<+105>: add    %esi,%r11d
+<+108>: mov    %r11d,0x4(%rcx,%rax,1)
+<+113>: mov    0x8(%rdx,%rax,1),%r11d
+<+118>: imul   %edi,%r11d
+<+122>: add    %esi,%r11d
+<+125>: mov    %r11d,0x8(%rcx,%rax,1)
+<+130>: mov    0xc(%rdx,%rax,1),%r11d
+<+135>: imul   %edi,%r11d
+<+139>: add    %esi,%r11d
+<+142>: mov    %r11d,0xc(%rcx,%rax,1)
+<+147>: mov    0x10(%rdx,%rax,1),%r11d
+<+152>: imul   %edi,%r11d
+<+156>: add    %esi,%r11d
+<+159>: mov    %r11d,0x10(%rcx,%rax,1)
+<+164>: mov    0x14(%rdx,%rax,1),%r11d
+<+169>: imul   %edi,%r11d
+<+173>: add    %esi,%r11d
+<+176>: mov    %r11d,0x14(%rcx,%rax,1)
+<+181>: mov    0x18(%rdx,%rax,1),%r11d
+<+186>: imul   %edi,%r11d
+<+190>: add    %esi,%r11d
+<+193>: mov    %r11d,0x18(%rcx,%rax,1)
+<+198>: mov    0x1c(%rdx,%rax,1),%r11d
+<+203>: imul   %edi,%r11d
+<+207>: add    %esi,%r11d
+<+210>: mov    %r11d,0x1c(%rcx,%rax,1)
+<+260>: mov    0x14(%rdx,%rax,4),%r8d
+<+265>: imul   %edi,%r8d
+<+269>: add    %esi,%r8d
+<+272>: mov    %r8d,0x14(%rcx,%rax,4)
+<+277>: mov    0x10(%rdx,%rax,4),%r8d
+<+282>: imul   %edi,%r8d
+<+286>: add    %esi,%r8d
+<+289>: mov    %r8d,0x10(%rcx,%rax,4)
+<+294>: mov    0xc(%rdx,%rax,4),%r8d
+<+299>: imul   %edi,%r8d
+<+303>: add    %esi,%r8d
+<+306>: mov    %r8d,0xc(%rcx,%rax,4)
+<+311>: mov    0x8(%rdx,%rax,4),%r8d
+<+316>: imul   %edi,%r8d
+<+320>: add    %esi,%r8d
+<+323>: mov    %r8d,0x8(%rcx,%rax,4)
+<+328>: mov    0x4(%rdx,%rax,4),%r8d
+<+333>: imul   %edi,%r8d
+<+337>: add    %esi,%r8d
+<+340>: mov    %r8d,0x4(%rcx,%rax,4)
+<+345>: mov    (%rdx,%rax,4),%r8d
+<+349>: imul   %edi,%r8d
+<+353>: add    %esi,%r8d
+<+356>: mov    %r8d,(%rcx,%rax,4)
+<+360>: mov    -0x4(%rdx,%rax,4),%edx
+<+364>: imul   %edx,%edi
+<+367>: add    %edi,%esi
+<+369>: mov    %esi,-0x4(%rcx,%rax,4)
+<+373>: jmp    0x40163f <linear_func+463>
+<+391>: movslq %r9d,%r9
+<+394>: mov    (%rdx,%r9,8),%eax
+<+398>: imul   %edi,%eax
+<+401>: add    %esi,%eax
+<+403>: mov    %eax,(%rcx,%r9,8)
+<+407>: mov    0x4(%rdx,%r9,8),%r11d
+<+412>: imul   %edi,%r11d
+<+416>: add    %esi,%r11d
+<+419>: mov    %r11d,0x4(%rcx,%r9,8)
+<+452>: mov    (%rdx,%rax,4),%edx
+<+455>: imul   %edx,%edi
+<+458>: add    %edi,%esi
+<+460>: mov    %esi,(%rcx,%rax,4)
+...
+```

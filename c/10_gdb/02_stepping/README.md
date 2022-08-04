@@ -15,10 +15,13 @@
     * Enable step mode: `set step-mode on` then `run`.
     * Check step mode status: `show step-mode`.
 
-* **Assembly**
+* **Assembly/Disassembly**
     * Show all assembly instructions: `layout asm`, or assembly instructions and source code side-by-side: `layout split`.nq
     * Set assembly syntax to "Intel": `set disassembly-flavor intel`.
     * Show current assembly instructions: `set disassemble-next-line on` then `show disassemble-next-line`
+    * Disassemble one single function from one file: `gdb -batch -ex 'file <file_path>' -ex 'disassemble <function_name>'`
+    * Disassemble one single function from one file with original C lines prepended:
+    `gdb -batch -ex 'file ./main-icc-on.out' -ex 'disassemble /m linear_func_uint32' | cut -d " " -f 5-`
 
 * **Step-by-step execution**
     * `n` for execution per source code line.

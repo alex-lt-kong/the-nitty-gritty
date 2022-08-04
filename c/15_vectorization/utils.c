@@ -1,9 +1,9 @@
 #include "utils.h"
 
-unsigned long long get_timestamp_now() {
+uint64_t get_timestamp_now() {
     struct timeval tv;
-    gettimeofday(&tv, NULL);
-    return (unsigned long long)(tv.tv_sec) * 1000 + (unsigned long long)(tv.tv_usec) / 1000;
+    gettimeofday(&tv, NULL); 
+    return 1000000 * tv.tv_sec + tv.tv_usec;
 }
 
 double standard_deviation(double* arr, size_t arr_len, bool is_sample) {

@@ -12,59 +12,55 @@ LOOP BEGIN at main.c(23,3)
    remark #15527: loop was not vectorized: function call to rand(void) cannot be vectorized   [ main.c(24,14) ]
 LOOP END
 
-LOOP BEGIN at main.c(27,3)
+LOOP BEGIN at main.c(28,19)
    remark #15542: loop was not vectorized: inner loop was already vectorized
 
-   LOOP BEGIN at main.c(13,3) inlined into main.c(29,5)
+   LOOP BEGIN at main.c(11,3) inlined into main.c(29,5)
    <Peeled loop for vectorization>
    LOOP END
 
-   LOOP BEGIN at main.c(13,3) inlined into main.c(29,5)
+   LOOP BEGIN at main.c(11,3) inlined into main.c(29,5)
       remark #15300: LOOP WAS VECTORIZED
    LOOP END
 
-   LOOP BEGIN at main.c(13,3) inlined into main.c(29,5)
+   LOOP BEGIN at main.c(11,3) inlined into main.c(29,5)
    <Alternate Alignment Vectorized Loop>
    LOOP END
 
-   LOOP BEGIN at main.c(13,3) inlined into main.c(29,5)
+   LOOP BEGIN at main.c(11,3) inlined into main.c(29,5)
    <Remainder loop for vectorization>
    LOOP END
 LOOP END
-
-LOOP BEGIN at main.c(36,3)
-   remark #15367: loop was not vectorized: a sequence of integer<->float conversions in reduction calculation is not supported. Use #pragma simd reduction(...) to override   [ main.c(37,7) ]
-LOOP END
 ===========================================================================
 
-Begin optimization report for: linear_func(unsigned int *, unsigned int *, size_t)
+Begin optimization report for: linear_func(uint32_t, uint32_t, uint32_t *, uint32_t *, size_t)
 
     Report from: Vector optimizations [vec]
 
 
-LOOP BEGIN at main.c(13,3)
+LOOP BEGIN at main.c(11,3)
 <Peeled loop for vectorization, Multiversioned v1>
 LOOP END
 
-LOOP BEGIN at main.c(13,3)
+LOOP BEGIN at main.c(11,3)
 <Multiversioned v1>
    remark #15300: LOOP WAS VECTORIZED
 LOOP END
 
-LOOP BEGIN at main.c(13,3)
+LOOP BEGIN at main.c(11,3)
 <Alternate Alignment Vectorized Loop, Multiversioned v1>
 LOOP END
 
-LOOP BEGIN at main.c(13,3)
+LOOP BEGIN at main.c(11,3)
 <Remainder loop for vectorization, Multiversioned v1>
 LOOP END
 
-LOOP BEGIN at main.c(13,3)
+LOOP BEGIN at main.c(11,3)
 <Multiversioned v2>
    remark #15304: loop was not vectorized: non-vectorizable loop instance from multiversioning
 LOOP END
 
-LOOP BEGIN at main.c(13,3)
+LOOP BEGIN at main.c(11,3)
 <Remainder, Multiversioned v2>
 LOOP END
 ===========================================================================
