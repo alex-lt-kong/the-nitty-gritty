@@ -26,4 +26,11 @@ instead.
 
 * The performance gain from vectorization can be difficult to measure, since CPU caching, memory bandwidth, etc 
  can all have an even larger impact on the performance.
- 
+
+* Check CPU cache: `lscpu | grep cache`
+```
+L1d cache:                       64 KiB
+L1i cache:                       64 KiB
+L2 cache:                        512 KiB
+L3 cache:                        10 MiB
+```

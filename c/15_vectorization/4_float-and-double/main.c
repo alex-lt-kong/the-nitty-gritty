@@ -20,14 +20,14 @@ int main() {
     arr_f[i] = (rand() % SIZE) * 1.414;
   }
 
-  uint64_t start_time = get_timestamp_now();
+  uint64_t start_time = get_timestamp_in_microsec();
   for (uint64_t i = 0; i < 1024 * 1024 * 32; ++i) {
     linear_func_float(a_f, b_f, arr_f, results_f, SIZE);
     if (i % (1024 * 1024 * 2) == 0) {
       printf("%f\n", results_f[rand() % SIZE]);
     }
   }
-  elapsed_times = get_timestamp_now() - start_time;
+  elapsed_times = get_timestamp_in_microsec() - start_time;
 
   free(arr_f);
   free(results_f);
@@ -41,14 +41,14 @@ int main() {
     arr_d[i] = (rand() % SIZE) * 1.414;
   }
 
-  start_time = get_timestamp_now();
+  start_time = get_timestamp_in_microsec();
   for (uint64_t i = 0; i < 1024 * 1024 * 32; ++i) {
     linear_func_double(a_d, b_d, arr_d, results_d, SIZE);
     if (i % (1024 * 1024 * 2) == 0) {
       printf("%.4lf\n", results_d[rand() % SIZE]);
     }
   }
-  elapsed_times = get_timestamp_now() - start_time;
+  elapsed_times = get_timestamp_in_microsec() - start_time;
 
   free(arr_d);
   free(results_d);

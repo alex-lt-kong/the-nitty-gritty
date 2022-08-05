@@ -1,4 +1,4 @@
-# Vectorization in object files
+# Float and double
 
 * Results for `float`:
 ```

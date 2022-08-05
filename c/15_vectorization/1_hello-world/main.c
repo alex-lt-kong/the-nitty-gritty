@@ -26,14 +26,14 @@ int main() {
     arr[j] = rand() % SIZE;
   }
 
-  uint64_t start_time = get_timestamp_now();
+  uint64_t start_time = get_timestamp_in_microsec();
   for (uint32_t i = 0; i < 1024 * 1024 * 32; ++i) {
     linear_func(a, b, arr, results, SIZE);
     if (i % (1024 * 1024) == 0) {
       printf("%u\n", results[rand() % SIZE]);
     }
   }
-  elapsed_times = get_timestamp_now() - start_time;
+  elapsed_times = get_timestamp_in_microsec() - start_time;
 
   free(arr);
   free(results);
