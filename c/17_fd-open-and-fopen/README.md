@@ -8,9 +8,8 @@
 it is portable.
 
 * With a `FILE` pointer, you can use functions like `fscanf()`, `fprintf()`, etc. If you have just the file descriptor,
-you have limited (but likely faster) input and output routines, such as `read()`, `write()`, etc.
+you have limited (but likely faster) input and output routines, such as `read()`, `write()`, etc. (Note that we can also
+`read()` data from and `write()` data to a socket.)
 
-* Note that we can also `read()` data from and `write()` data to a socket.
-
-* Many higher level functions can be replicated by directly `read()`ing from or `write()`ing pseudo device files
+* Many higher level functions can be replicated by directly `read()`ing from or `write()`ing to pseudo device files
 such as `/dev/stdin`, `/dev/stderr`, `/dev/tty` and `/dev/urandom`.
