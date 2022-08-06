@@ -12,4 +12,5 @@ you have limited (but likely faster) input and output routines, such as `read()`
 
 * Note that we can also `read()` data from and `write()` data to a socket.
 
-`fprintf()` to `/dev/tty` makes the c-string to console.
+* Many higher level functions can be replicated by directly `read()`ing from or `write()`ing pseudo device files
+such as `/dev/stdin`, `/dev/stderr`, `/dev/tty` and `/dev/urandom`.
