@@ -27,6 +27,11 @@ stored on the stack.
 | rsi             | esi         | si         | sil        |
 | rsp             | esp         | sp         | spl        |
 
+* This design is also related to Intel's choice of using little-endian byte order. For example, if a 64-bit
+register stores `0xDE AD BE EF 01 23 45 67` and we want to keep only its 32-bit part, it is more "reasonable" to
+keep `0x01 23 45 67` instead of `0xDE AD BE EF`. If we want to achieve this with the above compatibility design,
+we have to choose little-endian instead of big-endian byte order. That is, the first byte should store `0x67`
+rather than `0xDE`.
 
 ### References
 
