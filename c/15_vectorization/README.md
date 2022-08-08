@@ -35,3 +35,12 @@ L1i cache:                       64 KiB
 L2 cache:                        512 KiB
 L3 cache:                        10 MiB
 ```
+* Let's say, fetching an integer from memory takes one second and `add` operation takes one nanosecond. What
+will be the CPU's utilization during the execution of `add eax,DWORD PTR [rax]`?
+  * My answer: the CPU will be 100% utilized for 1 second + 1 nanosecond, instead of 0% utilized for
+  1 second + 100% utilized for 1 nano second.
+  * One implication is, if CPU is now 100% utilized, there is no easy way for us to know if CPU is "really"
+  doing calculation or it is "idly" waiting for data to arrive from memory.
+  * This is not the case for reading data from hard drives, though. Suppose it takes one second to read an integer
+  from hard drives to memory, one nanosecond to read the integer from memory to register and one nanosecond to
+  execution the `add` operation. The CPU should be 0% utilized for 1 second and 100% utilized for just 2 nanoseconds.
