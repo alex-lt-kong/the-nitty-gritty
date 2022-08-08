@@ -15,12 +15,12 @@ according to
 [here](https://stackoverflow.com/questions/2858483/how-can-i-compare-the-performance-of-log-and-fp-division-in-c), 
 [here](https://stackoverflow.com/questions/4125033/floating-point-division-vs-floating-point-multiplication) and
 [here](https://www.youtube.com/watch?v=bSkpMdDe4g4). As a result:
-  * It is much easier to "saturate" the CPU with division operations than saturate CPU with multiplication ones.
-  * If we pass a large array to do multiplication, it is likely that CPU can finish the calculation before next 
+  * It is much easier to "saturate" CPU with division operations than to saturate the CPU with multiplication ones.
+  * If we apply multiplication to a large array, it is likely that CPU can finish the calculation before next 
   batch of data can be fetched from memory. If this is the case, vectorization won't help much--CPU is not the
   bottleneck in the first place.
-  * On the other hand, if we ask CPU to do division, it is more CPU-intensive and thus it is less likely that CPU
-  can finish calculation before next batch of data are fetched from memory.
+  * On the other hand, if we apply division to a large array, it is less likely that CPU can finish calculation before
+  next batch of data are ready, and thus vectorized version can be observed to be much faster.
   * This thoery is consistent with what we observed from the code--vectorized multiplication is only 50% faster while
   vectorized division can be 2.5x faster.
 
