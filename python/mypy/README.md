@@ -1,4 +1,4 @@
-# Quality Assurance
+# Extra Proposal--enforce strong type in Python 
 ## 1. Basic idea
   * explicit is better than implicit.
   * Make Python strongly-typed via [mypy](https://github.com/python/mypy)--a linting tool that sponsored by Python
@@ -8,11 +8,12 @@
     functions are free to cast the pointer into any data structure, which causes unexpected behaviors here and there.
   * A [simple-example.py](./simple-example.py) on how `mypy` works.
   * `mypy` works with more advanced cases such as [function-pointers.py](./function-pointer.py)
-  * Python supports an `object` type which can effectively sideline `mypy`'s check if absolutely necessary.
-    One example is [json-object.py](./json-object.py).
+  * Python supports an `object` type (or its even more general version, `Any`) which can effectively sideline
+    `mypy`'s check if absolutely necessary. One example is [json-object.py](./json-object.py).
   * In a word, static typing won't make Python less flexible, Python still does what it can--just it forces programmers
     to think carefully on what is the expected behavior of a function.
-  * **Proposal**: each commit must clear all the errors reported by `mypy` before being merged to master.
+  * **Proposal**: for new code, each commit must clear all the errors reported by `mypy` before being merged to master.
+    For legacy code, I will try my best to make them compliant, but I need to take a closer look to be sure.
     
 ## 3. Discourage the use optional type hinting
   * Sometimes people define `get_price(as_of_date: [dt.date|dt.datetime|string|int])`.
