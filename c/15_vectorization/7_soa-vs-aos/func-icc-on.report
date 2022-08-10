@@ -11,23 +11,23 @@ Begin optimization report for: floating_division_aos(float, float, float, struct
     Report from: Vector optimizations [vec]
 
 
-LOOP BEGIN at func.c(28,3)
+LOOP BEGIN at func.c(30,3)
 <Peeled loop for vectorization>
 LOOP END
 
-LOOP BEGIN at func.c(28,3)
-   remark #15388: vectorization support: reference results[i] has aligned access   [ func.c(29,5) ]
-   remark #15388: vectorization support: reference arr[i] has aligned access   [ func.c(29,21) ]
-   remark #15388: vectorization support: reference results[i] has aligned access   [ func.c(30,5) ]
-   remark #15388: vectorization support: reference arr[i] has aligned access   [ func.c(30,25) ]
+LOOP BEGIN at func.c(30,3)
    remark #15388: vectorization support: reference results[i] has aligned access   [ func.c(31,5) ]
    remark #15388: vectorization support: reference arr[i] has aligned access   [ func.c(31,21) ]
-   remark #15329: vectorization support: indirect store was emulated for the variable <(*(results+i*8))->r>, 64-bit indexed, part of address is read from memory   [ func.c(29,5) ]
-   remark #15328: vectorization support: indirect load was emulated for the variable <(*(arr+i*8))->r>, 64-bit indexed, part of address is read from memory   [ func.c(29,21) ]
-   remark #15329: vectorization support: indirect store was emulated for the variable <(*(results+i*8))->g>, 64-bit indexed, part of address is read from memory   [ func.c(30,5) ]
-   remark #15328: vectorization support: indirect load was emulated for the variable <(*(arr+i*8))->g>, 64-bit indexed, part of address is read from memory   [ func.c(30,25) ]
-   remark #15329: vectorization support: indirect store was emulated for the variable <(*(results+i*8))->b>, 64-bit indexed, part of address is read from memory   [ func.c(31,5) ]
-   remark #15328: vectorization support: indirect load was emulated for the variable <(*(arr+i*8))->b>, 64-bit indexed, part of address is read from memory   [ func.c(31,21) ]
+   remark #15388: vectorization support: reference results[i] has aligned access   [ func.c(32,5) ]
+   remark #15388: vectorization support: reference arr[i] has aligned access   [ func.c(32,25) ]
+   remark #15388: vectorization support: reference results[i] has aligned access   [ func.c(33,5) ]
+   remark #15388: vectorization support: reference arr[i] has aligned access   [ func.c(33,21) ]
+   remark #15329: vectorization support: indirect store was emulated for the variable <(*(results+i*8))->r>, 64-bit indexed, part of address is read from memory   [ func.c(31,5) ]
+   remark #15328: vectorization support: indirect load was emulated for the variable <(*(arr+i*8))->r>, 64-bit indexed, part of address is read from memory   [ func.c(31,21) ]
+   remark #15329: vectorization support: indirect store was emulated for the variable <(*(results+i*8))->g>, 64-bit indexed, part of address is read from memory   [ func.c(32,5) ]
+   remark #15328: vectorization support: indirect load was emulated for the variable <(*(arr+i*8))->g>, 64-bit indexed, part of address is read from memory   [ func.c(32,25) ]
+   remark #15329: vectorization support: indirect store was emulated for the variable <(*(results+i*8))->b>, 64-bit indexed, part of address is read from memory   [ func.c(33,5) ]
+   remark #15328: vectorization support: indirect load was emulated for the variable <(*(arr+i*8))->b>, 64-bit indexed, part of address is read from memory   [ func.c(33,21) ]
    remark #15305: vectorization support: vector length 4
    remark #15309: vectorization support: normalized vectorization overhead 0.061
    remark #15300: LOOP WAS VECTORIZED
@@ -43,11 +43,11 @@ LOOP BEGIN at func.c(28,3)
    remark #15488: --- end vector cost summary ---
 LOOP END
 
-LOOP BEGIN at func.c(28,3)
+LOOP BEGIN at func.c(30,3)
 <Alternate Alignment Vectorized Loop>
 LOOP END
 
-LOOP BEGIN at func.c(28,3)
+LOOP BEGIN at func.c(30,3)
 <Remainder loop for vectorization>
 LOOP END
 ===========================================================================
@@ -57,17 +57,17 @@ Begin optimization report for: floating_division_soa(float, float, float, struct
     Report from: Vector optimizations [vec]
 
 
-LOOP BEGIN at func.c(39,3)
+LOOP BEGIN at func.c(43,3)
 <Peeled loop for vectorization>
 LOOP END
 
-LOOP BEGIN at func.c(39,3)
-   remark #15389: vectorization support: reference results->r[i] has unaligned access   [ func.c(40,5) ]
-   remark #15389: vectorization support: reference arr->r[i] has unaligned access   [ func.c(40,21) ]
-   remark #15388: vectorization support: reference results->g[i] has aligned access   [ func.c(41,5) ]
-   remark #15389: vectorization support: reference arr->g[i] has unaligned access   [ func.c(41,25) ]
-   remark #15388: vectorization support: reference results->b[i] has aligned access   [ func.c(42,5) ]
-   remark #15389: vectorization support: reference arr->b[i] has unaligned access   [ func.c(42,21) ]
+LOOP BEGIN at func.c(43,3)
+   remark #15389: vectorization support: reference results->r[i] has unaligned access   [ func.c(44,5) ]
+   remark #15389: vectorization support: reference arr->r[i] has unaligned access   [ func.c(44,21) ]
+   remark #15388: vectorization support: reference results->g[i] has aligned access   [ func.c(45,5) ]
+   remark #15389: vectorization support: reference arr->g[i] has unaligned access   [ func.c(45,25) ]
+   remark #15388: vectorization support: reference results->b[i] has aligned access   [ func.c(46,5) ]
+   remark #15389: vectorization support: reference arr->b[i] has unaligned access   [ func.c(46,21) ]
    remark #15381: vectorization support: unaligned access used inside loop body
    remark #15305: vectorization support: vector length 4
    remark #15399: vectorization support: unroll factor set to 2
@@ -85,18 +85,18 @@ LOOP BEGIN at func.c(39,3)
    remark #15488: --- end vector cost summary ---
 LOOP END
 
-LOOP BEGIN at func.c(39,3)
+LOOP BEGIN at func.c(43,3)
 <Alternate Alignment Vectorized Loop>
 LOOP END
 
-LOOP BEGIN at func.c(39,3)
+LOOP BEGIN at func.c(43,3)
 <Remainder loop for vectorization>
-   remark #15389: vectorization support: reference results->r[i] has unaligned access   [ func.c(40,5) ]
-   remark #15389: vectorization support: reference arr->r[i] has unaligned access   [ func.c(40,21) ]
-   remark #15389: vectorization support: reference results->g[i] has unaligned access   [ func.c(41,5) ]
-   remark #15389: vectorization support: reference arr->g[i] has unaligned access   [ func.c(41,25) ]
-   remark #15388: vectorization support: reference results->b[i] has aligned access   [ func.c(42,5) ]
-   remark #15389: vectorization support: reference arr->b[i] has unaligned access   [ func.c(42,21) ]
+   remark #15389: vectorization support: reference results->r[i] has unaligned access   [ func.c(44,5) ]
+   remark #15389: vectorization support: reference arr->r[i] has unaligned access   [ func.c(44,21) ]
+   remark #15389: vectorization support: reference results->g[i] has unaligned access   [ func.c(45,5) ]
+   remark #15389: vectorization support: reference arr->g[i] has unaligned access   [ func.c(45,25) ]
+   remark #15388: vectorization support: reference results->b[i] has aligned access   [ func.c(46,5) ]
+   remark #15389: vectorization support: reference arr->b[i] has unaligned access   [ func.c(46,21) ]
    remark #15381: vectorization support: unaligned access used inside loop body
    remark #15305: vectorization support: vector length 4
    remark #15309: vectorization support: normalized vectorization overhead 0.274
@@ -113,7 +113,7 @@ LOOP BEGIN at func.c(39,3)
    remark #15488: --- end vector cost summary ---
 LOOP END
 
-LOOP BEGIN at func.c(39,3)
+LOOP BEGIN at func.c(43,3)
 <Remainder loop for vectorization>
 LOOP END
 ===========================================================================

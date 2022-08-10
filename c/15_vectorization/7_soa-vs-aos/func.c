@@ -20,10 +20,12 @@ prohibit straightforward conversion of this loop into SIMD instructions.
 
 void floating_division_aos(float a, float b, float c, struct pixel** arr, struct pixel** results, size_t arr_len) {
   
-  #ifdef __INTEL_COMPILER
+  #if defined( __INTEL_COMPILER)
   #pragma ivdep
   // Pragmas are specific for the compiler and platform in use. So the best bet is to look at compiler's documentation.
   // https://stackoverflow.com/questions/5078679/what-is-the-scope-of-a-pragma-directive
+  #elif defined(__GNUC__)
+  #pragma GCC ivdep
   #endif
   for (int i = 0; i < arr_len; ++i) {
     results[i]->r = arr[i]->r / a;
@@ -33,8 +35,10 @@ void floating_division_aos(float a, float b, float c, struct pixel** arr, struct
 }
 
 void floating_division_soa(float a, float b, float c, struct pixelArray* arr, struct pixelArray* results, size_t arr_len) {
-  #ifdef __INTEL_COMPILER
-  #pragma ivdep  
+  #if defined( __INTEL_COMPILER)
+  #pragma ivdep
+  #elif defined(__GNUC__)
+  #pragma GCC ivdep
   #endif
   for (int i = 0; i < arr_len; ++i) {
     results->r[i] = arr->r[i] / a;

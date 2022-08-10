@@ -3,8 +3,7 @@
 * The general principle is that structure of arrays performs much better than array of structures.
 
 * Under vanilla settings, both `icc` and `gcc` can't automatically vectorize the code. After adding hints to
-`icc`, it can successfully vectorize both soa and aos functions. I failed to find the `gcc` equivalent of the 
-hint, and thus `gcc` versions are always not vectorized (even if the vectorization flag turned on).
+`icc` and `gcc`, they can successfully vectorize both soa and aos functions.
 
 * Results:
   * `icc`
@@ -16,7 +15,7 @@ hint, and thus `gcc` versions are always not vectorized (even if the vectorizati
   ```
 * `gcc`
   ```
-  SoA w/  vectorization: avg: 157.86ms, std: 11896.66
+  SoA w/  vectorization: avg:  74.75ms, std: 7488.92
   SoA w/o vectorization: avg: 162.48ms, std: 16860.44
   AoS w/  vectorization: avg: 284.74ms, std: 9477.58
   AoS w/o vectorization: avg: 282.07ms, std: 6494.34

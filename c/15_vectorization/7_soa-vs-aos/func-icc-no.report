@@ -11,7 +11,7 @@ Begin optimization report for: floating_division_aos(float, float, float, struct
     Report from: Vector optimizations [vec]
 
 
-LOOP BEGIN at func.c(28,3)
+LOOP BEGIN at func.c(30,3)
    remark #15540: loop was not vectorized: auto-vectorization is disabled with -no-vec flag
 LOOP END
 ===========================================================================
@@ -21,11 +21,11 @@ Begin optimization report for: floating_division_soa(float, float, float, struct
     Report from: Vector optimizations [vec]
 
 
-LOOP BEGIN at func.c(39,3)
+LOOP BEGIN at func.c(43,3)
    remark #15540: loop was not vectorized: auto-vectorization is disabled with -no-vec flag
 LOOP END
 
-LOOP BEGIN at func.c(39,3)
+LOOP BEGIN at func.c(43,3)
 <Remainder>
 LOOP END
 ===========================================================================

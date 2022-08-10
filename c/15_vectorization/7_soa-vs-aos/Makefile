@@ -18,10 +18,10 @@ func.o: func.c func.h
 	icc -c func.c -o func-icc-no.o -g -O3 -no-vec -qopt-report=5 -qopt-report-phase=vec -qopt-report-file=./func-icc-no.report
 	gdb -batch -ex 'file ./func-icc-no.o' -ex 'disassemble /m floating_division_aos' -ex 'disassemble /m floating_division_soa'  | cut -d " " -f 5- > ./func-icc-no.asm
 
-	gcc -c func.c -o func-gcc-on.o -g -O3                     -ftree-vectorize -fopt-info-vec-all
+	gcc -c func.c -o func-gcc-on.o -g -O3    -ftree-vectorize -fopt-info-vec-all
 	gdb -batch -ex 'file ./func-gcc-on.o' -ex 'disassemble /m floating_division_aos' -ex 'disassemble /m floating_division_soa'  | cut -d " " -f 5- > ./func-gcc-on.asm
 
-	gcc -c func.c -o func-gcc-no.o -g -O3 -fno-tree-vectorize -ftree-vectorize -fopt-info-vec-all
+	gcc -c func.c -o func-gcc-no.o -g -O3 -fno-tree-vectorize -fopt-info-vec-all
 	gdb -batch -ex 'file ./func-gcc-no.o' -ex 'disassemble /m floating_division_aos' -ex 'disassemble /m floating_division_soa'  | cut -d " " -f 5- > ./func-gcc-no.asm
 
 clear:

@@ -18,10 +18,12 @@ b, float c, struct pixel** arr, struct pixel** results, size_t arr_len) {
 <+710>:	shufps xmm2,xmm2,0x0
 
 
-
+__INTEL_COMPILER)
 
 are specific for the compiler and platform in use. So the best bet is to look at compiler's documentation.
 
+
+ivdep
 
 i = 0; i < arr_len; ++i) {
 <+12>:	test   rdx,rdx
@@ -293,7 +295,7 @@ results[i]->b = arr[i]->b / c;
 <+1206>:	movss  DWORD PTR [r9+0x8],xmm2
 
 
-33	}
+35	}
 <+1217>:	ret    
 
 
@@ -345,8 +347,10 @@ b, float c, struct pixelArray* arr, struct pixelArray* results, size_t arr_len) 
 <+474>:	shufps xmm2,xmm2,0x0
 <+478>:	subps  xmm0,xmm8
 
+__INTEL_COMPILER)
 
- 
+
+ivdep
 
 i = 0; i < arr_len; ++i) {
 <+19>:	test   rdx,rdx
@@ -557,7 +561,7 @@ results->b[i] = arr->b[i] / c;
 <+929>:	movss  DWORD PTR [rsi+rcx*4],xmm2
 
 
-44	}
+48	}
 <+942>:	pop    rbp
 <+943>:	pop    rbx
 <+944>:	pop    r15

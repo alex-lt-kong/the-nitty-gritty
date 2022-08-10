@@ -2,10 +2,12 @@ for function floating_division_aos:
 b, float c, struct pixel** arr, struct pixel** results, size_t arr_len) {
 
 
-
+__INTEL_COMPILER)
 
 are specific for the compiler and platform in use. So the best bet is to look at compiler's documentation.
 
+
+ivdep
 
 i = 0; i < arr_len; ++i) {
 <+0>:	xor    eax,eax
@@ -33,7 +35,7 @@ results[i]->b = arr[i]->b / c;
 <+54>:	movss  DWORD PTR [r8+0x8],xmm5
 
 
-33	}
+35	}
 <+65>:	ret    
 <+66>:	nop    DWORD PTR [rax+0x0]
 <+73>:	nop    DWORD PTR [rax+0x0]
@@ -48,8 +50,10 @@ b, float c, struct pixelArray* arr, struct pixelArray* results, size_t arr_len) 
 <+521>:	inc    rdx
 <+524>:	dec    edx
 
+__INTEL_COMPILER)
 
- 
+
+ivdep
 
 i = 0; i < arr_len; ++i) {
 <+2>:	test   rdx,rdx
@@ -216,7 +220,7 @@ results->b[i] = arr->b[i] / c;
 <+881>:	movss  DWORD PTR [r8+rdi*4-0x4],xmm0
 
 
-44	}
+48	}
 <+888>:	pop    r14
 <+890>:	ret    
 <+891>:	nop    DWORD PTR [rax+rax*1+0x0]

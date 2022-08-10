@@ -4,10 +4,12 @@ b, float c, struct pixel** arr, struct pixel** results, size_t arr_len) {
 <+3>:	mov    r8,rsi
 
 
-
+__INTEL_COMPILER)
 
 are specific for the compiler and platform in use. So the best bet is to look at compiler's documentation.
 
+
+ivdep
 
 i = 0; i < arr_len; ++i) {
 <+6>:	test   rdx,rdx
@@ -37,7 +39,7 @@ results[i]->b = arr[i]->b / c;
 <+70>:	movss  DWORD PTR [rdx+0x8],xmm0
 
 
-33	}
+35	}
 <+80>:	ret    
 nop WORD PTR cs:[rax+rax*1+0x0]
    DWORD PTR [rax+0x0]
@@ -49,8 +51,10 @@ b, float c, struct pixelArray* arr, struct pixelArray* results, size_t arr_len) 
 <+3>:	mov    rcx,rdi
 <+6>:	mov    rax,rsi
 
+__INTEL_COMPILER)
 
- 
+
+ivdep
 
 i = 0; i < arr_len; ++i) {
 <+9>:	test   rdx,rdx
@@ -84,7 +88,7 @@ results->b[i] = arr->b[i] / c;
 <+87>:	movss  DWORD PTR [rcx+rax*1],xmm0
 
 
-44	}
+48	}
 <+101>:	ret    
 
 
