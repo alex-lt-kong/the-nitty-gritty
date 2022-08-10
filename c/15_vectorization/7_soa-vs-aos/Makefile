@@ -3,6 +3,8 @@ main: main-aos.c main-soa.c func.o utils.o
 	icc main-aos.c func-icc-no.o utils.o -o main-icc-aos-no.out -g -O3 -lm -no-vec
 	icc main-soa.c func-icc-on.o utils.o -o main-icc-soa-on.out -g -O3 -lm
 	icc main-soa.c func-icc-no.o utils.o -o main-icc-soa-no.out -g -O3 -lm -no-vec
+	gcc main-aos.c func-gcc-on.o utils.o -o main-gcc-aos-on.out -g -O3 -lm
+	gcc main-aos.c func-gcc-no.o utils.o -o main-gcc-aos-no.out -g -O3 -lm -fno-tree-vectorize 
 	gcc main-soa.c func-gcc-on.o utils.o -o main-gcc-soa-on.out -g -O3 -lm
 	gcc main-soa.c func-gcc-no.o utils.o -o main-gcc-soa-no.out -g -O3 -lm -fno-tree-vectorize 
 

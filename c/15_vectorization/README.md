@@ -9,7 +9,7 @@ could be a starting point for beginners.
 * `gcc` supports auto vectorization as well. However, since the Guide uses Intel's own compiler, here we also document
 how to install and use it.
 
-* Also, experiments appear to show that `gcc` is not as good as `icc` in terms of vectorization.
+* Experiments show that neither `gcc` nor `icc` can constantly outperform the other.
 
 * Install both the `base kit` and the `HPC kit` from: https://www.intel.com/content/www/us/en/developer/articles/news/free-intel-software-developer-tools.html
 
@@ -44,3 +44,12 @@ will be the CPU's utilization during the execution of `add eax,DWORD PTR [rax]`?
   * This is not the case for reading data from hard drives, though. Suppose it takes one second to read an integer
   from hard drives to memory, one nanosecond to read the integer from memory to register and one nanosecond to
   execution the `add` operation. The CPU should be 0% utilized for 1 second and 100% utilized for just 2 nanoseconds.
+
+* To make the performance gain more pronunced in experiments, this project takes the following two approaches:
+  * Limit the size of test array to the size of L1 cache (i.e., not greater than a few hundred KBs), so that we eliminate
+  the bottleneck at memory bandwidth.
+  * use more time-consuming (but still vectorized) CPU instructions such as `divps` (i.e., performs a SIMD divide
+  of the 4/8/16 packed single-precision floating-point values in the first source operand by the 4/8/16 packed
+  single-precision floating-point values in the second source operand) instead of simpler SIMD instructions such
+  as `addps` (Add 4/8/16 packed single-precision floating-point values from the first source operand with the second
+  source operand, and stores the packed single-precision floating-point results in the destination operand.)

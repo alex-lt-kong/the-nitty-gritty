@@ -1,4 +1,4 @@
-# Memory bandwitdh benchmarking
+# Memory bandwidth benchmarking
 
 * It takes time to move data from memory to CPU and here we try to measure that.
 (fun fact: if the CPU is 10 centimeters away from memory, the lower limit of
