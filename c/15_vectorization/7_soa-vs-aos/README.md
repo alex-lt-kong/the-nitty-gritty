@@ -13,7 +13,7 @@
   AoS w/  vectorization: avg: 274.06ms, std: 7605.32
   AoS w/o vectorization: avg: 278.09ms, std: 8914.05
   ```
-* `gcc`
+  * `gcc`
   ```
   SoA w/  vectorization: avg:  74.75ms, std: 7488.92
   SoA w/o vectorization: avg: 162.48ms, std: 16860.44
