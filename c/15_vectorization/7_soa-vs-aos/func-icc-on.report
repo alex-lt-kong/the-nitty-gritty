@@ -1,0 +1,119 @@
+Intel(R) Advisor can now assist with vectorization and show optimization
+  report messages with your source code.
+See "https://software.intel.com/en-us/intel-advisor-xe" for details.
+
+Intel(R) C Intel(R) 64 Compiler Classic for applications running on Intel(R) 64, Version 2021.6.0 Build 20220226_000000
+
+Compiler options: -c -o func-icc-on.o -g -O2 -qopt-report=5 -qopt-report-phase=vec -qopt-report-file=./func-icc-on.report
+
+Begin optimization report for: floating_division_aos(float, float, float, struct pixel **, struct pixel **, size_t)
+
+    Report from: Vector optimizations [vec]
+
+
+LOOP BEGIN at func.c(28,3)
+<Peeled loop for vectorization>
+LOOP END
+
+LOOP BEGIN at func.c(28,3)
+   remark #15388: vectorization support: reference results[i] has aligned access   [ func.c(29,5) ]
+   remark #15388: vectorization support: reference arr[i] has aligned access   [ func.c(29,21) ]
+   remark #15388: vectorization support: reference results[i] has aligned access   [ func.c(30,5) ]
+   remark #15388: vectorization support: reference arr[i] has aligned access   [ func.c(30,25) ]
+   remark #15388: vectorization support: reference results[i] has aligned access   [ func.c(31,5) ]
+   remark #15388: vectorization support: reference arr[i] has aligned access   [ func.c(31,21) ]
+   remark #15329: vectorization support: indirect store was emulated for the variable <(*(results+i*8))->r>, 64-bit indexed, part of address is read from memory   [ func.c(29,5) ]
+   remark #15328: vectorization support: indirect load was emulated for the variable <(*(arr+i*8))->r>, 64-bit indexed, part of address is read from memory   [ func.c(29,21) ]
+   remark #15329: vectorization support: indirect store was emulated for the variable <(*(results+i*8))->g>, 64-bit indexed, part of address is read from memory   [ func.c(30,5) ]
+   remark #15328: vectorization support: indirect load was emulated for the variable <(*(arr+i*8))->g>, 64-bit indexed, part of address is read from memory   [ func.c(30,25) ]
+   remark #15329: vectorization support: indirect store was emulated for the variable <(*(results+i*8))->b>, 64-bit indexed, part of address is read from memory   [ func.c(31,5) ]
+   remark #15328: vectorization support: indirect load was emulated for the variable <(*(arr+i*8))->b>, 64-bit indexed, part of address is read from memory   [ func.c(31,21) ]
+   remark #15305: vectorization support: vector length 4
+   remark #15309: vectorization support: normalized vectorization overhead 0.061
+   remark #15300: LOOP WAS VECTORIZED
+   remark #15442: entire loop may be executed in remainder
+   remark #15448: unmasked aligned unit stride loads: 2 
+   remark #15462: unmasked indexed (or gather) loads: 3 
+   remark #15463: unmasked indexed (or scatter) stores: 3 
+   remark #15475: --- begin vector cost summary ---
+   remark #15476: scalar cost: 98 
+   remark #15477: vector cost: 93.750 
+   remark #15478: estimated potential speedup: 1.040 
+   remark #15486: divides: 3 
+   remark #15488: --- end vector cost summary ---
+LOOP END
+
+LOOP BEGIN at func.c(28,3)
+<Alternate Alignment Vectorized Loop>
+LOOP END
+
+LOOP BEGIN at func.c(28,3)
+<Remainder loop for vectorization>
+LOOP END
+===========================================================================
+
+Begin optimization report for: floating_division_soa(float, float, float, struct pixelArray *, struct pixelArray *, size_t)
+
+    Report from: Vector optimizations [vec]
+
+
+LOOP BEGIN at func.c(39,3)
+<Peeled loop for vectorization>
+LOOP END
+
+LOOP BEGIN at func.c(39,3)
+   remark #15389: vectorization support: reference results->r[i] has unaligned access   [ func.c(40,5) ]
+   remark #15389: vectorization support: reference arr->r[i] has unaligned access   [ func.c(40,21) ]
+   remark #15388: vectorization support: reference results->g[i] has aligned access   [ func.c(41,5) ]
+   remark #15389: vectorization support: reference arr->g[i] has unaligned access   [ func.c(41,25) ]
+   remark #15388: vectorization support: reference results->b[i] has aligned access   [ func.c(42,5) ]
+   remark #15389: vectorization support: reference arr->b[i] has unaligned access   [ func.c(42,21) ]
+   remark #15381: vectorization support: unaligned access used inside loop body
+   remark #15305: vectorization support: vector length 4
+   remark #15399: vectorization support: unroll factor set to 2
+   remark #15309: vectorization support: normalized vectorization overhead 0.159
+   remark #15300: LOOP WAS VECTORIZED
+   remark #15442: entire loop may be executed in remainder
+   remark #15449: unmasked aligned unit stride stores: 2 
+   remark #15450: unmasked unaligned unit stride loads: 3 
+   remark #15451: unmasked unaligned unit stride stores: 1 
+   remark #15475: --- begin vector cost summary ---
+   remark #15476: scalar cost: 92 
+   remark #15477: vector cost: 27.500 
+   remark #15478: estimated potential speedup: 3.230 
+   remark #15486: divides: 3 
+   remark #15488: --- end vector cost summary ---
+LOOP END
+
+LOOP BEGIN at func.c(39,3)
+<Alternate Alignment Vectorized Loop>
+LOOP END
+
+LOOP BEGIN at func.c(39,3)
+<Remainder loop for vectorization>
+   remark #15389: vectorization support: reference results->r[i] has unaligned access   [ func.c(40,5) ]
+   remark #15389: vectorization support: reference arr->r[i] has unaligned access   [ func.c(40,21) ]
+   remark #15389: vectorization support: reference results->g[i] has unaligned access   [ func.c(41,5) ]
+   remark #15389: vectorization support: reference arr->g[i] has unaligned access   [ func.c(41,25) ]
+   remark #15388: vectorization support: reference results->b[i] has aligned access   [ func.c(42,5) ]
+   remark #15389: vectorization support: reference arr->b[i] has unaligned access   [ func.c(42,21) ]
+   remark #15381: vectorization support: unaligned access used inside loop body
+   remark #15305: vectorization support: vector length 4
+   remark #15309: vectorization support: normalized vectorization overhead 0.274
+   remark #15301: REMAINDER LOOP WAS VECTORIZED
+   remark #15442: entire loop may be executed in remainder
+   remark #15449: unmasked aligned unit stride stores: 2 
+   remark #15450: unmasked unaligned unit stride loads: 3 
+   remark #15451: unmasked unaligned unit stride stores: 1 
+   remark #15475: --- begin vector cost summary ---
+   remark #15476: scalar cost: 92 
+   remark #15477: vector cost: 27.500 
+   remark #15478: estimated potential speedup: 3.230 
+   remark #15486: divides: 3 
+   remark #15488: --- end vector cost summary ---
+LOOP END
+
+LOOP BEGIN at func.c(39,3)
+<Remainder loop for vectorization>
+LOOP END
+===========================================================================
