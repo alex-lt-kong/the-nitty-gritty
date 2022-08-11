@@ -31,6 +31,11 @@ a cache line is 64 bytes.
 
 ## The experiment
 
+* Can we `malloc()` some cache lines and use them as ordinary memory blocks? No, how data get in to or get out from
+caches are controlled by hardware called the cache controller, such as one described
+[here](https://developer.arm.com/documentation/den0024/a/Caches/Cache-controller). What a cache controller
+does is largely transparent and there is usually no way for a program to explicity control it.
+
 * Given the ultralow latency between CPU and L1 cache, the expected result is that the loop should take more or
 less the same amount of time to complete before the step size reaches 16 (i.e. 64 bytes) and the time needed
 after that should be halved each time step size is doubled. 
