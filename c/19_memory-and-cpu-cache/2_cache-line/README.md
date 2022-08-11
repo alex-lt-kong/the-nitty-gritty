@@ -13,15 +13,15 @@ which provides CPU with much faster data access.
 
 <img style="width: 500px" src="./assets/l2.png" />
 
-|   Storage   | Latency |
-| ----------- | ------- |
-| Register    | 0.3ns   |
-| L1 Cache    | ~1ns    |
-| L2 Cache    | ~3ns    |
-| L3 Cache    | ~10ns   |
-| Memory      | ~100ns  |
-| SSD         | ~100us  |
-| HDD         | 1-10ms  |
+|   Storage   | Latency | CPU Cycles (3GHz) |
+| ----------- | ------- | ----------------- |
+| Register    | 0.3ns   |  1                |
+| L1 Cache    | ~1ns    |  3                |
+| L2 Cache    | ~3ns    |  9                |
+| L3 Cache    | ~10ns   |  30               |
+| Memory      | ~100ns  |  300              |
+| SSD         | ~100us  |  300,000          |
+| HDD         | 1-10ms  |  eternity🤷       |
 
 * There is one more technical detail which this experiment is going to touch upon.
 Data are transferred between memory and cache in blocks of fixed size, called cache lines. Usually the size of
