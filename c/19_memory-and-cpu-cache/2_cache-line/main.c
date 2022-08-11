@@ -6,7 +6,7 @@
 
 int main() {
     srand(time(NULL));
-    const size_t arr_len = 2 << 26; // 512MB;    
+    const size_t arr_len = 256 * 1024 * 1024;   
     clock_t start_time;
     int* array;
     FILE *fp;
@@ -15,32 +15,29 @@ int main() {
         fprintf(stderr, "Failed to open file\n");
     }    
 
-    fprintf(fp, "Step,Time,Sample Value\n");
+    fprintf(fp, "Step,Time,Sum\n");
     int step = 1;
-
-    while (step <= arr_len) {
+    unsigned int sum;
+    while (step <= 65536) {
         array = malloc(arr_len * sizeof(int));
+	sum = 0;
         for (int i = 0; i < arr_len; ++i) {
             array[i] = rand() % (RAND_MAX / 2 - 1);
         }
         start_time = clock();
         for (int i = 0; i < ITER; ++i) {
             for (int j = 0; j < arr_len; j += step) {
-                array[j] += array[i];
+                sum += array[j];
             }
         }
         long time_elapsed = clock() - start_time;
-        fprintf(fp, "%d,%.02lf,%d\n", step, time_elapsed / ITER / 1000.0, array[rand() % arr_len]);
-        printf("%d/%d\n", step, arr_len);
+        fprintf(fp, "%d,%.02lf,%d\n", step, time_elapsed / ITER / 1000.0, sum);
         free(array);
-        if (step < 32) {
-            step += 1;
-        } else if (step < 128) {
-            step += 4;
-        } else {
-            step *= 2;
-        }
-
+	if (step < 16) {
+	    ++step;
+	} else {
+	    step *= 2;
+	}
     }
     fclose(fp); //Don't forget to close the file when finished   
     return 0;
