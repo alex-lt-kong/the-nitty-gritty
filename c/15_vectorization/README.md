@@ -53,3 +53,6 @@ will be the CPU's utilization during the execution of `add eax,DWORD PTR [rax]`?
   single-precision floating-point values in the second source operand) instead of simpler SIMD instructions such
   as `addps` (Add 4/8/16 packed single-precision floating-point values from the first source operand with the second
   source operand, and stores the packed single-precision floating-point results in the destination operand.)
+
+* Some experiments which are more closely related to memory are moved to the separate directory
+`19_memory-and-cpu-cache`.
