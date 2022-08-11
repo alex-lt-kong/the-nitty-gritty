@@ -11,13 +11,16 @@ time step size is doubled.
 
 * My results
 
-![](./assets/my-results.png)
+  * `gcc`:
+  ![gcc](./assets/my-results-gcc.png)
+  * `icc`:
+  ![icc](./assets/my-results-icc.png)
 
 * Results are roughly consistent with the expected--before 16, the amount of time needed is more or less stable and
 after that the time needed is approximately halved as step size doubles.
 
-* There is one significantly different pattern: when the step size is between 1 and 16, the amount of time needed
-is higher as step size gets closers to 1 ot 16 and lower when step size is closer to 8.
+* There is one significantly different pattern: when step size is close to 1 or 16, there are some significant 
+fluctuations in both versions.
 
 * (Failed) attempts to eliminate this unexpected pattern:
   * Try different computers, both virtual and physical ones--so that virtual machine won't complicate the issue.
@@ -27,6 +30,8 @@ is higher as step size gets closers to 1 ot 16 and lower when step size is close
 
 * Other people results found online
 
-![](./assets/igoro-results.png) From [Igoro Ostrovsky](http://igoro.com/archive/gallery-of-processor-cache-effects/)
+  * From [Igoro Ostrovsky](http://igoro.com/archive/gallery-of-processor-cache-effects/):
+  ![](./assets/igoro-results.png) 
 
-![](./assets/timur-results.png) From [Timur Doumler](https://isocpp.org/blog/2017/05/cppcon-2016-want-fast-cpp-know-your-hardware-timur-doumler)
+  *  From [Timur Doumler](https://isocpp.org/blog/2017/05/cppcon-2016-want-fast-cpp-know-your-hardware-timur-doumler):
+  ![](./assets/timur-results.png)
