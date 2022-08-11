@@ -27,6 +27,8 @@ which provides CPU with much faster data access.
 Data are transferred between memory and cache in blocks of fixed size, called cache lines. Usually the size of
 a cache line is 64 bytes.
 
+<img style="width: 500px" src="./assets/l3.png" />
+
 ## The experiment
 
 * Given the ultralow latency between CPU and L1 cache, the expected result is that the loop should take more or
