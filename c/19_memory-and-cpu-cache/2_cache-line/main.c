@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdint.h>
 #include <time.h>
 
 #define ITER 32
@@ -8,30 +9,34 @@ int main() {
     srand(time(NULL));
     const size_t arr_len = 256 * 1024 * 1024;   
     clock_t start_time;
-    int* array;
+    uint32_t* array;
     FILE *fp;
-    fp = fopen("results.csv", "w");
+    #if defined( __INTEL_COMPILER)
+    fp = fopen("results-icc.csv", "w");
+    #elif defined(__GNUC__)
+    fp = fopen("results-gcc.csv", "w");
+    #else
+    fp = fopen("results-unknown.csv", "w");
+    #endif    
     if (fp == NULL) {
         fprintf(stderr, "Failed to open file\n");
     }    
 
     fprintf(fp, "Step,Time,Sum\n");
     int step = 1;
-    unsigned int sum;
-    while (step <= 65536) {
-        array = malloc(arr_len * sizeof(int));
-	sum = 0;
+    while (step <= 4096) {
+        array = malloc(arr_len * sizeof(uint32_t));
         for (int i = 0; i < arr_len; ++i) {
-            array[i] = rand() % (RAND_MAX / 2 - 1);
+            array[i] = rand();
         }
         start_time = clock();
         for (int i = 0; i < ITER; ++i) {
             for (int j = 0; j < arr_len; j += step) {
-                sum += array[j];
+                array[j] += j;
             }
         }
         long time_elapsed = clock() - start_time;
-        fprintf(fp, "%d,%.02lf,%d\n", step, time_elapsed / ITER / 1000.0, sum);
+        fprintf(fp, "%d,%.02lf,%d\n", step, time_elapsed / ITER / 1000.0, array[rand() % arr_len]);
         free(array);
 	if (step < 16) {
 	    ++step;
