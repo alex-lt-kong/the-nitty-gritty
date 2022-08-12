@@ -20,6 +20,7 @@ int main() {
     #endif    
     if (fp == NULL) {
         fprintf(stderr, "Failed to open file\n");
+        return -1;
     }    
 
     fprintf(fp, "Step,Time,Sum\n");
@@ -38,11 +39,11 @@ int main() {
         long time_elapsed = clock() - start_time;
         fprintf(fp, "%d,%.02lf,%d\n", step, time_elapsed / ITER / 1000.0, array[rand() % arr_len]);
         free(array);
-	if (step < 16) {
-	    ++step;
-	} else {
-	    step *= 2;
-	}
+        if (step < 16) {
+            ++step;
+        } else {
+            step *= 2;
+        }
     }
     fclose(fp); //Don't forget to close the file when finished   
     return 0;
