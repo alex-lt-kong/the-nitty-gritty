@@ -8,6 +8,7 @@
         "time.h": "c",
         "func.h": "c",
         "stdlib.h": "c",
-        "utils.h": "c"
+        "utils.h": "c",
+        "semaphore.h": "c"
     }
 }
