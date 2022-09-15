@@ -7,34 +7,53 @@
 #include <unistd.h>
 #include <semaphore.h>
 #include <string.h>
+#include <time.h>
+#include <signal.h>
 
 #include "common.h"
 
-#define ByteSize 1024
+volatile sig_atomic_t done = 0;
+sem_t* semptr;
+
+void signal_handler(int signum) {
+  char msg[] = "Signal %d received by signal_handler()\n";
+  printf(msg, signum);
+  done = 1;
+}
 
 int main() {
 
   int AccessPerms = 0644;
-  
+  struct timespec ts;
+
+  struct sigaction act;
+  act.sa_handler = signal_handler;
+  sigemptyset(&act.sa_mask);
+  act.sa_flags = SA_RESETHAND;
+  sigaction(SIGINT, &act, 0);
+  sigaction(SIGABRT, &act, 0);
+  sigaction(SIGTERM, &act, 0);
 
   /* create a semaphore for mutual exclusion */
-  sem_t* semptr = sem_open(SEM_NAME, O_RDWR);
+  semptr = sem_open(SEM_NAME, O_RDWR);
   if (semptr == (void*) -1) {
     perror("sem_open()");
     return 1;
   }
-  while (1) {
+  while (!done) {
     printf("Waiting for mutex..\n");
     /* use semaphore as a mutex (lock) by waiting for writer to increment it */
     if (sem_wait(semptr) < 0) {
       perror("sem_post()");
       break;
     } /* wait until semaphore != 0 */
-    printf("Lock entered\n");
+    timespec_get(&ts, TIME_UTC);
+    printf("Lock entered at: %ld.%09ld UTC\n", ts.tv_sec, ts.tv_nsec);
     sem_post(semptr);
     printf("Lock quited\n");
-    
+    sleep(5);
   }
   sem_close(semptr);
+  printf("event loop exited\n");
   return 0;
 }

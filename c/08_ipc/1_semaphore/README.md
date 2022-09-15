@@ -19,3 +19,11 @@ signaled only by the thread that called the wait function.
 * There are mainly two types of semaphores i.e. counting semaphores and binary semaphores.
 
 * Counting Semaphores are integer value semaphores and have an unrestricted value domain. These semaphores are used to coordinate the resource access, where the semaphore count is the number of available resources.
+
+## Performance
+
+* According to this [link](http://ethan.tira-thompson.com/Semaphore_Lag_Time_Tests.html), time lag between setting a
+semaphore in one thread, and awaking each of `n` observing threads is on the order of 10 microseconds.
+(13 - 50 us to be more accurate)
+
+* On a GHz-class CPU, it means that it takes 13,000 - 50,000 CPU cycles to complete the semaphore signal
