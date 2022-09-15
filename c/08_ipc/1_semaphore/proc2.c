@@ -16,8 +16,8 @@ volatile sig_atomic_t done = 0;
 sem_t* semptr;
 
 void signal_handler(int signum) {
-  char msg[] = "Signal %d received by signal_handler()\n";
-  printf(msg, signum);
+  char msg[] = "Signal %d received by signal_handler(), the event loop will respond soon\n";
+  printf(msg, signum);  
   done = 1;
 }
 
@@ -31,7 +31,6 @@ int main() {
   sigemptyset(&act.sa_mask);
   act.sa_flags = SA_RESETHAND;
   sigaction(SIGINT, &act, 0);
-  sigaction(SIGABRT, &act, 0);
   sigaction(SIGTERM, &act, 0);
 
   /* create a semaphore for mutual exclusion */
@@ -48,12 +47,13 @@ int main() {
       break;
     } /* wait until semaphore != 0 */
     timespec_get(&ts, TIME_UTC);
-    printf("Lock entered at: %ld.%09ld UTC\n", ts.tv_sec, ts.tv_nsec);
+    printf("Lock entered at: %ld.%09ld \n", ts.tv_sec, ts.tv_nsec);
     sem_post(semptr);
-    printf("Lock quited\n");
+    printf("Lock quited, waiting for 5 sec before next attempt...\n");
     sleep(5);
   }
   sem_close(semptr);
+  sem_unlink(SEM_NAME);
   printf("event loop exited\n");
   return 0;
 }
