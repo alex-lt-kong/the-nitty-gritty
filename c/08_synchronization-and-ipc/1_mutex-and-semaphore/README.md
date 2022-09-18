@@ -1,6 +1,10 @@
-# Semaphore
+# Mutex and Semaphore
 
-## Implementations
+## Mutex
+
+## Semaphore
+
+### Implementations
 
 * There are a few implementations of semaphore, including:
   * more modern POSIX one (`sem_init()`/`sem_open()`, `sem_wait()`, `sem_post()`.
@@ -23,7 +27,13 @@
   * POSIX semaphores provide a mechanism for process-wide semaphores rather than system-wide semaphores. So, if a developer
     forgets to close the semaphore, on process exit the semaphore is cleaned up. In simple terms, POSIX semaphores provide a mechanism for non-persistent semaphores.
 
+### Performance
 
+* According to this [link](http://ethan.tira-thompson.com/Semaphore_Lag_Time_Tests.html), time lag between setting a
+semaphore in one thread, and awaking each of `n` observing threads is on the order of 10 microseconds.
+(13 - 50 us to be more accurate)
+
+* On a GHz-class CPU, it means that it takes 13,000 - 50,000 CPU cycles to complete the semaphore signal
 
 ## Semaphore vs Mutex
 
@@ -46,11 +56,3 @@ signaled only by the thread that called the wait function.
 * There are mainly two types of semaphores i.e. counting semaphores and binary semaphores.
 
 * Counting Semaphores are integer value semaphores and have an unrestricted value domain. These semaphores are used to coordinate the resource access, where the semaphore count is the number of available resources.
-
-## Performance
-
-* According to this [link](http://ethan.tira-thompson.com/Semaphore_Lag_Time_Tests.html), time lag between setting a
-semaphore in one thread, and awaking each of `n` observing threads is on the order of 10 microseconds.
-(13 - 50 us to be more accurate)
-
-* On a GHz-class CPU, it means that it takes 13,000 - 50,000 CPU cycles to complete the semaphore signal
