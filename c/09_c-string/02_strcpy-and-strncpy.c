@@ -13,7 +13,7 @@ int main() {
 
   /*
   strncpy() is NOT a "safe" version of strcpy(). It is defined to:
-  * Copies the first num characters of source to destination.
+  * copies the first num characters of source to destination.
   * If the end of the source C string (which is signaled by a null-character) is found before num characters have been
     copied,destination is padded with zeros until a total of num characters have been written to it.
   * No null-character is implicitly appended at the end of destination if source is longer than num. Thus, in this case,
