@@ -48,7 +48,7 @@ int main() {
     printf("Press Enter to quit the critical section\n");
     while (getchar() != '\n');
         
-    timespec_get(&ts, TIME_UTC);    
+    timespec_get(&ts, TIME_UTC);
     if (sem_post(semptr) < 0) {
       perror("sem_post()");
       break;

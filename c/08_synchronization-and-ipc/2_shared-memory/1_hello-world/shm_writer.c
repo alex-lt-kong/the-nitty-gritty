@@ -7,6 +7,7 @@
 #include <unistd.h>
 #include <semaphore.h>
 #include <string.h>
+#include <time.h>
 
 #include "common.h"
 
@@ -17,11 +18,10 @@ void report_and_exit(const char* msg) {
 }
 
 int main() {
-  int AccessPerms = 0644;
-  char SemaphoreName[] = "MySemaphore";
-  char MemContents[1023];
-  memset(MemContents, 'C', 1023);
-  MemContents[1023] = '\0';
+  struct timespec ts;
+  char s[8], *p;
+  char shm_boundary[128];
+  
   int fd = shm_open(SHM_NAME, O_RDWR | O_CREAT, SEM_PERMS);
   if (fd < 0) report_and_exit("shm_open()");
 
@@ -43,16 +43,31 @@ int main() {
                            SEM_PERMS,   /* protection perms */
                            SEM_INITIAL_VALUE);            /* initial value */
   if (semptr == (void*) -1) report_and_exit("sem_open()");
-  if (sem_wait(semptr) < 0) report_and_exit("sem_wait()");
-  printf("sleep()'ing for 10 sec, emulating data fetching\n");
-  sleep(10);
-  
-  strcpy(memptr, MemContents); /* copy some ASCII bytes to the segment */
- 
-  /* increment the semaphore so that memreader can read */
-  if (sem_post(semptr) < 0) report_and_exit("sem_post()");
-  printf("sem_post()'ed\n");
-  sleep(20); /* give reader a chance */
+  while (1) {
+    printf("Enter one character to write to shared memory, or \"exit\" to quit\n");
+    p = s;
+    while((*p++ = getchar())!= '\n');
+    *p = '\0'; /* add null terminator */
+    if (strcmp(s, "exit\n") == 0) {
+      break;
+    }
+
+    if (sem_wait(semptr) < 0) report_and_exit("sem_wait()");
+    printf("press any key to memset() then sem_post()\n");
+    getchar();
+
+    timespec_get(&ts, TIME_UTC);
+    sprintf(shm_boundary, "\n========== Shared memory buffer BEGIN %ld.%09ld ==========\n", ts.tv_sec, ts.tv_nsec);
+    strcpy(memptr, shm_boundary);
+    memset(memptr + strlen(shm_boundary), s[0], SHM_SIZE - strlen(shm_boundary));
+    
+    
+    timespec_get(&ts, TIME_UTC);
+    sprintf(shm_boundary, "\n========== Shared memory buffer END %ld.%09ld ==========\n", ts.tv_sec, ts.tv_nsec);
+    strcpy(memptr + SHM_SIZE - strlen(shm_boundary), shm_boundary);
+    if (sem_post(semptr) < 0) report_and_exit("sem_post()");
+    printf("sem_post()'ed\n");
+  }
 
   /* clean up */
   munmap(memptr, SHM_SIZE); /* unmap the storage */
