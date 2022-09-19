@@ -8,7 +8,7 @@
 #include <semaphore.h>
 #include <string.h>
 
-#define ByteSize 1024
+#include "common.h"
 
 void report_and_exit(const char* msg) {
   perror(msg);
@@ -16,30 +16,27 @@ void report_and_exit(const char* msg) {
 }
 
 int main() {
-  char BackingFile[] = "/ak-shared.mem";
-  int AccessPerms = 0644;
-  char SemaphoreName[] = "MySemaphore";
-  int fd = shm_open(BackingFile, O_RDWR, AccessPerms);  /* empty to begin */
-  if (fd < 0) report_and_exit("Can't get file descriptor...");
+  int fd = shm_open(SHM_NAME, O_RDWR, SEM_PERMS);  /* empty to begin */
+  if (fd < 0) report_and_exit("shm_open()");
 
   /* get a pointer to memory */
   void* memptr = mmap(NULL,       /* let system pick where to put segment */
-                        ByteSize,   /* how many bytes */
+                        SHM_SIZE,   /* how many bytes */
                         PROT_READ | PROT_WRITE, /* access protections */
                         MAP_SHARED, /* mapping visible to other processes */
                         fd,         /* file descriptor */
                         0);         /* offset: start at 1st byte */
-  if ((void*) -1 == memptr) report_and_exit("Can't access segment...");
+  if ((void*) -1 == memptr) report_and_exit("mmap()");
 
   /* create a semaphore for mutual exclusion */
-  sem_t* semptr = sem_open(SemaphoreName, /* name */
+  sem_t* semptr = sem_open(SEM_NAME, /* name */
                            O_CREAT,       /* create the semaphore */
-                           AccessPerms,   /* protection perms */
-                           0);            /* initial value */
-  if (semptr == (void*) -1) report_and_exit("sem_open");
+                           SEM_PERMS,   /* protection perms */
+                           SEM_INITIAL_VALUE);            /* initial value */
+  if (semptr == (void*) -1) report_and_exit("sem_open()");
 
-  /* use semaphore as a mutex (lock) by waiting for writer to increment it */
-  if (!sem_wait(semptr)) { /* wait until semaphore != 0 */
+  printf("sem_wait()'ing\n");
+  if (sem_wait(semptr) == 0) {
     int i;
     for (i = 0; i < 1023; i++)
       write(STDOUT_FILENO, memptr + i, 1); /* one byte at a time */
@@ -47,9 +44,9 @@ int main() {
   }
 
   /* cleanup */
-  munmap(memptr, ByteSize);
+  munmap(memptr, SHM_SIZE);
   close(fd);
   sem_close(semptr);
-  unlink(BackingFile);
+  unlink(SEM_NAME);
   return 0;
 }
