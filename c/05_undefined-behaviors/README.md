@@ -31,3 +31,7 @@
     </td>
   </tr>
 </table>
+
+## Seemingly undefined by actually defined behaviors
+
+* `unsigned int` never overflow, it is defined that ...
