@@ -9,6 +9,7 @@
         "func.h": "c",
         "stdlib.h": "c",
         "utils.h": "c",
-        "semaphore.h": "c"
+        "semaphore.h": "c",
+        "types.h": "c"
     }
 }
