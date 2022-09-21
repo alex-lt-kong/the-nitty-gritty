@@ -26,6 +26,7 @@ stored on the stack.
 | rdi             | edi         | di         | dil        |
 | rsi             | esi         | si         | sil        |
 | rsp             | esp         | sp         | spl        |
+| rbp             | ebp         |            |            |
 
 * This design is also related to Intel's choice of using little-endian byte order. For example, if a 64-bit
 register stores `0xDE AD BE EF 01 23 45 67` and we want to keep only its 32-bit part, it is more "reasonable" to
@@ -36,3 +37,8 @@ rather than `0xDE`.
 ### References
 
 * [x64 Cheat Sheet](https://cs.brown.edu/courses/cs033/docs/guides/x64_cheatsheet.pdf)
+
+## Common compiler tricks
+
+* `xor    eax,eax`: `xor`ing a register with itself is a faster way of setting
+the register to zero.
