@@ -36,3 +36,6 @@
 
 * `unsigned int` never overflow, for `unsigned int a = UINT_MAX;`, `a + 1` will be "wrapped around", i.e.,
 `(a + 1) % UINT_MAX == 0`.
+  * However, `unsigned int a = 2147483646 * 2147483646;` may lead to undefined behaviors since `2147483646 * 2147483646`
+  could be considered as signed multiplication before the signed result is cast and assigned to `unsigned int a`.
+  To make sure it is unsigned, rewrite it as `2147483646U * 2147483646U`.
