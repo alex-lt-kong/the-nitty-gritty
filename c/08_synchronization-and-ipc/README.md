@@ -21,7 +21,12 @@
   </tr>
   <tr>
     <td>Unix domain socket</td>
-    <td>Similar to an internet socket, but all communication occurs within the kernel. Domain sockets use the file system as their address space.</td>
+    <td>
+    Similar to an internet socket, but all communication occurs within the kernel.
+    Domain sockets use the file system as their address space.
+    According to <a href="https://momjian.us/main/blogs/pgblog/2012.html#June_6_2012">this blog</a> from Postgres
+    core developer Bruce Momjian, Unix socket can be 31% faster than TCP socket and 175% faster than TCP socket with SSL
+    </td>
   </tr>
   <tr>
     <td>Message queue</td>
@@ -41,8 +46,7 @@
   </tr>
   <tr>
     <td>Message passing</td>
-    <td>Allows multiple programs to communicate using message queues and/or non-OS managed channels. This concept includes a lot of 
-    different implementations, from gRPC to RESTful API</td>
+    <td>This concept includes a lot of different implementations, from gRPC to RESTful API</td>
   </tr>
   <tr>
     <td>Memory-mapped file</td>
