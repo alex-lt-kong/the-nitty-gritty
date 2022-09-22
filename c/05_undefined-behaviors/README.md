@@ -32,6 +32,7 @@
   </tr>
 </table>
 
-## Seemingly undefined by actually defined behaviors
+## Seemingly undefined by actually well-defined behaviors
 
-* `unsigned int` never overflow, it is defined that ...
+* `unsigned int` never overflow, for `unsigned int a = UINT_MAX;`, `a + 1` will be "wrapped around", i.e.,
+`(a + 1) % UINT_MAX == 0`.
