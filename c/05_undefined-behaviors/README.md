@@ -30,6 +30,28 @@
     -O2/-O3: still observe the above, but the loop won't quit after i reaching 100, trapped in an infinite loop
     </td>
   </tr>
+  <tr>
+    <td>Initial value of malloc() memory</td>
+    <td>
+    <code>
+      arr = malloc(dim * 4);
+      for (int j = 0; j < dim; ++j) {
+        printf("%d, ", arr[j]);
+      }
+      free(arr);
+    </code>
+    </td>
+    <td>
+      <code>malloc()</code> is documented in C standard and memory it returns are uninitialized.<br />
+      According to
+      <a href="https://stackoverflow.com/questions/8029584/why-does-malloc-initialize-the-values-to-0-in-gcc">this link</a>
+      , behind <code>malloc()</code> there are two scenarios: it recycles <code>free()'ed</code> or request more memory
+      from the OS.<br />
+      <li>if recycles memory from existing one, memory blocks are returned by <code>malloc()</code> as they are, unchanged.</li>
+      <li>if requests new memory from the OS, many OSes will initialize all memory blocks to 0 as a
+      security feature, which is not really related to C and <code>malloc()</code>.</li>
+    </td>
+  </tr>
 </table>
 
 ## Seemingly undefined by actually well-defined behaviors

@@ -54,6 +54,7 @@ int main() {
   }
   sem_close(semptr);
   sem_unlink(SEM_NAME);
+  // sem_close() releases the semaphore from the program, sem_unlink() releases the semaphore for the entire OS
   printf("event loop exited\n");
   return 0;
 }

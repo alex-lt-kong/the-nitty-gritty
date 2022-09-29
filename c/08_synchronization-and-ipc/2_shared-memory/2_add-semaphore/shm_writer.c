@@ -52,6 +52,7 @@ int main() {
   munmap(memptr, SHM_SIZE); /* unmap the storage */
   close(fd);
   sem_close(semptr);
+  sem_unlink(semptr);
   shm_unlink(SHM_NAME); /* unlink from the backing file */
   return 0;
 }

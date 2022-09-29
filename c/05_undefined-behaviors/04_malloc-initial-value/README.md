@@ -1,0 +1,1 @@
+https://stackoverflow.com/questions/8029584/why-does-malloc-initialize-the-values-to-0-in-gcc
