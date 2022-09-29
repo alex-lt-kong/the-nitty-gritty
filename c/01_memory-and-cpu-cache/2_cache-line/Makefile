@@ -1,8 +1,8 @@
-main.out: main.c
-	gcc main.c -o main-gcc.out -O3 -fno-tree-vectorize
-	icc main.c -o main-icc.out -O3 -no-vec
-	gdb -batch -ex 'file ./main-gcc.out' -ex 'disassemble /m main' > ./main-gcc.asm
-	gdb -batch -ex 'file ./main-icc.out' -ex 'disassemble /m main' > ./main-icc.asm
+main.out: 1st.c 2nd.c
+	gcc 1st.c -o 1st-gcc.out -O3 -fno-tree-vectorize
+	icc 1st.c -o 1st-icc.out -O3 -no-vec
+	gcc 2nd.c -o 2nd-gcc.out -O3 -fno-tree-vectorize
+	icc 2nd.c -o 2nd-icc.out -O3 -no-vec
 	lscpu > ./system.env
 clean:
 	rm *.out
