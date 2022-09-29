@@ -39,7 +39,7 @@ int main() {
     }
     timespec_get(&ts, TIME_UTC);
     delta = ts.tv_sec + ts.tv_nsec / 1000.0 / 1000.0 / 1000.0 - t0;
-    printf("%0.9lf,\t%8u\n", delta, *(arr_ptr + ts.tv_sec % d * d + ts.tv_nsec % d));
+    printf("%12.9lf,\t%8u\n", delta, *(arr_ptr + ts.tv_sec % d * d + ts.tv_nsec % d));
     free(arr_ptr);
   }
   return 0;
