@@ -47,7 +47,7 @@
       <a href="https://stackoverflow.com/questions/8029584/why-does-malloc-initialize-the-values-to-0-in-gcc">this link</a>
       , behind <code>malloc()</code> there are two scenarios: it recycles <code>free()'ed</code> or requests more memory
       from the OS.<br />
-      <li>if recycles memory from already allocated one, memory blocks are returned by <code>malloc()</code> as they are, unchanged.</li>
+      <li>if recycles memory from already allocated one, memory blocks are returned by <code>malloc()</code> as they are, unchanged, i.e., program can read the values that are already in those blocks assigned previously.</li>
       <li>if requests new memory from the OS, many OSes initialize all memory blocks to 0 as a
       security feature, which is not really related to C and <code>malloc()</code>.</li>
     </td>
