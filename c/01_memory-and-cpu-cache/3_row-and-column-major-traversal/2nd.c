@@ -16,7 +16,11 @@ int main() {
     size_t d = dim[i];
     printf("%5lu,\t%11lu,\t", d, d * d * sizeof(uint32_t) / 1024);
     arr_ptr = (uint32_t*)malloc(d * d * sizeof(uint32_t));
-
+    for (int j = 0; j < d; ++j) { // the initialized loop that all memory blocks are up and ready.
+      for (int k = 0; k < d; ++k) {
+        *(arr_ptr + j * d + k) = (j * k);
+      }
+    }
     timespec_get(&ts, TIME_UTC);
     t0 = ts.tv_sec + ts.tv_nsec / 1000.0 / 1000.0 / 1000.0;
     for (int j = 0; j < d; ++j) {
@@ -30,6 +34,11 @@ int main() {
     free(arr_ptr);
 
     arr_ptr = (uint32_t*)malloc(d * d * sizeof(uint32_t));
+    for (int j = 0; j < d; ++j) {
+      for (int k = 0; k < d; ++k) {
+        *(arr_ptr + j * d + k) = (j * k);
+      }
+    }
     timespec_get(&ts, TIME_UTC);
     t0 = ts.tv_sec + ts.tv_nsec / 1000.0 / 1000.0 / 1000.0;
     for (int j = 0; j < d; ++j) {
@@ -39,7 +48,7 @@ int main() {
     }
     timespec_get(&ts, TIME_UTC);
     delta = ts.tv_sec + ts.tv_nsec / 1000.0 / 1000.0 / 1000.0 - t0;
-    printf("%0.9lf,\t%8u\n", delta, *(arr_ptr + ts.tv_sec % d * d + ts.tv_nsec % d));
+    printf("%12.9lf,\t%9u\n", delta, *(arr_ptr + ts.tv_sec % d * d + ts.tv_nsec % d));
     free(arr_ptr);
   }
   return 0;
