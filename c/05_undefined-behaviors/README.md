@@ -18,10 +18,10 @@
     <td>Signed integer overflow</td>
     <td>
     <code>
-      int a = 2147483600;
-      for (int i=0; i<100; ++i) {
-        a++;
-        printf("%d\n", a);
+      int a = 2147483600;<br />
+      for (int i=0; i<100; ++i) {<br />
+        a++;<br />
+        printf("%d\n", a);<br />
       }
     </code>
     </td>
@@ -34,10 +34,10 @@
     <td>Initial value of malloc() memory</td>
     <td>
     <code>
-      arr = malloc(dim * 4);
-      for (int j = 0; j < dim; ++j) {
-        printf("%d, ", arr[j]);
-      }
+      arr = malloc(dim * 4);<br />
+      for (int j = 0; j < dim; ++j) {<br />
+        printf("%d, ", arr[j]);<br />
+      }<br />
       free(arr);
     </code>
     </td>
