@@ -31,7 +31,7 @@
     </td>
   </tr>
   <tr>
-    <td>Initial value of malloc() memory</td>
+    <td>Initial value of <code>malloc()</code> memory</td>
     <td>
     <code>
       arr = malloc(dim * 4);
