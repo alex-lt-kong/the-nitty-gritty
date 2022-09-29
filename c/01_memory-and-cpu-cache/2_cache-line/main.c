@@ -32,8 +32,8 @@ int main() {
         }
         start_time = clock();
         for (int i = 0; i < ITER; ++i) {
-            for (int j = 0; j < arr_len; j += step) {
-                array[j] += j;
+            for (int j = 1; j < arr_len; j += step) {
+                array[j] += array[j-1];
             }
         }
         long time_elapsed = clock() - start_time;
