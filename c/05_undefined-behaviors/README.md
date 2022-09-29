@@ -45,10 +45,10 @@
       <code>malloc()</code> is documented in C standard and memory it returns are uninitialized.<br />
       According to
       <a href="https://stackoverflow.com/questions/8029584/why-does-malloc-initialize-the-values-to-0-in-gcc">this link</a>
-      , behind <code>malloc()</code> there are two scenarios: it recycles <code>free()'ed</code> or request more memory
+      , behind <code>malloc()</code> there are two scenarios: it recycles <code>free()'ed</code> or requests more memory
       from the OS.<br />
-      <li>if recycles memory from existing one, memory blocks are returned by <code>malloc()</code> as they are, unchanged.</li>
-      <li>if requests new memory from the OS, many OSes will initialize all memory blocks to 0 as a
+      <li>if recycles memory from already allocated one, memory blocks are returned by <code>malloc()</code> as they are, unchanged.</li>
+      <li>if requests new memory from the OS, many OSes initialize all memory blocks to 0 as a
       security feature, which is not really related to C and <code>malloc()</code>.</li>
     </td>
   </tr>
