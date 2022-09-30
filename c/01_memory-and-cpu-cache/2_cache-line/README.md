@@ -42,12 +42,12 @@ after that should be halved each time step size is doubled.
 
 ## Results
 
-### 1st.c
+* My results
 
   * `gcc`:
-  ![gcc](./assets/my-1st-results-gcc.png)
+  ![gcc](./assets/my-results-gcc.png)
   * `icc`:
-  ![icc](./assets/my-1st-results-icc.png)
+  ![icc](./assets/my-results-icc.png)
 
 * Results are roughly consistent with the expected--before 16, the amount of time needed is more or less stable and
 after that the time needed is approximately halved as step size doubles.
@@ -61,9 +61,7 @@ fluctuations in both versions.
   * Simplify the calculation within the main loop--so that calculations won't be the bottleneck.
   * Disable vectorization and print out sample data--so that compilers can't just optimize my loop away.
 
-### 2nd.c
-
-### Online results
+* Other people results found online
 
   * From [Igoro Ostrovsky](http://igoro.com/archive/gallery-of-processor-cache-effects/):
   ![](./assets/igoro-results.png) 
