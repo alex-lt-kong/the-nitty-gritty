@@ -7,7 +7,7 @@
 
 int main() {
     srand(time(NULL));
-    const size_t arr_len = 32 * 1024 * 1024;   
+    const size_t arr_len = 256 * 1024 * 1024;   
     clock_t start_time;
     uint32_t* array;
     FILE *fp;
@@ -32,8 +32,8 @@ int main() {
         }
         start_time = clock();
         for (int i = 0; i < ITER; ++i) {
-            for (int j = 0; j < arr_len; j += step) {
-                array[j] += j + start_time;
+            for (int j = 1; j < arr_len; j += step) {
+                array[j] += array[j-1];
             }
         }
         long time_elapsed = clock() - start_time;
@@ -48,3 +48,4 @@ int main() {
     fclose(fp); //Don't forget to close the file when finished   
     return 0;
 }
+
