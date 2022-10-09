@@ -167,4 +167,5 @@ Dim,	ArraySize(KB),	Row-Major Time,	RM Sample,	Col-Major Time,	CM Sample,	Diff
 
 * How about the tiny drop at around 1MB? My guess is that it is relevant to L1 cache, which is also 1MB in size.
 * How about the out-of-order execution? It seems to me that compilers aren't as smart as we think. OOO execution
-does not appears to be the cause of the issue. It does, however, cause issues when we [test the size of cache lines](../2_cache-line) though.
+does not appears to be the cause of the issue. It may, however, cause issues when we
+[test the size of cache lines](../2_cache-line) though.

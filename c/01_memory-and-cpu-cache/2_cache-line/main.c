@@ -22,11 +22,14 @@ int main() {
         fprintf(stderr, "Failed to open file\n");
         return -1;
     }    
-
+    array = malloc(arr_len * sizeof(uint32_t));
+    for (int i = 0; i < arr_len; ++i) {
+        array[i] = 0;
+    }
     fprintf(fp, "Step,Time,Sum\n");
     int step = 1;
+    
     while (step <= 4096) {
-        array = malloc(arr_len * sizeof(uint32_t));
         for (int i = 0; i < arr_len; ++i) {
             array[i] = rand();
         }
@@ -34,17 +37,20 @@ int main() {
         for (int i = 0; i < ITER; ++i) {
             for (int j = 1; j < arr_len; j += step) {
                 array[j] += array[j-1];
+                // strategically adding loop dependence to
+                // break out-of-order execution and vectorization.
             }
         }
         long time_elapsed = clock() - start_time;
         fprintf(fp, "%d,%.02lf,%d\n", step, time_elapsed / ITER / 1000.0, array[rand() % arr_len]);
-        free(array);
+        
         if (step < 16) {
             ++step;
         } else {
             step *= 2;
         }
     }
+    free(array);
     fclose(fp); //Don't forget to close the file when finished   
     return 0;
 }

@@ -44,24 +44,40 @@ after that should be halved each time step size is doubled.
 
 * My results
 
-  * `gcc`:
-  ![gcc](./assets/my-results-gcc.png)
-  * `icc`:
-  ![icc](./assets/my-results-icc.png)
+ <table>
+  <tr>
+    <th>GCC</th>
+    <th>ICC</th>    
+  </tr>
+  <tr>
+    <td><img src="./assets/my-results-gcc.png" /></td>
+    <td><img src="./assets/my-results-icc.png" /></td>
+  </tr>
+  <tr>
+    <td><a href="./results-gcc.csv">Raw data</></td>
+    <td><a href="./results-icc.csv">Raw data</></td>
+  </tr>
+ </table>
 
 * Results are roughly consistent with the expected--before 16, the amount of time needed is more or less stable and
 after that the time needed is approximately halved as step size doubles.
 
-* There is one significantly different pattern: when step size is close to 1 or 16, there are some significant 
-fluctuations in both versions.
+* There is one significantly different pattern: both programs are much slower when step size is `1`
 
 * (Failed) attempts to eliminate this unexpected pattern:
   * Try different computers, both virtual and physical ones--so that virtual machine won't complicate the issue.
   * Iterate each step size a few times--so that some random peaks will be smoothed out.
   * Simplify the calculation within the main loop--so that calculations won't be the bottleneck.
-  * Disable vectorization and print out sample data--so that compilers can't just optimize my loop away.
+  * Add loop dependence to break out-of-order execution and vectorization--as they may obfuscate the result
+  in unexpceted manners.
+  * Print out sample data--so that compilers can't just optimize my loop away.
 
-* Other people results found online
+* One more guess: the program may become CPU-bound when step_size == 1. Various memory caching mechanisms only matter
+when a program is mostly memory-bound, which is mostly the case in reality. However, say a CPU's frequency is **1 Hz**
+(i.e., one cycly per second) then cache line or whatever caching won't matter any more--we should observe the time
+needed being halved as step size being doubled. Because the program will always be CPU-bound.
+
+* Other people's perfect results found online:
 
   * From [Igoro Ostrovsky](http://igoro.com/archive/gallery-of-processor-cache-effects/):
   ![](./assets/igoro-results.png) 
