@@ -84,8 +84,8 @@ needed being halved as step size being doubled. Because the program will always 
     <th>Timur Doumler</th>    
   </tr>
   <tr>
-    <td style="width:50%"><img src="./assets/igoro-results.png" /></td>
-    <td style="width:50%"><img src="./assets/timur-results.png" /></td>
+    <td style="width:50%"><img src="./assets/igoro-results.png" height="300px" /></td>
+    <td style="width:50%"><img src="./assets/timur-results.png" height="300px" /></td>
   </tr>
   <tr>
     <td><a href="http://igoro.com/archive/gallery-of-processor-cache-effects/">Source</></td>
