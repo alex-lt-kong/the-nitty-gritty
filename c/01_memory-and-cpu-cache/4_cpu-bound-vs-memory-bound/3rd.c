@@ -3,10 +3,11 @@
 #include <stdlib.h>
 #include <time.h>
 #include <string.h>
+#include <math.h>
 
 int main() {
   size_t dim[] = {
-    5, 10, 25, 50, 75, 100, 150, 200, 250, 300, 400, 500, 750, 1000, 2000, 5000, 10000, 20000, 30000
+    5, 10, 25, 50, 75, 100, 150, 200, 250, 300, 400, 500, 750, 1000, 2000, 5000, 10000, 20000
   };
   struct timespec ts;
   uint32_t* arr_ptr;
@@ -27,7 +28,7 @@ int main() {
     t0 = ts.tv_sec + ts.tv_nsec / 1000.0 / 1000.0 / 1000.0;
     for (int j = 0; j < d; ++j) {
       for (int k = 0; k < d; ++k) {
-        *(arr_ptr + j * d + k) += (j + k);
+        *(arr_ptr + j * d + k) += (sqrt(j + k) * sqrt(j) / sqrt(k));
       }
     }
     timespec_get(&ts, TIME_UTC);
@@ -45,7 +46,7 @@ int main() {
     t0 = ts.tv_sec + ts.tv_nsec / 1000.0 / 1000.0 / 1000.0;
     for (int j = 0; j < d; ++j) {
       for (int k = 0; k < d; ++k) {
-        *(arr_ptr + k * d + j) += (j + k);
+        *(arr_ptr + k * d + j) += (sqrt(j + k) * sqrt(j) / sqrt(k));
       }
     }
     timespec_get(&ts, TIME_UTC);
