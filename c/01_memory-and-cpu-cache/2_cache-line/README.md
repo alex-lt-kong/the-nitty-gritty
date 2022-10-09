@@ -78,9 +78,17 @@ when a program is mostly memory-bound, which is mostly the case in reality. Howe
 needed being halved as step size being doubled. Because the program will always be CPU-bound.
 
 * Other people's perfect results found online:
-
-  * From [Igoro Ostrovsky](http://igoro.com/archive/gallery-of-processor-cache-effects/):
-  ![](./assets/igoro-results.png) 
-
-  *  From [Timur Doumler](https://isocpp.org/blog/2017/05/cppcon-2016-want-fast-cpp-know-your-hardware-timur-doumler):
-  ![](./assets/timur-results.png)
+  <table>
+  <tr>
+    <th>Igoro Ostrovsky</th>
+    <th>Timur Doumler</th>    
+  </tr>
+  <tr>
+    <td style="width:50%"><img src="./assets/igoro-results.png" /></td>
+    <td style="width:50%"><img src="./assets/timur-results.png" /></td>
+  </tr>
+  <tr>
+    <td><a href="http://igoro.com/archive/gallery-of-processor-cache-effects/">Source</></td>
+    <td><a href="https://isocpp.org/blog/2017/05/cppcon-2016-want-fast-cpp-know-your-hardware-timur-doumler">Source</></td>
+  </tr>
+ </table>
