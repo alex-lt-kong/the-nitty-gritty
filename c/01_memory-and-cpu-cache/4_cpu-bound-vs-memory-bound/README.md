@@ -34,6 +34,6 @@ row-major and column-major traversal appears later.
   CPU-bound, the memory IO advatange of row-major traversal becomes less and less significant, until totally fades away.
 
 
-* The major lesson of the experiment is that, as too many components are moving simultaneously,
-theoretical performance gain can't be simply assumed. One should always profile the program to be
-sure on whether or not an optimization technique actually works.
+* The major lesson of the experiment is that, as too many components (e.g., CPU, memory, hard drive, OS, compiler, etc)
+are moving simultaneously, theoretical performance gain can't be simply assumed. One should always profile the
+program to be sure on whether or not an optimization technique actually works.
