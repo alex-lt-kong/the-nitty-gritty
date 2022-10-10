@@ -55,4 +55,4 @@ will be the CPU's utilization during the execution of `add eax,DWORD PTR [rax]`?
   source operand, and stores the packed single-precision floating-point results in the destination operand.)
 
 * Some experiments which are more closely related to memory are moved to the separate directory
-`19_memory-and-cpu-cache`.
+[01_memory-and-cpu-cache](./01_memory-and-cpu-cache).
