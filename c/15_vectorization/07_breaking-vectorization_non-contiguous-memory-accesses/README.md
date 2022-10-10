@@ -27,11 +27,11 @@ stride: 4,      0.000011683,           0
 
 ## Disassembl analysis
 
-* It is interesting that `gcc` and `icc` handles the second loop (stride == 4 one) differently.
+* It is interesting that `gcc` and `icc` handle the 2nd loop (stride == 4 one) differently.
 
-* `icc` does exactly what we expect: it vectorized the 1st loop but does not vectorize the 2nd.
+* `icc` does exactly what we expect: it vectorized the 1st loop but didn't vectorize the 2nd.
 
-* `gcc`, however, vectorized both, most likely by loading data from memory to SIMD registers separately.
+* `gcc`, however, vectorized both, probably by loading data from memory to SIMD registers separately.
 
 ### icc
 
