@@ -25,7 +25,7 @@ stride: 1,      0.000007153,         181
 stride: 4,      0.000011683,           0
 ```
 
-## Disassembl analysis
+## Disassembly analysis
 
 * It is interesting that `gcc` and `icc` handle the 2nd loop (stride == 4 one) differently.
 
