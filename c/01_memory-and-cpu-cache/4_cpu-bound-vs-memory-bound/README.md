@@ -11,6 +11,11 @@
     <th>sqrt() * sqrt() / sqrt()</th>    
   </tr>
   <tr>
+    <td>Completely memory-bound</td>
+    <td>Firstly CPU-bound, then memory-bound</td>
+    <td>Completely CPU-bound</td>
+  </tr>
+  <tr>
     <td><img src="./assets/1st-results.png" /></td>
     <td><img src="./assets/2nd-results.png" /></td>
     <td><img src="./assets/3rd-results.png" /></td>

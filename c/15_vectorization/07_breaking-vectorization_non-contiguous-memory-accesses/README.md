@@ -27,7 +27,7 @@ stride: 4,      0.000011683,           0
 
 ## Disassembly analysis
 
-* `objdump --disassembler-options "intel" --disassemble="main" -S <executable>` is used to generate disassembly code.
+* `objdump --disassembler-options "intel" --disassemble="main" -S <executable>` is used to generate assembly code.
 
 * It is interesting that `gcc` and `icc` handle the 2nd loop (stride == 4 one) differently.
 
