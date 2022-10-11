@@ -28,7 +28,7 @@ int main() {
   }
   timespec_get(&ts, TIME_UTC);
   delta = ts.tv_sec + ts.tv_nsec / 1000.0 / 1000.0 / 1000.0 - t0;
-  printf("stride: 1,\t%0.9lf,\t%8u\n", delta, *(a + ts.tv_sec % ARR_SIZE));
+  printf("%0.9lf,\t%8u\n", delta, *(a + ts.tv_sec % ARR_SIZE));
 
   timespec_get(&ts, TIME_UTC);
   t0 = ts.tv_sec + ts.tv_nsec / 1000.0 / 1000.0 / 1000.0;
@@ -39,7 +39,7 @@ int main() {
   }
   timespec_get(&ts, TIME_UTC);
   delta = ts.tv_sec + ts.tv_nsec / 1000.0 / 1000.0 / 1000.0 - t0;
-  printf("stride: %d,\t%0.9lf,\t%8u\n", stride, delta, *(c + ts.tv_sec % ARR_SIZE));
+  printf("%0.9lf,\t%8u\n", stride, delta, *(c + ts.tv_sec % ARR_SIZE));
 
   free(a);
   free(b);
