@@ -10,8 +10,8 @@
     <th>Random access only (linear)</th>
   </tr>
   <tr>
-    <td><img src="./assets/results_all-in-one.png"></td>
-    <td><img src="./assets/results_random.png"></td>
+    <td><img src="./assets/results_all-in-one.png" style="height:300px"></td>
+    <td><img src="./assets/results_random.png"  style="height:300px"></td>
   </tr>
   <tr>
     <td colspan="2"><a href="./assets/results.csv">source</a></td>
