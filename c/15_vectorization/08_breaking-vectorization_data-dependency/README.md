@@ -4,7 +4,6 @@
   * Read-after-write: `for (j=1; j<MAX; j++) A[j]=A[j-1]+1;`.
   * Write-after-read: `for (j=1; j<MAX; j++) A[j-1]=A[j]+1;`.
 
-* 
 
 ## Results
 
