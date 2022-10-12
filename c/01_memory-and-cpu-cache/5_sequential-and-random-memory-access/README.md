@@ -22,7 +22,7 @@
 
 * The reason is the [cache prefetching technology](https://en.wikipedia.org/wiki/Cache_prefetching).
 
-<img src="./assets/prefetcher.png" />
+<img src="./assets/prefetcher.png" style="height:300px" />
 
   * Apart from prefetching very predictable data/instruction, some smarter prefetchers may try to prefetch based on some
   simple patterns.
