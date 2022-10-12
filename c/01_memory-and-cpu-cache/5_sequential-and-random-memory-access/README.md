@@ -21,10 +21,8 @@
 * [Results](./assets/results.csv) show that random-access is even slower than column-major traversal.
 
 * The reason is the [cache prefetching technology](https://en.wikipedia.org/wiki/Cache_prefetching).
-
-<img src="./assets/prefetcher.png" style="height:300px" />
-
-  * Apart from prefetching very predictable data/instruction, some smarter prefetchers may try to prefetch based on some
-  simple patterns.
-  * In the second chart, one can still observe that row-major irregular-stride traversal can still outperform its
-  counterparts by a coefficient.
+    * Apart from prefetching very predictable data/instruction, some smarter prefetchers may try to prefetch based on some
+    simple patterns.
+    * In the second chart, one can still observe that row-major irregular-stride traversal can still outperform its
+    counterparts by a coefficient.
+  <img src="./assets/prefetcher.png" style="height:300px" />
