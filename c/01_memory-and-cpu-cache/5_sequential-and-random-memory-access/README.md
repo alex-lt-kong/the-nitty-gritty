@@ -4,8 +4,6 @@
 
 * Apart from row-major and column-major traversal, two loops that randomly access the 2d array are also added.
 
-<img src="./assets/results.png" />
-
 <table>
   <tr>
     <th>All-in-one (logarithmic)</th>
@@ -14,6 +12,9 @@
   <tr>
     <td><img src="./assets/results_all-in-one.png"></td>
     <td><img src="./assets/results_random.png"></td>
+  </tr>
+  <tr>
+    <td colspan="2"><a href="./assets/results.csv">source</a></td>
   </tr>
 </table>
 
@@ -25,5 +26,5 @@
 
   * Apart from prefetching very predictable data/instruction, some smarter prefetchers may try to prefetch based on some
   simple patterns.
-  * In the second chart, it can still be observed that row-major irregular-stride can still outperform its counterparts
-  by a coefficient.
+  * In the second chart, one can still observe that row-major irregular-stride traversal can still outperform its
+  counterparts by a coefficient.
