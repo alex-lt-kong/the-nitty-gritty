@@ -13,7 +13,7 @@ int main() {
   uint32_t* arr_ptr;
   double delta, t0;
   printf(
-    "Dim,\tArraySize(KB),\tRow-Major Time,\tSample,\t\tCol-Major Time,\tSample,\tFast Random Time,\tSample,\tProper Random Time,\tSample\n"
+    "Dim,\tArraySize(KB),\tRow-Major Unit-Stride Time,\tSample,\t\tCol-Major Unit-Stride Time,\tSample,\tRow-Major Irregular-Stride Time,\tSample,\tColumn-Major Irregular-Stride Time,\tSample,\tFast Random Time,\tSample,\tProper Random Time,\tSample\n"
   );
   for (int i = 0; i < sizeof(dim) / sizeof(dim[0]); ++i) {
     size_t d = dim[i];
@@ -22,6 +22,7 @@ int main() {
     printf("%5lu,\t%11lu,\t", d, dd * sizeof(uint32_t) / 1024);
 
 
+    /* row-major traversal */
     arr_ptr = (uint32_t*)malloc(dd * sizeof(uint32_t));
     for (int j = 0; j < d; ++j) { // the initialization loop which makes sure all memory blocks are up and ready.
       for (int k = 0; k < d; ++k) {
@@ -41,6 +42,7 @@ int main() {
     free(arr_ptr);
 
 
+    /* col-major traversal */
     arr_ptr = (uint32_t*)malloc(dd * sizeof(uint32_t));
     for (int j = 0; j < d; ++j) {
       for (int k = 0; k < d; ++k) {
@@ -60,6 +62,47 @@ int main() {
     free(arr_ptr);
 
 
+    /* row-major irregular-stride traversal */
+    const size_t strides_count = 5;
+    int strides[5] = {2, 3, 4, 5, 6}; // 64 bytes cache line can store 4 unsigned int
+    arr_ptr = (uint32_t*)malloc(dd * sizeof(uint32_t));
+    for (int j = 1; j < d; ++j) {
+      for (int k = 1; k < d; ++k) {
+        *(arr_ptr + j * d + k) = (j * k);
+      }
+    }
+    timespec_get(&ts, TIME_UTC);
+    t0 = ts.tv_sec + ts.tv_nsec / 1000.0 / 1000.0 / 1000.0;
+    for (size_t j = 0; j < d; ++j) {
+      for (size_t k = 0; k < d; ++k) {
+        *(arr_ptr + (j * d + k + strides[k % strides_count]) % dd) += (j + k);
+      }
+    }
+    timespec_get(&ts, TIME_UTC);
+    delta = ts.tv_sec + ts.tv_nsec / 1000.0 / 1000.0 / 1000.0 - t0;
+    printf("%12.9lf,\t%9u,\t", delta, *(arr_ptr + ts.tv_sec % dd + ts.tv_nsec % d));
+    free(arr_ptr);
+
+    /* column-major irregular-stride traversal */
+    arr_ptr = (uint32_t*)malloc(dd * sizeof(uint32_t));
+    for (int j = 1; j < d; ++j) {
+      for (int k = 1; k < d; ++k) {
+        *(arr_ptr + j * d + k) = (j * k);
+      }
+    }
+    timespec_get(&ts, TIME_UTC);
+    t0 = ts.tv_sec + ts.tv_nsec / 1000.0 / 1000.0 / 1000.0;
+    for (size_t j = 0; j < d; ++j) {
+      for (size_t k = 0; k < d; ++k) {
+        *(arr_ptr + (k * d + j + strides[k % strides_count]) % dd) += (j + k);
+      }
+    }
+    timespec_get(&ts, TIME_UTC);
+    delta = ts.tv_sec + ts.tv_nsec / 1000.0 / 1000.0 / 1000.0 - t0;
+    printf("%12.9lf,\t%9u,\t", delta, *(arr_ptr + ts.tv_sec % dd + ts.tv_nsec % d));
+    free(arr_ptr);
+
+
     arr_ptr = (uint32_t*)malloc(dd * sizeof(uint32_t));
     for (int j = 0; j < d; ++j) {
       for (int k = 0; k < d; ++k) {
@@ -71,7 +114,7 @@ int main() {
     t0 = ts.tv_sec + ts.tv_nsec / 1000.0 / 1000.0 / 1000.0;
     for (size_t j = 0; j < d; ++j) {
       for (size_t k = 0; k < d; ++k) {
-        *(arr_ptr + (seed + d * j * k) % dd) += (j + k);
+        *(arr_ptr + (seed + d * j * k + strides[k % strides_count]) % dd) += (j + k);
         // This so-called "fast random" is not really "random"--it is designed to confuse prefetcher only.
       }
     }
