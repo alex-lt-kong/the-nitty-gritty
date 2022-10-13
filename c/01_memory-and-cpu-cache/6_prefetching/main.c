@@ -1,57 +1,67 @@
-#include <stdint.h>
+#include <time.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <time.h>
-#include <string.h>
+#include <stdint.h>
+
+#define ARR_SIZE (512 * 1024 * 1024)
+#define NUM_LOOKUPS (8 * 1024 * 1024)
+#define DO_PREFETCH
+
+int binary_search(int *array, int key, int enable_prefetch) {
+  int low = 0, high = ARR_SIZE - 1, mid;
+  while(low <= high) {
+    mid = (low + high)/2;
+
+    if (enable_prefetch) {
+      __builtin_prefetch (&array[(mid + 1 + high)/2], 0, 1);
+      __builtin_prefetch (&array[(low + mid - 1)/2], 0, 1);
+    }
+
+    if(array[mid] < key)
+            low = mid + 1; 
+    else if(array[mid] == key)
+            return mid;
+    else if(array[mid] > key)
+            high = mid-1;
+  }
+  return mid;
+}
 
 int main() {
-  srand(time(NULL));
-  size_t dim[] = {100000, 1000000, 10000000, 100000000, 1000000000};
+
+  uint32_t sum = 0;
   struct timespec ts;
-  uint32_t* arr_ptr;
-  double delta, t0;
-
-  
-  int strides[] = {20391, 8433, 74508, 15065, 72462, 88331, 29235, 04731}; // 64 bytes cache line can store 4 unsigned int
-  const size_t strides_count = sizeof(strides) / sizeof(strides[0]);
-  for (int i = 0; i < sizeof(dim) / sizeof(dim[0]); ++i) {
-    size_t d = dim[i];
-
-    printf("%11lu,\t", d);
-
-/*
-    arr_ptr = (uint32_t*)malloc(d * sizeof(uint32_t));
-    for (int j = 0; j < d; ++j) {
-        arr_ptr[j] = j;
-    }
-    timespec_get(&ts, TIME_UTC);
-    t0 = ts.tv_sec + ts.tv_nsec / 1000.0 / 1000.0 / 1000.0;
-    for (size_t j = 0; j < d - 99999; ++j) {
-      arr_ptr[j + strides[j % strides_count]] += arr_ptr[j-1];
-    }
-    timespec_get(&ts, TIME_UTC);
-    delta = ts.tv_sec + ts.tv_nsec / 1000.0 / 1000.0 / 1000.0 - t0;
-    printf("%12.9lf,\t%9u,\t", delta, arr_ptr[ts.tv_nsec % d]);
-    free(arr_ptr);*/
-
-    
-    arr_ptr = (uint32_t*)malloc(d * sizeof(uint32_t));
-    for (int j = 0; j < d; ++j) {
-        arr_ptr[j] = j;
-    }
-    timespec_get(&ts, TIME_UTC);
-    t0 = ts.tv_sec + ts.tv_nsec / 1000.0 / 1000.0 / 1000.0;
-    for (size_t j = 0; j < d - 99999; ++j) {
-      __builtin_prefetch(&arr_ptr[(j+1) + strides[(j+1) % strides_count]], 1, 1);
-      arr_ptr[j + strides[j % strides_count]] += arr_ptr[j-1];
-    //  printf("%lu, %lu\n", j + strides[j % strides_count], (j+4) + strides[(j+4) % strides_count]);
-    }
-    timespec_get(&ts, TIME_UTC);
-    delta = ts.tv_sec + ts.tv_nsec / 1000.0 / 1000.0 / 1000.0 - t0;
-    printf("%12.9lf,\t%9u,\t", delta, arr_ptr[ts.tv_nsec % d]);
-    free(arr_ptr);
-
-    printf("\n");
+  double t0, delta;
+  int *array =  malloc(ARR_SIZE*sizeof(int));
+  for (int i = 0; i < ARR_SIZE; ++i){
+    array[i] = i;
   }
-  return 0;
+
+  srand(time(NULL));
+  int *lookups = malloc(NUM_LOOKUPS * sizeof(int));
+  for (int i = 0; i < NUM_LOOKUPS; ++i) {
+    lookups[i] = rand() % ARR_SIZE;
+  }
+
+  timespec_get(&ts, TIME_UTC);
+  t0 = ts.tv_sec + ts.tv_nsec / 1000.0 / 1000.0 / 1000.0;
+  for (int i = 0; i < NUM_LOOKUPS; i++) {
+    sum += binary_search(array, lookups[i], 1);
+  }
+  timespec_get(&ts, TIME_UTC);
+  delta = ts.tv_sec + ts.tv_nsec / 1000.0 / 1000.0 / 1000.0 - t0;
+  printf("Prefetching enabled: %0.3lfsec\n", delta);
+
+timespec_get(&ts, TIME_UTC);
+  t0 = ts.tv_sec + ts.tv_nsec / 1000.0 / 1000.0 / 1000.0;
+  for (int i = 0; i < NUM_LOOKUPS; i++) {
+    sum += binary_search(array, lookups[i], 0);
+  }
+  timespec_get(&ts, TIME_UTC);
+  delta = ts.tv_sec + ts.tv_nsec / 1000.0 / 1000.0 / 1000.0 - t0;
+  printf("Prefetching disabled: %0.3lfsec\n", delta);
+
+  free(array);
+  free(lookups);
+  return sum;
 }
