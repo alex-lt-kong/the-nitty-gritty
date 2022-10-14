@@ -1,1 +1,3 @@
-https://opensource.com/article/19/4/interprocess-communication-linux-storage
+# Shared memory with semaphore
+
+* More on semaphore, check [this link](../../1_mutex-and-semaphore/2_semaphore/)
