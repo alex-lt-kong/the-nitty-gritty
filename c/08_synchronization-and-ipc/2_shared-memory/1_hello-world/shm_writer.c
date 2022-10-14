@@ -36,7 +36,7 @@ int main() {
   if ((void*) -1  == memptr) report_and_exit("mmap()");
 
   printf("shared mem address: %p [0..%d]\n", memptr, SHM_SIZE - 1);
-  memset(memptr, 'Z', SHM_SIZE);
+  memset(memptr, 88, SHM_SIZE);
   printf("Shared mem written, press Enter to exit\n");
   getchar();
   
