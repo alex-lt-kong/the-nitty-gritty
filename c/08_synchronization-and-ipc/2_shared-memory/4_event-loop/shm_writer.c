@@ -29,7 +29,6 @@ int main() {
 
   void* memptr = mmap(NULL, SHM_SIZE, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
   if ((void*) -1  == memptr) report_and_exit("mmap()");
-
   fprintf(stderr, "shared mem address: %p [0..%d]\n", memptr, SHM_SIZE - 1);
 
   sem_t* semptr = sem_open(SEM_NAME, O_CREAT, PERMS, SEM_INITIAL_VALUE);

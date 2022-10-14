@@ -1,5 +1,6 @@
 #define SEM_INITIAL_VALUE 1
-#define SEM_NAME "MySemaphore5"
+
+#define SEM_NAME "MySemaphore0"
 
 #define SHM_SIZE 65535
 #define SHM_NAME "/shm.me"
