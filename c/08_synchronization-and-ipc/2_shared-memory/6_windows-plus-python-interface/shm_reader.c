@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include <windows.h>
 #include <stdio.h>
 #include <conio.h>
@@ -5,17 +6,18 @@
 #include "common.h"
 #pragma comment(lib, "user32.lib")
 
-
-
-int main()
+int read_shm(int arr[], int length)
 {
-   void* fd;
-   void* memptr;
-   void* sem_ptr = CreateSemaphore( 
-      NULL,           // default security attributes
-      MAX_SEM_COUNT,  // initial count
-      MAX_SEM_COUNT,  // maximum count
-      sem_name);      // the name of the semaphore
+    for (int i = 0; i < length; ++i) {
+        printf("%d\n", arr[i]);
+    }
+    void* fd;
+    void* memptr;
+    void* sem_ptr = CreateSemaphore( 
+        NULL,           // default security attributes
+        MAX_SEM_COUNT,  // initial count
+        MAX_SEM_COUNT,  // maximum count
+        sem_name);      // the name of the semaphore
 
    fd = OpenFileMapping(
                    FILE_MAP_ALL_ACCESS,   // read/write access
@@ -63,5 +65,8 @@ int main()
    UnmapViewOfFile(memptr);   
    CloseHandle(fd);
    CloseHandle(sem_ptr);
-   return 0;
+   for (int i = 0; i < length; ++i) {
+      arr[i] += 2;
+   }
+   return 666;
 }

@@ -1,0 +1,7 @@
+Hello world!
+This is the 1st test
+HSBC.HK
+01234.TW
+MSFT or APPL, it doesn't really matter
+WHATEVER should be fine, as long as it is shorter than 128 bytes
+!&*(^&*(&*(^*()(*^$#)))))(*&^&%)

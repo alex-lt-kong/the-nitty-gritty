@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include <windows.h>
 #include <stdio.h>
 #include <conio.h>
@@ -5,17 +6,16 @@
 #include "common.h"
 #pragma comment(lib, "user32.lib")
 
-
-
-int main()
+int read_shm(int* int_arr_ptr, int* dbl_arr_ptr,  char* chr_arr_ptr, int length)
 {
-   void* fd;
-   void* memptr;
-   void* sem_ptr = CreateSemaphore( 
-      NULL,           // default security attributes
-      MAX_SEM_COUNT,  // initial count
-      MAX_SEM_COUNT,  // maximum count
-      sem_name);      // the name of the semaphore
+   size_t line_count;
+    void* fd;
+    void* memptr;
+    void* sem_ptr = CreateSemaphore( 
+        NULL,           // default security attributes
+        MAX_SEM_COUNT,  // initial count
+        MAX_SEM_COUNT,  // maximum count
+        sem_name);      // the name of the semaphore
 
    fd = OpenFileMapping(
                    FILE_MAP_ALL_ACCESS,   // read/write access
@@ -52,7 +52,11 @@ int main()
    unsigned long long t = get_timestamp_100nano();
    printf("Lock entered at %lld\n", t);
 
-   printf("%s\n", (char*) memptr);
+   memcpy(&line_count, memptr, sizeof(size_t));
+   memcpy(int_arr_ptr, (char*)memptr + sizeof(size_t), line_count * sizeof(int));
+   memcpy(dbl_arr_ptr, (char*)memptr + sizeof(size_t) + line_count * sizeof(int), line_count * sizeof(double));
+   memcpy(chr_arr_ptr, (char*)memptr + sizeof(size_t) + line_count * sizeof(int) + line_count * sizeof(double), line_count * sizeof(char) * CHAR_COL_BUF_SIZE);
+   printf("%lu\n", line_count);
    if (!ReleaseSemaphore(
       sem_ptr,  // handle to semaphore
       1,        // increase count by one
@@ -63,5 +67,5 @@ int main()
    UnmapViewOfFile(memptr);   
    CloseHandle(fd);
    CloseHandle(sem_ptr);
-   return 0;
+   return line_count;
 }
