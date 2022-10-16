@@ -3,8 +3,6 @@
 
 #include "common.h"
 
-#define MAX_LINE 128
-
 size_t read_ints(const char* file_name, int* arr_ptr, const size_t max_len) {
     int c;
     FILE* fptr;
@@ -88,8 +86,11 @@ size_t read_chrs(const char* file_name, char* arr_ptr, const size_t max_len) {
             }
             col_count = 0; // start to read next line
         } else { // read line contents
-            line[col_count] = (char)c;
-            ++ col_count;
+            if (col_count < CHAR_COL_BUF_SIZE - 1) {
+                // -1 is for '\0'
+                line[col_count] = (char)c;
+                ++ col_count;
+            }
         }
     }
     fclose(fptr);

@@ -1,9 +1,9 @@
 #include <windows.h>
 #include <stdio.h>
 #include <conio.h>
-#include <tchar.h>
 #include <stdlib.h>
 #include <time.h>
+
 #include "common.h"
 
 int main()
@@ -28,7 +28,7 @@ int main()
                  PAGE_READWRITE,          // read/write access
                  0,                       // maximum object size (high-order DWORD)
                  SHM_SIZE,                // maximum object size (low-order DWORD)
-                 shm_name);                 // name of mapping object
+                 shm_name);               // name of mapping object
 
    if (fd == NULL) {
       fprintf(stderr, "Could not create file mapping object (%ld).\n",  GetLastError());
@@ -60,11 +60,11 @@ int main()
    t0 = get_timestamp_100nano();
    sprintf(shm_boundary, "\n========== Shared memory buffer BEGIN at %lld ==========\n",t0);
    strcpy(memptr, shm_boundary);
-   memset(memptr + strlen(shm_boundary), 'Y', SHM_SIZE - (strlen(shm_boundary) + 1));
+   memset((unsigned char*)memptr + strlen(shm_boundary), 'Y', SHM_SIZE - (strlen(shm_boundary) + 1));
 
    t1 = get_timestamp_100nano();   
    sprintf(shm_boundary, "\n========== Shared memory buffer END at %lld ==========\n", t1);
-   strcpy(memptr + SHM_SIZE - (strlen(shm_boundary) + 1), shm_boundary);
+   strcpy((unsigned char*)memptr + SHM_SIZE - (strlen(shm_boundary) + 1), shm_boundary);
    printf("shared memory memset()'ed, press any key to release the lock\n");
 
    getchar();

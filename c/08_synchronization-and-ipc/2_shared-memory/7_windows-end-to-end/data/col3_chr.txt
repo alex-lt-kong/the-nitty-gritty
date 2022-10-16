@@ -4,4 +4,5 @@ HSBC.HK
 01234.TW
 MSFT or APPL, it doesn't really matter
 WHATEVER should be fine, as long as it is shorter than 128 bytes
-!&*(^&*(&*(^*()(*^$#)))))(*&^&%)
+BUT even if a line is super long, the program will still be running fine without an ArrayOutOfBound error--just characters beyond 128 will be truncated...
+!&*(^&*(&*(^*()(~~~!@"""\\\'''??!*^$#)))))(*&^&%)
