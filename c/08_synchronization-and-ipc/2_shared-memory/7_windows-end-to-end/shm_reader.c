@@ -6,7 +6,9 @@
 
 int read_shm(int* int_arr_ptr, int* dbl_arr_ptr,  char* chr_arr_ptr, int length)
 {
-    printf("[%lf] read_shm()@shm_reader.so called\n", get_timestamp_100nano() / 10.0 / 1000.0 / 1000.0);
+    unsigned long long t0, t1, t2;
+    t0 = get_timestamp_100nano();
+    //printf("[%lf] read_shm()@shm_reader.so called\n", get_timestamp_100nano() / 10.0 / 1000.0 / 1000.0);
     size_t line_count;
     void* fd;
     void* memptr;
@@ -61,6 +63,7 @@ int read_shm(int* int_arr_ptr, int* dbl_arr_ptr,  char* chr_arr_ptr, int length)
       fprintf(stderr, "WaitForSingleObject()@shm_reader.so failed (Return value: %d)\n", retval);
       return 0;
    }
+   t1 = get_timestamp_100nano();
    memcpy(&line_count, memptr, sizeof(size_t));
    memcpy(int_arr_ptr, (char*)memptr + sizeof(size_t), line_count * sizeof(int));
    memcpy(dbl_arr_ptr, (char*)memptr + sizeof(size_t) + line_count * sizeof(int), line_count * sizeof(double));
@@ -75,6 +78,7 @@ int read_shm(int* int_arr_ptr, int* dbl_arr_ptr,  char* chr_arr_ptr, int length)
    UnmapViewOfFile(memptr);   
    CloseHandle(fd);
    CloseHandle(sem_ptr);
-   printf("[%lf] read_shm()@shm_reader.so returned\n", get_timestamp_100nano() / 10.0 / 1000.0 / 1000.0);
+   t2 = get_timestamp_100nano();
+   printf("[%lf] read_shm()@shm_reader.so returned, %.1lf micro before lock, %.1lf micro after lock\n", t2 / 10.0 / 1000.0 / 1000.0, (t1 - t0) / 10.0, (t2 - t1) / 10.0);
    return line_count;
 }

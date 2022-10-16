@@ -5,9 +5,9 @@
 
 #define MAX_SEM_COUNT 1
 
-#define SHM_SIZE 65536
+#define SHM_SIZE 4194304 // 4MB
 #define CHAR_COL_BUF_SIZE 128
-#define MAX_LINE_COUNT 256
+#define MAX_LINE_COUNT 4096
 
 extern const char sem_name[];
 extern const char shm_name[];

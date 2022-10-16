@@ -4,7 +4,7 @@ import pandas as pd
 import numpy as np
 import time
 
-MAX_LINE_COUNT = 256
+MAX_LINE_COUNT = 4096
 CHAR_COL_BUF_SIZE = 128
 # These two variables must be the same as those in common.h!
 

@@ -21,7 +21,7 @@ int main()
     int* int_col_ptr = malloc(MAX_LINE_COUNT * sizeof(int));
     double* dbl_col_ptr = malloc(MAX_LINE_COUNT * sizeof(double));
     char* chr_col_ptr = malloc(MAX_LINE_COUNT * sizeof(char) * CHAR_COL_BUF_SIZE);
-    size_t int_col_line_count, dbl_col_line_count, chr_col_line_count;
+    size_t int_col_line_count, dbl_col_line_count, chr_col_line_count, line_count;
     // Create a semaphore
     void* sem_ptr = CreateSemaphore( 
         NULL,           // default security attributes
@@ -74,10 +74,10 @@ int main()
             return 1;
         }
         memset(chr_col_ptr, 0, (MAX_LINE_COUNT * sizeof(char) * CHAR_COL_BUF_SIZE));
-        int_col_line_count = read_ints(".\\data\\col1_int.txt", int_col_ptr, MAX_LINE_COUNT);
-        dbl_col_line_count = read_dbls(".\\data\\col2_dbl.txt", dbl_col_ptr, MAX_LINE_COUNT);
-        chr_col_line_count = read_chrs(".\\data\\col3_chr.txt", chr_col_ptr, MAX_LINE_COUNT);
-
+        int_col_line_count = read_ints(".\\data\\col1_int.txt", int_col_ptr);
+        dbl_col_line_count = read_dbls(".\\data\\col2_dbl.txt", dbl_col_ptr);
+        chr_col_line_count = read_chrs(".\\data\\col3_chr.txt", chr_col_ptr);
+        
         if (int_col_line_count != dbl_col_line_count || dbl_col_line_count != chr_col_line_count) {
             fprintf(
                 stderr,
@@ -85,12 +85,26 @@ int main()
                 "(old data, if any, are still in shared memory and intact.)\n",
                 get_timestamp_100nano() / 10.0 / 1000.0 / 1000.0
             );
-        } else {        
-            memcpy(memptr, &int_col_line_count, sizeof(size_t));
-            memcpy((unsigned char*)memptr + sizeof(size_t), int_col_ptr, sizeof(int) * int_col_line_count);
-            memcpy((unsigned char*)memptr + sizeof(size_t) + sizeof(int) * int_col_line_count, dbl_col_ptr, sizeof(double) * dbl_col_line_count);
-            memcpy((unsigned char*)memptr + sizeof(size_t) + sizeof(int) * int_col_line_count+ sizeof(double) * dbl_col_line_count, chr_col_ptr, sizeof(char) * chr_col_line_count * CHAR_COL_BUF_SIZE);
-            printf("[%lf] data loaded from data files\n", get_timestamp_100nano() / 10.0 / 1000.0 / 1000.0);
+        } else {
+            line_count = int_col_line_count;
+            size_t content_size = sizeof(line_count) + (sizeof(int) + sizeof(double) + sizeof(char) * CHAR_COL_BUF_SIZE) * line_count;
+            if (SHM_SIZE < content_size) {
+                fprintf(
+                    stderr,
+                    "[%lf] Shared memory too small for incoming data. New data will not be written into shared memory "
+                    "(old data, if any, are still in shared memory and intact.)\n",
+                    get_timestamp_100nano() / 10.0 / 1000.0 / 1000.0
+                );
+            }else {
+                memcpy(memptr, &line_count, sizeof(size_t));   
+                memcpy((unsigned char*)memptr + sizeof(line_count), int_col_ptr, sizeof(int) * line_count);
+                memcpy((unsigned char*)memptr + sizeof(line_count) + sizeof(int) * line_count, dbl_col_ptr, sizeof(double) * line_count);
+                memcpy((unsigned char*)memptr + sizeof(line_count) + sizeof(int) * line_count+ sizeof(double) * line_count, chr_col_ptr, sizeof(char) * line_count * CHAR_COL_BUF_SIZE);
+                printf(
+                    "[%lf] %llu KB of data loaded from files, shared memory size is %u KB\n",
+                    get_timestamp_100nano() / 10.0 / 1000.0 / 1000.0, content_size / 1024, SHM_SIZE / 1024
+                );
+            }
         }
         if (!ReleaseSemaphore(
             sem_ptr,  // handle to semaphore
