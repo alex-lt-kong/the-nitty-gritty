@@ -4,8 +4,8 @@ import pandas as pd
 import numpy as np
 import time
 
-MAX_LINE_COUNT = 4096
-CHAR_COL_BUF_SIZE = 128
+MAX_LINE_COUNT = 32768
+CHAR_COL_BUF_SIZE = 64
 # These two variables must be the same as those in common.h!
 
 so_file = "./shm_reader.so"
@@ -14,7 +14,7 @@ shm_reader = ctypes.CDLL(so_file)
 shm_reader.read_shm.argtypes = [ctypes.POINTER(ctypes.c_int), ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_char), ctypes.c_int]
 shm_reader.read_shm.restype =  ctypes.c_int
 # build python array
-arr =  [1,2,3,4,5]
+arr =  [0]
 str_arr = [35]
 
 # allocates memory for an equivalent array in C and populates it with

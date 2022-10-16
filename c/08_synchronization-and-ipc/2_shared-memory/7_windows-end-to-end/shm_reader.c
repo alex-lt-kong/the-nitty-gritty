@@ -6,9 +6,10 @@
 
 int read_shm(int* int_arr_ptr, int* dbl_arr_ptr,  char* chr_arr_ptr, int length)
 {
-    unsigned long long t0, t1, t2;
-    t0 = get_timestamp_100nano();
-    //printf("[%lf] read_shm()@shm_reader.so called\n", get_timestamp_100nano() / 10.0 / 1000.0 / 1000.0);
+    LARGE_INTEGER freq, t0, t1, t2;
+    QueryPerformanceFrequency(&freq);
+    QueryPerformanceCounter(&t0);
+    //printf("[%.6lf] read_shm()@shm_reader.so called\n", get_timestamp_100nano() / 10.0 / 1000.0 / 1000.0);
     size_t line_count;
     void* fd;
     void* memptr;
@@ -28,7 +29,7 @@ int read_shm(int* int_arr_ptr, int* dbl_arr_ptr,  char* chr_arr_ptr, int length)
     if (fd == NULL) {
         fprintf(
             stderr, 
-            "[%lf] OpenFileMapping() failed, "
+            "[%.6lf] OpenFileMapping() failed, "
             "either shared memory is not ready or the program doesn't have access permission. (Error code: %ld).\n",
             get_timestamp_100nano() / 10.0 / 1000.0 / 1000.0, GetLastError()
         );
@@ -45,7 +46,7 @@ int read_shm(int* int_arr_ptr, int* dbl_arr_ptr,  char* chr_arr_ptr, int length)
    if (memptr == NULL) {
       fprintf(
         stderr,
-        "[%lf] MapViewOfFile()@shm_reader.so failed (Error code: %ld).\n",
+        "[%.6lf] MapViewOfFile()@shm_reader.so failed (Error code: %ld).\n",
         get_timestamp_100nano() / 10.0 / 1000.0 / 1000.0, GetLastError());
       CloseHandle(fd);
       CloseHandle(sem_ptr);
@@ -63,7 +64,7 @@ int read_shm(int* int_arr_ptr, int* dbl_arr_ptr,  char* chr_arr_ptr, int length)
       fprintf(stderr, "WaitForSingleObject()@shm_reader.so failed (Return value: %d)\n", retval);
       return 0;
    }
-   t1 = get_timestamp_100nano();
+   QueryPerformanceCounter(&t1);
    memcpy(&line_count, memptr, sizeof(size_t));
    memcpy(int_arr_ptr, (char*)memptr + sizeof(size_t), line_count * sizeof(int));
    memcpy(dbl_arr_ptr, (char*)memptr + sizeof(size_t) + line_count * sizeof(int), line_count * sizeof(double));
@@ -78,7 +79,12 @@ int read_shm(int* int_arr_ptr, int* dbl_arr_ptr,  char* chr_arr_ptr, int length)
    UnmapViewOfFile(memptr);   
    CloseHandle(fd);
    CloseHandle(sem_ptr);
-   t2 = get_timestamp_100nano();
-   printf("[%lf] read_shm()@shm_reader.so returned, %.1lf micro before lock, %.1lf micro after lock\n", t2 / 10.0 / 1000.0 / 1000.0, (t1 - t0) / 10.0, (t2 - t1) / 10.0);
+   QueryPerformanceCounter(&t2);
+   printf(
+      "[%.6lf] read_shm()@shm_reader.so returned, %.1lf micro before lock, %.1lf micro after lock\n",
+      get_timestamp_100nano() / 10.0 / 1000.0 / 1000.0,
+      (t1.QuadPart - t0.QuadPart) * 1e6 / freq.QuadPart,
+      (t2.QuadPart - t1.QuadPart) * 1e6 / freq.QuadPart
+   );
    return line_count;
 }
