@@ -6,16 +6,30 @@
 #include "common.h"
 #include "col_parser.c"
 
-char sample_dt[][20] = {
-    "2022-10-11T22:33:14Z",
-    "2022-09-11T22:33:24Z",
-    "2022-08-11T22:33:34Z",
-    "2022-07-11T22:33:44Z",
-    "2021-10-11T12:33:54Z",
-    "2020-10-11T12:34:64Z",
-    "2022-10-12T12:35:74Z",
-    "2022-10-13T12:36:84Z",
-    "2022-10-14T12:37:94Z",
+char sample_dt[][21] = {
+    "2021-10-21T12:17:14Z",
+    "2021-09-12T21:21:24Z",
+    "2021-08-31T20:33:34Z",
+    "2020-07-01T22:46:44Z",
+    "2020-06-27T12:56:54Z",
+    "2020-05-04T13:04:64Z",
+    "2022-04-29T14:12:22Z",
+    "2022-03-13T15:29:30Z",
+    "2022-02-14T16:30:46Z",
+    "2022-01-14T16:49:52Z"
+};
+
+char sample_strings[][256] = {
+    "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed doeiusmod tempor incididunt ut labore et dolore magna aliqua. Ut",
+    "enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure",
+    "dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non",
+    "proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+    "In publishing and graphic design, Lorem ipsum is a placeholder text commonly used to demonstrate the visual form of a document or a typeface without relying on meaningful content.",
+    "ipsum may be used as a placeholder before final copy is available. It is also used to temporarily replace text in a process called greeking, which allows designers to consider the form of a webpage or publication.",
+    "typically a corrupted version of De finibus bonorum et malorum, a 1st-century BC text by the Roman statesman and philosopher Cicero, with words altered, added, and removed to make it nonsensical and improper Latin.",
+    "Versions of the Lorem ipsum text have been used in typesetting at least since the 1960s, when it was popularized by advertisements for Letraset transfer sheets.[1]",
+    "Other popular word processors, including Pages and Microsoft Word, have since adopted Lorem ipsum,[2] as have many LaTeX packages,[3][4][5] web content managers such as Joomla! and WordPress, and CSS libraries such as Semantic UI.[6]",
+    "Sed ut perspiciatis, unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam eaque ipsa"
 };
 
 volatile int done = 0;
@@ -97,20 +111,21 @@ int main()
         }
         int rnd_int = rand() % MAX_LINE_COUNT;
         double rnd_dbl = ((double)rand() * (10 - (-10)) ) / (double)RAND_MAX + (-10);
-        char rnd_str[] = "read_dbls(\".\\data\\col2_dbl.txt\", dbl_col_ptr)";
         memoffset = rnd_int;
         memset((unsigned char*)memptr + sizeof(line_count) + line_count * sizeof(int) + memoffset * char_col_size, 0, char_col_size);
         memset((unsigned char*)memptr + sizeof(line_count) + line_count * (sizeof(int) + char_col_size + sizeof(double)) + memoffset * char_col_size, 0, char_col_size);
 
         memcpy((unsigned char*)memptr, &line_count, sizeof(line_count));   
         memcpy((unsigned char*)memptr + sizeof(line_count) + memoffset * sizeof(int), &rnd_int, sizeof(int));
-        memcpy((unsigned char*)memptr + sizeof(line_count) + line_count * sizeof(int) + memoffset * char_col_size, rnd_str, char_col_size);
+        memcpy((unsigned char*)memptr + sizeof(line_count) + line_count * sizeof(int) + memoffset * char_col_size, sample_dt[rand() % 9], char_col_size);
         memcpy((unsigned char*)memptr + sizeof(line_count) + line_count * (sizeof(int) + char_col_size) + memoffset * sizeof(double), &rnd_dbl, sizeof(double));
-        memcpy((unsigned char*)memptr + sizeof(line_count) + line_count * (sizeof(int) + char_col_size + sizeof(double)) + memoffset * char_col_size, rnd_str, char_col_size);
+        memcpy((unsigned char*)memptr + sizeof(line_count) + line_count * (sizeof(int) + char_col_size + sizeof(double)) + memoffset * char_col_size, sample_strings[rand() % 9], char_col_size);
         
         if (iter_count % (1000 * 1000) == 0) {
             QueryPerformanceCounter(&t1);
-            printf("Takes %.1lf ms to write 1,000,000 rows\n", (t1.QuadPart - t0.QuadPart) * 1e6 / freq.QuadPart / 1000.0);
+            printf("Takes %6.1lf ms to write 1M rows (%.1lf / %.1lf MB used)\n",
+            (t1.QuadPart - t0.QuadPart) * 1e6 / freq.QuadPart / 1000.0,
+            content_size / 1024.0 / 1024.0, SHM_SIZE / 1024.0 / 1024.0);
             QueryPerformanceCounter(&t0);
         }
 
