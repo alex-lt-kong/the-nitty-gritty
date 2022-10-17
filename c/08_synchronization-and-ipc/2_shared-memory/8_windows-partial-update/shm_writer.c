@@ -123,7 +123,7 @@ int main()
         
         if (iter_count % (1000 * 1000) == 0) {
             QueryPerformanceCounter(&t1);
-            printf("Takes %6.1lf ms to write 1M rows (%.1lf / %.1lf MB used)\n",
+            printf("Takes %6.1lf ms to write 1M rows (%.1lf of %.1lf MB used)\n",
             (t1.QuadPart - t0.QuadPart) * 1e6 / freq.QuadPart / 1000.0,
             content_size / 1024.0 / 1024.0, SHM_SIZE / 1024.0 / 1024.0);
             QueryPerformanceCounter(&t0);
