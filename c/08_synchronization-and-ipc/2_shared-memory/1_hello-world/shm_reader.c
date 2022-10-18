@@ -32,7 +32,7 @@ int main() {
     0                       /* offset since fd: 0 to start from the beginning */
   );
   if ((void*) -1 == memptr) report_and_exit("mmap()");
-
+  printf("shared mem address: %p [0..%d]\n", memptr, SHM_SIZE - 1);
   write(STDOUT_FILENO, memptr, SHM_SIZE); /* one byte at a time */
 
   /* cleanup */
