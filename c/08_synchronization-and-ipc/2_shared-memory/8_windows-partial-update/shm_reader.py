@@ -15,17 +15,18 @@ so_file = "./shm_reader.so"
 shm_reader = ctypes.CDLL(so_file)
 
 shm_reader.read_shm.argtypes = [
-    POINTER(POINTER(c_int)),
-    POINTER(POINTER(c_char)),
-    POINTER(POINTER(c_double)),
-    POINTER(POINTER(c_char)),
+    POINTER(c_int),
+    POINTER(c_char),
+    POINTER(c_double),
+    POINTER(c_char),
     c_uint64, c_uint64]
 shm_reader.read_shm.restype =  c_int
 
-int_ptr =  POINTER(c_int)()
-dt_ptr = POINTER(c_char)()
-dbl_ptr =  POINTER(c_double)()
-chr_ptr = POINTER(c_char)()
+# allocates memory for an equivalent array in C
+int_arr_c = (ctypes.c_int * MAX_LINE_COUNT)()
+dt_arr_c  = (ctypes.c_char * (MAX_LINE_COUNT * CHAR_COL_BUF_SIZE))()
+dbl_arr_c = (ctypes.c_double * MAX_LINE_COUNT)()
+chr_arr_c = (ctypes.c_char * (MAX_LINE_COUNT * CHAR_COL_BUF_SIZE))()
 
 hi_los = [    
     [0, 0],
@@ -50,15 +51,15 @@ while True:
         f'[{dt.datetime.now(dt.timezone.utc).timestamp()}] calling read_shm()@shm_reader.so from shm_reader.py with [{hi}, {lo}], length: {hi - lo + 1}'
     )
     retval = shm_reader.read_shm(
-        byref(int_ptr), byref(dt_ptr), byref(dbl_ptr), byref(chr_ptr), c_uint64(hi), c_uint64(lo)
+        int_arr_c, dt_arr_c, dbl_arr_c, chr_arr_c, c_uint64(hi), c_uint64(lo)
     )
     if retval == 0: # most likely internal error
         continue
     d = {
-        'int_col':  np.ctypeslib.as_array(int_ptr, shape=(retval,)),
-        'dt_col': np.frombuffer(dt_ptr[0: retval* CHAR_COL_BUF_SIZE], dtype=f'S{CHAR_COL_BUF_SIZE}'),
-        'dbl_col': np.ctypeslib.as_array(dbl_ptr, shape=(retval,)),
-        'chr_col': np.frombuffer(chr_ptr[0: retval* CHAR_COL_BUF_SIZE], dtype=f'S{CHAR_COL_BUF_SIZE}')
+        'int_col': np.frombuffer(int_arr_c, dtype=np.int32, count=retval),
+        'dt_col': np.frombuffer(dt_arr_c[0: retval* CHAR_COL_BUF_SIZE], dtype=f'S{CHAR_COL_BUF_SIZE}'),
+        'dbl_col': np.frombuffer(dbl_arr_c, dtype=np.double, count=retval),
+        'chr_col': np.frombuffer(chr_arr_c[0: retval* CHAR_COL_BUF_SIZE], dtype=f'S{CHAR_COL_BUF_SIZE}')
     }
 
     df = pd.DataFrame(d)

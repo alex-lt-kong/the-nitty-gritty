@@ -4,7 +4,7 @@
 
 #include "common.h"
 
-int read_shm(int** int_arr_ptr, char** dt_arr_ptr, double** dbl_arr_ptr, char** chr_arr_ptr, size_t hi, size_t lo)
+int read_shm(int* int_arr_ptr, char* dt_arr_ptr, double* dbl_arr_ptr, char* chr_arr_ptr, size_t hi, size_t lo)
 {
 
     if (lo > hi || hi >= MAX_LINE_COUNT) {
@@ -61,14 +61,10 @@ int read_shm(int** int_arr_ptr, char** dt_arr_ptr, double** dbl_arr_ptr, char** 
         lo = 0;
     } else {
         slice_line_count = (hi - lo + 1);
-        (*int_arr_ptr) = malloc(MAX_LINE_COUNT * sizeof(int));
-        (*dt_arr_ptr) = calloc(MAX_LINE_COUNT, CHAR_COL_BUF_SIZE);
-        (*dbl_arr_ptr) = malloc(MAX_LINE_COUNT * sizeof(double));
-        (*chr_arr_ptr) = calloc(MAX_LINE_COUNT, CHAR_COL_BUF_SIZE);
-        memcpy(*int_arr_ptr, (char*)memptr + sizeof(size_t) + lo * sizeof(int),  slice_line_count * sizeof(int));
-        memcpy( *dt_arr_ptr, (char*)memptr + sizeof(size_t) + total_line_count * (sizeof(int)                                 ) + lo * char_col_size, slice_line_count * char_col_size);
-        memcpy(*dbl_arr_ptr, (char*)memptr + sizeof(size_t) + total_line_count * (sizeof(int) + char_col_size                 ) + lo * sizeof(double), slice_line_count * sizeof(double));
-        memcpy(*chr_arr_ptr, (char*)memptr + sizeof(size_t) + total_line_count * (sizeof(int) + char_col_size + sizeof(double)) + lo * char_col_size, slice_line_count * char_col_size);
+        memcpy(int_arr_ptr, (char*)memptr + sizeof(size_t) + lo * sizeof(int),  slice_line_count * sizeof(int));
+        memcpy( dt_arr_ptr, (char*)memptr + sizeof(size_t) + total_line_count * (sizeof(int)                                 ) + lo * char_col_size, slice_line_count * char_col_size);
+        memcpy(dbl_arr_ptr, (char*)memptr + sizeof(size_t) + total_line_count * (sizeof(int) + char_col_size                 ) + lo * sizeof(double), slice_line_count * sizeof(double));
+        memcpy(chr_arr_ptr, (char*)memptr + sizeof(size_t) + total_line_count * (sizeof(int) + char_col_size + sizeof(double)) + lo * char_col_size, slice_line_count * char_col_size);
         QueryPerformanceCounter(&t2);
     }
     if (!ReleaseSemaphore(sem_ptr, 1, NULL)) {
