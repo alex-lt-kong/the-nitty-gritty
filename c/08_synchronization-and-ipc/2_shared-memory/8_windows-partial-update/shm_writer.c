@@ -6,7 +6,7 @@
 #include "common.h"
 #include "col_parser.c"
 
-char sample_dt[][21] = {
+char sample_dt[][CHAR_COL_BUF_SIZE] = {
     "2021-10-21T12:17:14Z",
     "2021-09-12T21:21:24Z",
     "2021-08-31T20:33:34Z",
@@ -19,7 +19,7 @@ char sample_dt[][21] = {
     "2022-01-14T16:49:52Z"
 };
 
-char sample_strings[][256] = {
+char sample_strings[][CHAR_COL_BUF_SIZE] = {
     "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed doeiusmod tempor incididunt ut labore et dolore magna aliqua. Ut",
     "enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure",
     "dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non",
@@ -103,13 +103,13 @@ int main()
     unsigned int iter_count = 0;
     QueryPerformanceCounter(&t0);
     while (!done) {
-        ++ iter_count; 
+        ++ iter_count;
         if ((retval = WaitForSingleObject(sem_ptr, 3600 * 1000L)) != WAIT_OBJECT_0) {
             done = 1;
             fprintf(stderr, "WaitForSingleObject() returns unknown value: %d\n", retval);
             break;
         }
-        int rnd_int = rand() % MAX_LINE_COUNT;
+        int rnd_int = (((short)rand() << 8) + rand()) % MAX_LINE_COUNT;
         double rnd_dbl = ((double)rand() * (10 - (-10)) ) / (double)RAND_MAX + (-10);
         memoffset = rnd_int;
         memset((unsigned char*)memptr + sizeof(line_count) + line_count * sizeof(int) + memoffset * char_col_size, 0, char_col_size);
