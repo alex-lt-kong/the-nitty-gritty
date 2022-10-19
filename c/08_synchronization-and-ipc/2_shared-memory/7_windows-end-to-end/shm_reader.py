@@ -13,15 +13,13 @@ shm_reader = ctypes.CDLL(so_file)
 
 shm_reader.read_shm.argtypes = [ctypes.POINTER(ctypes.c_int), ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_char), ctypes.c_int]
 shm_reader.read_shm.restype =  ctypes.c_int
-# build python array
-arr =  [0]
-str_arr = [35]
+
 
 # allocates memory for an equivalent array in C and populates it with
 # values from `arr`
-int_arr_c = (ctypes.c_int * MAX_LINE_COUNT)(*arr)
-dbl_arr_c = (ctypes.c_double * MAX_LINE_COUNT)(*arr)
-chr_arr_c = (ctypes.c_char * (MAX_LINE_COUNT * CHAR_COL_BUF_SIZE))(*str_arr)
+int_arr_c = (ctypes.c_int * MAX_LINE_COUNT)()
+dbl_arr_c = (ctypes.c_double * MAX_LINE_COUNT)()
+chr_arr_c = (ctypes.c_char * (MAX_LINE_COUNT * CHAR_COL_BUF_SIZE))()
 
 while True:
     

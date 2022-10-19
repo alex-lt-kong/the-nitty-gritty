@@ -95,11 +95,14 @@ int main()
                     "(old data, if any, are still in shared memory and intact.)\n",
                     get_timestamp_100nano() / 10.0 / 1000.0 / 1000.0
                 );
-            }else {
+            } else {
                 memcpy(memptr, &line_count, sizeof(size_t));   
                 memcpy((unsigned char*)memptr + sizeof(line_count), int_col_ptr, sizeof(int) * line_count);
                 memcpy((unsigned char*)memptr + sizeof(line_count) + sizeof(int) * line_count, dbl_col_ptr, sizeof(double) * line_count);
                 memcpy((unsigned char*)memptr + sizeof(line_count) + sizeof(int) * line_count+ sizeof(double) * line_count, chr_col_ptr, sizeof(char) * line_count * CHAR_COL_BUF_SIZE);
+                /* Memory scheme
+                 * |8 bytes| all ints |         all doubles           |                                              all strings                                        |
+                */
                 printf(
                     "[%.6lf] %llu KB of data loaded from files, shared memory size is %u KB\n",
                     get_timestamp_100nano() / 10.0 / 1000.0 / 1000.0, content_size / 1024, SHM_SIZE / 1024

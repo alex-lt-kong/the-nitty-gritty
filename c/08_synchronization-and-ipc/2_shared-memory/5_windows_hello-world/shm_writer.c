@@ -59,12 +59,13 @@ int main()
    unsigned long long t0, t1;
    t0 = get_timestamp_100nano();
    sprintf(shm_boundary, "\n========== Shared memory buffer BEGIN at %lld ==========\n",t0);
-   strcpy(memptr, shm_boundary);
-   memset(memptr + strlen(shm_boundary), 'Y', SHM_SIZE - (strlen(shm_boundary) + 1));
+   // shm_boundary = "\n========== Shared memory buffer BEGIN at " + t0 + " ==========\n");
+   strcpy((unsigned char*)memptr, shm_boundary);
+   memset((unsigned char*)memptr + strlen(shm_boundary), 'Y', SHM_SIZE - (strlen(shm_boundary) + 1));
 
    t1 = get_timestamp_100nano();   
    sprintf(shm_boundary, "\n========== Shared memory buffer END at %lld ==========\n", t1);
-   strcpy(memptr + SHM_SIZE - (strlen(shm_boundary) + 1), shm_boundary);
+   strcpy((unsigned char*)memptr + SHM_SIZE - (strlen(shm_boundary) + 1), shm_boundary);
    printf("shared memory memset()'ed, press any key to release the lock\n");
 
    getchar();
