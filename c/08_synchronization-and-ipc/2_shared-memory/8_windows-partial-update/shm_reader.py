@@ -48,7 +48,7 @@ while True:
     if idx >= len(hi_los):
         idx = 0
     print(
-        f'[{dt.datetime.now(dt.timezone.utc).timestamp()}] calling read_shm()@shm_reader.so from shm_reader.py with [{hi}, {lo}], length: {hi - lo + 1}'
+        f'[{dt.datetime.now(dt.timezone.utc).timestamp()}] calling read_shm()@shm_reader.so with [{hi}, {lo}], length: {hi - lo + 1}'
     )
     retval = shm_reader.read_shm(
         int_arr_c, dt_arr_c, dbl_arr_c, chr_arr_c, c_uint64(hi), c_uint64(lo)
@@ -63,6 +63,8 @@ while True:
     }
 
     df = pd.DataFrame(d)
+    df['dt_col'] = df['dt_col'].str.decode("utf-8")
+    df['chr_col'] = df['chr_col'].str.decode("utf-8")
     print(f'[{dt.datetime.now(dt.timezone.utc).timestamp()}] pd.DataFrame()@shm_reader.py returned')
     print(df)
     print('')
