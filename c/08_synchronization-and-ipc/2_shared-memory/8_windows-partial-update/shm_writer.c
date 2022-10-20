@@ -4,7 +4,6 @@
 #include <signal.h>
 
 #include "common.h"
-#include "col_parser.c"
 
 char sample_dt[][CHAR_COL_BUF_SIZE] = {
     "2021-10-21T12:17:14Z",
@@ -100,6 +99,7 @@ int main()
         done = 1;
     }
     size_t memoffset = 0;
+    unsigned char *int_col_offset, *chr_col_offset, *dbl_col_offset, *dt_col_offset;
     unsigned int iter_count = 0;
     QueryPerformanceCounter(&t0);
     while (!done) {
@@ -112,14 +112,19 @@ int main()
         int rnd_int = (((short)rand() << 8) + rand()) % MAX_LINE_COUNT;
         double rnd_dbl = ((double)rand() * (10 - (-10)) ) / (double)RAND_MAX + (-10);
         memoffset = rnd_int;
+        int_col_offset = (unsigned char*)memptr + sizeof(line_count) + memoffset * sizeof(int);
+        dt_col_offset = (unsigned char*)memptr + sizeof(line_count) + line_count * sizeof(int) + memoffset * char_col_size;
+        dbl_col_offset = (unsigned char*)memptr + sizeof(line_count) + line_count * (sizeof(int) + char_col_size) + memoffset * sizeof(double);
+        chr_col_offset = (unsigned char*)memptr + sizeof(line_count) + line_count * (sizeof(int) + char_col_size + sizeof(double)) + memoffset * char_col_size;
+
         memset((unsigned char*)memptr + sizeof(line_count) + line_count * sizeof(int) + memoffset * char_col_size, 0, char_col_size);
         memset((unsigned char*)memptr + sizeof(line_count) + line_count * (sizeof(int) + char_col_size + sizeof(double)) + memoffset * char_col_size, 0, char_col_size);
 
         memcpy((unsigned char*)memptr, &line_count, sizeof(line_count));   
-        memcpy((unsigned char*)memptr + sizeof(line_count) + memoffset * sizeof(int), &rnd_int, sizeof(int));
-        memcpy((unsigned char*)memptr + sizeof(line_count) + line_count * sizeof(int) + memoffset * char_col_size, sample_dt[rand() % 9], char_col_size);
-        memcpy((unsigned char*)memptr + sizeof(line_count) + line_count * (sizeof(int) + char_col_size) + memoffset * sizeof(double), &rnd_dbl, sizeof(double));
-        memcpy((unsigned char*)memptr + sizeof(line_count) + line_count * (sizeof(int) + char_col_size + sizeof(double)) + memoffset * char_col_size, sample_strings[rand() % 9], char_col_size);
+        memcpy(int_col_offset, &rnd_int, sizeof(int));
+        memcpy(dt_col_offset, sample_dt[rand() % 9], char_col_size);
+        memcpy(dbl_col_offset, &rnd_dbl, sizeof(double));
+        memcpy(chr_col_offset, sample_strings[rand() % 9], char_col_size);
         
         if (iter_count % (1000 * 1000) == 0) {
             QueryPerformanceCounter(&t1);
