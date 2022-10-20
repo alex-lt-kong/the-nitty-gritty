@@ -1,9 +1,12 @@
 # Disassembly
 
-To dissamble an execuable to assembly code:
+To dissamble a binary file to assembly code:
 
-* `gdb`: `gdb --quiet --eval-command="set disassembly-flavor intel" --eval-command="disassemble /m <func name>" --batch <exe name>`.
-* `objdump`: `objdump --disassembler-options "intel" --disassemble=<func name> -S <exe name>`.
+* Dissamble the entire binary file:
+    * `objdump --disassembler-options "intel" -S ./main.out`
+* Dissamble only a function from a binary file:
+    * `gdb`: `gdb --quiet --eval-command="set disassembly-flavor intel" --eval-command="disassemble /m <func name>" --batch <exe name>`.
+    * `objdump`: `objdump --disassembler-options "intel" --disassemble=<func name> -S <exe name>`.
 
 ## x86-64 register fundamentals
 
