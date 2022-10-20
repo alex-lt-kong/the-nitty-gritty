@@ -18,6 +18,7 @@ stored on the stack.
 * `rbp`: register base pointer, which points to the base of the current stack frame.
 * `rsp`: register stack pointer, store the stack pointer.
 * `xmm0`-`xmm15`: use by an SIMD instruction set to vectorize array operation, etc.
+* `rip`, `eip` is a 64bit/32bit register  in x86 architectures (32bit). It holds the "Extended Instruction Pointer" for the stack. In other words, it tells the computer where to go next to execute the next command and controls the flow of a program.
 
 ### Backward compatibility and their naming convention
 
