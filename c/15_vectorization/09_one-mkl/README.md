@@ -12,49 +12,48 @@ export LD_PRELOAD=/opt/intel/oneapi/mkl/2022.2.0/lib/intel64/libmkl_core.so:/opt
 ```
 >>> py main.py 
 Generating 0.1K random doubles...
-mkl_sum():	13.512871281210375,	takes 2.581 ms
-np.sum():	13.512871281210373,	takes 0.04005 ms
-my_sum():	13.512871281210375,	takes 0.0174 ms
+mkl_sum():	12.570874509662477,	takes 2.687 ms
+np.sum():	12.570874509662477,	takes 0.07176 ms
+my_sum():	12.570874509662477,	takes 0.04745 ms
 
 Generating 1.0K random doubles...
-mkl_sum():	121.9170148059413,	takes 0.02456 ms
-np.sum():	121.91701480594132,	takes 0.01335 ms
-my_sum():	121.9170148059413,	takes 0.008106 ms
+mkl_sum():	122.63308019202967,	takes 0.0515 ms
+np.sum():	122.63308019202968,	takes 0.05555 ms
+my_sum():	122.63308019202967,	takes 0.05007 ms
 
 Generating 10.0K random doubles...
-mkl_sum():	1241.2003798826581,	takes 0.009775 ms
-np.sum():	1241.200379882658,	takes 0.01359 ms
-my_sum():	1241.2003798826577,	takes 0.008345 ms
+mkl_sum():	1252.8869286717918,	takes 0.05651 ms
+np.sum():	1252.8869286717918,	takes 0.06461 ms
+my_sum():	1252.8869286717925,	takes 0.05436 ms
 
 Generating 100.0K random doubles...
-mkl_sum():	12503.530554514951,	takes 0.02885 ms
-np.sum():	12503.530554514951,	takes 0.03862 ms
-my_sum():	12503.53055451494,	takes 0.04482 ms
+mkl_sum():	12503.745696040642,	takes 0.1116 ms
+np.sum():	12503.745696040636,	takes 0.1185 ms
+my_sum():	12503.745696040613,	takes 0.109 ms
 
 Generating 1,000.0K random doubles...
-mkl_sum():	124993.24383228763,	takes 0.3374 ms
-np.sum():	124993.24383228761,	takes 0.612 ms
-my_sum():	124993.24383228837,	takes 0.3448 ms
+mkl_sum():	124842.96669992828,	takes 0.6111 ms
+np.sum():	124842.9666999282,	takes 0.6087 ms
+my_sum():	124842.96669992819,	takes 0.5689 ms
 
 Generating 10,000.0K random doubles...
-mkl_sum():	1249793.0001717184,	takes 4.155 ms
-np.sum():	1249793.000171711,	takes 4.472 ms
-my_sum():	1249793.000171695,	takes 3.945 ms
+mkl_sum():	1249677.6050475435,	takes 4.795 ms
+np.sum():	1249677.605047542,	takes 5.283 ms
+my_sum():	1249677.6050475384,	takes 5.078 ms
 
 Generating 100,000.0K random doubles...
-mkl_sum():	12500773.841899103,	takes 41.53 ms
-np.sum():	12500773.841899212,	takes 42.48 ms
-my_sum():	12500773.841898542,	takes 39.3 ms
+mkl_sum():	12500859.451768743,	takes 38.16 ms
+np.sum():	12500859.451768894,	takes 40.65 ms
+my_sum():	12500859.451768074,	takes 37.75 ms
 
 Generating 1,000,000.0K random doubles...
-mkl_sum():	125002927.25494404,	takes 452.1 ms
-np.sum():	125002927.25494047,	takes 462.4 ms
-my_sum():	125002927.25496253,	takes 444.1 ms
+mkl_sum():	124999729.25400539,	takes 423.8 ms
+np.sum():	124999729.25401,	takes 452.6 ms
+my_sum():	124999729.25404471,	takes 437.0 ms
 
 Generating 2,000,000.0K random doubles...
-mkl_sum():	249990484.42186642,	takes 911.6 ms
-np.sum():	249990484.421876,	takes 944.4 ms
-my_sum():	249990484.42179978,	takes 903.0 ms
-
+mkl_sum():	250000290.83869344,	takes 901.0 ms
+np.sum():	250000290.83869845,	takes 947.8 ms
+my_sum():	250000290.8387339,	takes 911.4 ms
 
 ```

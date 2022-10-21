@@ -24,16 +24,22 @@ for arr_size in arr_sizes:
   print(f"Generating {arr_size / 1_000:,}K random doubles...")
   arr = np.random.random((arr_size,)) / 4.0
   
+  time.sleep(1)
+
   t0 = time.time()
   sum = func.mkl_sum(arr.ctypes.data_as(POINTER(c_double)), arr_size)
   t1 = time.time()
   print(f'mkl_sum():\t{sum},\ttakes {(t1 - t0) * 1000:.4} ms')
-  
+
+  time.sleep(1)
+
   t0 = time.time()
   sum = np.sum(arr)
   t1 = time.time()
   print(f'np.sum():\t{sum},\ttakes {(t1 - t0) * 1000:.4} ms')
 
+  time.sleep(1)
+  
   t0 = time.time()
   sum = func.my_sum(arr.ctypes.data_as(POINTER(c_double)), arr_size)
   t1 = time.time()
