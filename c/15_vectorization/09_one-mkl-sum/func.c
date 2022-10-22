@@ -7,6 +7,7 @@
 
 double mkl_sum(double* arr, size_t arr_size)
 {
+    // https://www.intel.com/content/www/us/en/develop/documentation/onemkl-developer-reference-c/top/blas-and-sparse-blas-routines/blas-routines/blas-level-1-routines-and-functions/cblas-asum.html
     return cblas_dasum(arr_size, arr, 1);;
 }
 
