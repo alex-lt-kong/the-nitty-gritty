@@ -54,15 +54,15 @@ double my_dot_product(double* vec_a, double* vec_b, double* sum, int64_t arr_siz
         pl0.vec_a = vec_a;
         pl0.vec_b = vec_b;
         pl0.sum = 0;
-        pl0.arr_size = arr_size / 4;
+        pl0.arr_size = arr_size / 2;
         pl0.offset = 0;
         pthread_create(&tid0, NULL, _my_dot_product_job, (void*)&pl0); // takes < 100 us to pthread_create() a thread
 
         pl1.vec_a = vec_a;
         pl1.vec_b = vec_b;
         pl1.sum = 0;
-        pl1.arr_size = arr_size / 4;
-        pl1.offset = arr_size / 4 * 1;
+        pl1.arr_size = arr_size / 2;
+        pl1.offset = arr_size / 2;
         pthread_create(&tid1, NULL, _my_dot_product_job, (void*)&pl1);        
 
         pthread_join(tid0, NULL);
