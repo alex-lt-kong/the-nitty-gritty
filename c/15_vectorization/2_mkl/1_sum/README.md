@@ -5,8 +5,11 @@ following [this link](../), no other installation is needed.
 
 * If the Python wrapper doesn't run, may consider this per [this link](https://github.com/ikinsella/trefide/issues/2): 
 ```
-export LD_PRELOAD=/opt/intel/oneapi/mkl/2022.2.0/lib/intel64/libmkl_core.so:/opt/intel/oneapi/mkl/2022.2.0/lib/intel64/libmkl_sequential.so
+export LD_PRELOAD=/opt/intel/oneapi/mkl/latest/lib/intel64/libmkl_core.so:/opt/intel/oneapi/mkl/latest/lib/intel64/libmkl_sequential.so
 ```
+
+* `numpy` usually uses an accelerated linear algebra library to improve performance--typically either Intel MKL or OpenBLAS.
+To check which library it is actually using, issue `np.show_config()`
 
 ## Results
 ```
