@@ -17,7 +17,9 @@ func.my_dot_product.restype = c_double
 func.mkl_dot_product.argtypes = (POINTER(c_double), POINTER(c_double), POINTER(c_double), c_int64)
 func.mkl_dot_product.restype = c_double
 
-arr_sizes = np.array([100, 1_000, 10_000, 100_000, 1_000_000, 10_000_000, 100_000_000, 200_000_000, 300_000_000], dtype=np.int64)
+arr_sizes = np.array(
+    [100, 1_000, 10_000, 100_000, 1_000_000, 10_000_000, 100_000_000, 200_000_000, 300_000_000], dtype=np.int64
+)
 
 for arr_size in arr_sizes:
   print(f"Generating two vectors, each with {arr_size / 1_000:,}K random doubles...")

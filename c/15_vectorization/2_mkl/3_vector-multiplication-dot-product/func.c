@@ -68,7 +68,7 @@ double my_dot_product(double* vec_a, double* vec_b, double* sum, int64_t arr_siz
         pthread_join(tid0, NULL);
         pthread_join(tid1, NULL);
         *sum = pl0.sum + pl1.sum; 
-    }else if (arr_size <= 10000 * 1000 * 1000) {
+    } else {
         struct JobPayload pl0, pl1, pl2, pl3;
         pthread_t tid0, tid1, tid2, tid3;
 
@@ -77,27 +77,28 @@ double my_dot_product(double* vec_a, double* vec_b, double* sum, int64_t arr_siz
         pl0.sum = 0;
         pl0.arr_size = arr_size / 4;
         pl0.offset = 0;
-        pthread_create(&tid0, NULL, _my_dot_product_job, (void*)&pl0); // takes < 100 us to pthread_create() a thread
 
         pl1.vec_a = vec_a;
         pl1.vec_b = vec_b;
         pl1.sum = 0;
         pl1.arr_size = arr_size / 4;
         pl1.offset = arr_size / 4 * 1;
-        pthread_create(&tid1, NULL, _my_dot_product_job, (void*)&pl1);
 
         pl2.vec_a = vec_a;
         pl2.vec_b = vec_b;
         pl2.sum = 0;
         pl2.arr_size = arr_size / 4;
         pl2.offset = arr_size / 4 * 2;
-        pthread_create(&tid2, NULL, _my_dot_product_job, (void*)&pl2);
 
         pl3.vec_a = vec_a;
         pl3.vec_b = vec_b;
         pl3.sum = 0;
         pl3.arr_size = arr_size / 4;
         pl3.offset = arr_size / 4 * 3;
+
+        pthread_create(&tid0, NULL, _my_dot_product_job, (void*)&pl0); // takes < 100 us to pthread_create() a thread
+        pthread_create(&tid1, NULL, _my_dot_product_job, (void*)&pl1);
+        pthread_create(&tid2, NULL, _my_dot_product_job, (void*)&pl2);
         pthread_create(&tid3, NULL, _my_dot_product_job, (void*)&pl3);
         
 
@@ -106,103 +107,6 @@ double my_dot_product(double* vec_a, double* vec_b, double* sum, int64_t arr_siz
         pthread_join(tid2, NULL);
         pthread_join(tid3, NULL);
         *sum = pl0.sum + pl1.sum + pl2.sum + pl3.sum; 
-    } else {
-        struct JobPayload pl0, pl1, pl2, pl3, pl4, pl5, pl6, pl7;
-        pthread_t tid0, tid1, tid2, tid3, tid4, tid5, tid6, tid7;
-
-        pl0.vec_a = vec_a;
-        pl0.vec_b = vec_b;
-        pl0.sum = 0;
-        pl0.arr_size = arr_size / 8;
-        pl0.offset = 0;
-        pthread_create(&tid0, NULL, _my_dot_product_job, (void*)&pl0); // takes < 100 us to pthread_create() a thread
-
-        pl1.vec_a = vec_a;
-        pl1.vec_b = vec_b;
-        pl1.sum = 0;
-        pl1.arr_size = arr_size / 8;
-        pl1.offset = arr_size / 8 * 1;
-        pthread_create(&tid1, NULL, _my_dot_product_job, (void*)&pl1);
-
-        pl2.vec_a = vec_a;
-        pl2.vec_b = vec_b;
-        pl2.sum = 0;
-        pl2.arr_size = arr_size / 8;
-        pl2.offset = arr_size / 8 * 2;
-        pthread_create(&tid2, NULL, _my_dot_product_job, (void*)&pl2);
-
-        pl3.vec_a = vec_a;
-        pl3.vec_b = vec_b;
-        pl3.sum = 0;
-        pl3.arr_size = arr_size / 8;
-        pl3.offset = arr_size / 8 * 3;
-        pthread_create(&tid3, NULL, _my_dot_product_job, (void*)&pl3);
-        pl0.vec_a = vec_a;
-        pl0.vec_b = vec_b;
-        pl0.sum = 0;
-        pl0.arr_size = arr_size / 8;
-        pl0.offset = 0;
-        pthread_create(&tid0, NULL, _my_dot_product_job, (void*)&pl0); // takes < 100 us to pthread_create() a thread
-
-        pl1.vec_a = vec_a;
-        pl1.vec_b = vec_b;
-        pl1.sum = 0;
-        pl1.arr_size = arr_size / 8;
-        pl1.offset = arr_size / 8 * 1;
-        pthread_create(&tid1, NULL, _my_dot_product_job, (void*)&pl1);
-
-        pl2.vec_a = vec_a;
-        pl2.vec_b = vec_b;
-        pl2.sum = 0;
-        pl2.arr_size = arr_size / 8;
-        pl2.offset = arr_size / 8 * 2;
-        pthread_create(&tid2, NULL, _my_dot_product_job, (void*)&pl2);
-
-        pl3.vec_a = vec_a;
-        pl3.vec_b = vec_b;
-        pl3.sum = 0;
-        pl3.arr_size = arr_size / 8;
-        pl3.offset = arr_size / 8 * 3;
-        pthread_create(&tid3, NULL, _my_dot_product_job, (void*)&pl3);
-
-        pl4.vec_a = vec_a;
-        pl4.vec_b = vec_b;
-        pl4.sum = 0;
-        pl4.arr_size = arr_size / 8;
-        pl4.offset = arr_size / 8 * 4;
-        pthread_create(&tid4, NULL, _my_dot_product_job, (void*)&pl4); // takes < 100 us to pthread_create() a thread
-
-        pl5.vec_a = vec_a;
-        pl5.vec_b = vec_b;
-        pl5.sum = 0;
-        pl5.arr_size = arr_size / 8;
-        pl5.offset = arr_size / 8 * 5;
-        pthread_create(&tid5, NULL, _my_dot_product_job, (void*)&pl5);
-
-        pl6.vec_a = vec_a;
-        pl6.vec_b = vec_b;
-        pl6.sum = 0;
-        pl6.arr_size = arr_size / 8;
-        pl6.offset = arr_size / 8 * 6;
-        pthread_create(&tid6, NULL, _my_dot_product_job, (void*)&pl6);
-
-        pl7.vec_a = vec_a;
-        pl7.vec_b = vec_b;
-        pl7.sum = 0;
-        pl7.arr_size = arr_size / 8;
-        pl7.offset = arr_size / 8 * 7;
-        pthread_create(&tid7, NULL, _my_dot_product_job, (void*)&pl7);
-        
-
-        pthread_join(tid0, NULL);
-        pthread_join(tid1, NULL);
-        pthread_join(tid2, NULL);
-        pthread_join(tid3, NULL);
-        pthread_join(tid4, NULL);
-        pthread_join(tid5, NULL);
-        pthread_join(tid6, NULL);
-        pthread_join(tid7, NULL);
-        *sum = pl0.sum + pl1.sum + pl2.sum + pl3.sum + pl4.sum + pl5.sum + pl6.sum + pl7.sum; 
     }
     t1 = get_timestamp_in_microsec();
     return (t1 - t0) / 1000.0;
