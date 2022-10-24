@@ -6,6 +6,7 @@
 struct JobPayload {
     double* vec_a;
     double* vec_b;
-    double* sum;
+    double sum;
     int64_t arr_size;
+    int64_t offset;
 };
