@@ -22,48 +22,48 @@ approaching the hard limit of memory bandwidth.
 ```
 >>> py main.py 
 Generating two vectors, each with 0.1K random doubles...
-numpy:             product = 25.92156, takes 0.05 (ms, per Python) / NA    (ms, per C)
-mkl_dot_product(): product = 25.92156, takes 2.64 (ms, per Python) / 2.57 (ms, per C)
-my_dot_product():  product = 25.92156, takes 0.09 (ms, per Python) / 0.00 (ms, per C)
+numpy:             product = 23.07125, takes 0.04 (ms, per Python) / NA    (ms, per C)
+mkl_dot_product(): product = 23.07125, takes 2.65 (ms, per Python) / 2.59 (ms, per C)
+my_dot_product():  product = 23.07125, takes 0.05 (ms, per Python) / 0.00 (ms, per C)
 
 Generating two vectors, each with 1.0K random doubles...
-numpy:             product = 243.82504, takes 0.02 (ms, per Python) / NA    (ms, per C)
-mkl_dot_product(): product = 243.82504, takes 0.06 (ms, per Python) / 0.00 (ms, per C)
-my_dot_product():  product = 243.82504, takes 0.05 (ms, per Python) / 0.00 (ms, per C)
+numpy:             product = 245.19251, takes 0.02 (ms, per Python) / NA    (ms, per C)
+mkl_dot_product(): product = 245.19251, takes 0.05 (ms, per Python) / 0.00 (ms, per C)
+my_dot_product():  product = 245.19251, takes 0.05 (ms, per Python) / 0.00 (ms, per C)
 
 Generating two vectors, each with 10.0K random doubles...
-numpy:             product = 2,463.13575, takes 0.03 (ms, per Python) / NA    (ms, per C)
-mkl_dot_product(): product = 2,463.13575, takes 0.06 (ms, per Python) / 0.01 (ms, per C)
-my_dot_product():  product = 2,463.13575, takes 0.06 (ms, per Python) / 0.00 (ms, per C)
+numpy:             product = 2,512.47507, takes 0.03 (ms, per Python) / NA    (ms, per C)
+mkl_dot_product(): product = 2,512.47507, takes 0.06 (ms, per Python) / 0.01 (ms, per C)
+my_dot_product():  product = 2,512.47507, takes 0.06 (ms, per Python) / 0.01 (ms, per C)
 
 Generating two vectors, each with 100.0K random doubles...
-numpy:             product = 25,061.59725, takes 0.11 (ms, per Python) / NA    (ms, per C)
-mkl_dot_product(): product = 25,061.59725, takes 0.10 (ms, per Python) / 0.05 (ms, per C)
-my_dot_product():  product = 12,476.10601, takes 0.18 (ms, per Python) / 0.13 (ms, per C)
+numpy:             product = 24,965.81085, takes 0.12 (ms, per Python) / NA    (ms, per C)
+mkl_dot_product(): product = 24,965.81085, takes 0.11 (ms, per Python) / 0.05 (ms, per C)
+my_dot_product():  product = 24,965.81085, takes 0.29 (ms, per Python) / 0.23 (ms, per C)
 
 Generating two vectors, each with 1,000.0K random doubles...
-numpy:             product = 250,247.87103, takes 8.21 (ms, per Python) / NA    (ms, per C)
-mkl_dot_product(): product = 250,247.87103, takes 0.66 (ms, per Python) / 0.61 (ms, per C)
-my_dot_product():  product = 125,036.85575, takes 0.56 (ms, per Python) / 0.47 (ms, per C)
+numpy:             product = 249,890.37412, takes 0.64 (ms, per Python) / NA    (ms, per C)
+mkl_dot_product(): product = 249,890.37412, takes 0.71 (ms, per Python) / 0.65 (ms, per C)
+my_dot_product():  product = 249,890.37412, takes 0.79 (ms, per Python) / 0.72 (ms, per C)
 
 Generating two vectors, each with 10,000.0K random doubles...
-numpy:             product = 2,500,641.08617, takes 8.51 (ms, per Python) / NA    (ms, per C)
-mkl_dot_product(): product = 2,500,641.08617, takes 8.72 (ms, per Python) / 8.66 (ms, per C)
-my_dot_product():  product = 2,500,641.08617, takes 7.62 (ms, per Python) / 7.55 (ms, per C)
+numpy:             product = 2,499,917.35075, takes 8.96 (ms, per Python) / NA    (ms, per C)
+mkl_dot_product(): product = 2,499,917.35075, takes 10.48 (ms, per Python) / 10.42 (ms, per C)
+my_dot_product():  product = 2,499,917.35075, takes 8.84 (ms, per Python) / 8.77 (ms, per C)
 
 Generating two vectors, each with 100,000.0K random doubles...
-numpy:             product = 25,002,481.35212, takes 79.72 (ms, per Python) / NA    (ms, per C)
-mkl_dot_product(): product = 25,002,481.35212, takes 86.20 (ms, per Python) / 86.13 (ms, per C)
-my_dot_product():  product = 25,002,481.35212, takes 86.23 (ms, per Python) / 86.16 (ms, per C)
+numpy:             product = 25,001,304.15563, takes 85.22 (ms, per Python) / NA    (ms, per C)
+mkl_dot_product(): product = 25,001,304.15563, takes 90.38 (ms, per Python) / 90.31 (ms, per C)
+my_dot_product():  product = 25,001,304.15563, takes 83.13 (ms, per Python) / 83.06 (ms, per C)
 
 Generating two vectors, each with 200,000.0K random doubles...
-numpy:             product = 49,997,609.56441, takes 184.45 (ms, per Python) / NA    (ms, per C)
-mkl_dot_product(): product = 49,997,609.56441, takes 182.33 (ms, per Python) / 182.25 (ms, per C)
-my_dot_product():  product = 49,997,609.56441, takes 161.26 (ms, per Python) / 161.18 (ms, per C)
+numpy:             product = 50,003,564.82433, takes 163.21 (ms, per Python) / NA    (ms, per C)
+mkl_dot_product(): product = 50,003,564.82433, takes 180.64 (ms, per Python) / 180.56 (ms, per C)
+my_dot_product():  product = 50,003,564.82434, takes 160.70 (ms, per Python) / 160.62 (ms, per C)
 
 Generating two vectors, each with 300,000.0K random doubles...
-numpy:             product = 75,003,193.53317, takes 235.61 (ms, per Python) / NA    (ms, per C)
-mkl_dot_product(): product = 75,003,193.53317, takes 277.15 (ms, per Python) / 277.07 (ms, per C)
-my_dot_product():  product = 75,003,193.53317, takes 220.65 (ms, per Python) / 220.58 (ms, per C)
+numpy:             product = 74,993,455.11691, takes 246.62 (ms, per Python) / NA    (ms, per C)
+mkl_dot_product(): product = 74,993,455.11692, takes 282.95 (ms, per Python) / 282.88 (ms, per C)
+my_dot_product():  product = 74,993,455.11691, takes 232.27 (ms, per Python) / 232.20 (ms, per C)
 
 ```
