@@ -11,7 +11,12 @@ CHAR_COL_BUF_SIZE = 64
 so_file = "./shm_reader.so"
 shm_reader = ctypes.CDLL(so_file)
 
-shm_reader.read_shm.argtypes = [ctypes.POINTER(ctypes.c_int), ctypes.POINTER(ctypes.c_double), ctypes.POINTER(ctypes.c_char), ctypes.c_int]
+shm_reader.read_shm.argtypes = [
+    ctypes.POINTER(ctypes.c_int),
+    ctypes.POINTER(ctypes.c_double),
+    ctypes.POINTER(ctypes.c_char),
+    ctypes.c_int
+]
 shm_reader.read_shm.restype =  ctypes.c_int
 
 
@@ -24,18 +29,20 @@ chr_arr_c = (ctypes.c_char * (MAX_LINE_COUNT * CHAR_COL_BUF_SIZE))()
 while True:
     
     retval = shm_reader.read_shm(int_arr_c, dbl_arr_c, chr_arr_c, ctypes.c_int(MAX_LINE_COUNT))
-    str_col = [CHAR_COL_BUF_SIZE] * retval
-
-    for i in range(retval):
-        str_col[i] = chr_arr_c[i * CHAR_COL_BUF_SIZE : (i+1) * CHAR_COL_BUF_SIZE].decode('utf-8').rstrip('\0')
 
     d = {
         'int_col': np.frombuffer(int_arr_c, dtype=np.int32, count=retval),
         'dbl_col': np.frombuffer(dbl_arr_c, dtype=np.double, count=retval),
-        'chr_col': np.array(str_col)
+        'chr_col': np.frombuffer(chr_arr_c[0: retval* CHAR_COL_BUF_SIZE], dtype=f'S{CHAR_COL_BUF_SIZE}')
+        # Note that numpy is developed in C as well!
+        # np.frombuffer(): Interpret a buffer as a 1-dimensional array.
+        # conincidentally, numpy and shm_reader.so organize memory in exactly the same way.
+
+        # In a sense, we have already partially implemented pd.DataFrame in shm_writer.c/shm_reader.c
     }
 
     df = pd.DataFrame(d)
+    df['chr_col'] = df['chr_col'].str.decode("utf-8")
     print(f'[{dt.datetime.now(dt.timezone.utc).timestamp()}] pd.DataFrame()@shm_reader.py returned')
     print(df)
     time.sleep(5)

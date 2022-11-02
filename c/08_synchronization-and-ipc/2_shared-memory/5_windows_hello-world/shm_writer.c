@@ -39,7 +39,7 @@ int main()
                         0,
                         0,
                         SHM_SIZE);
-
+   // |                4096bytes              |
    if (memptr == NULL) {
       fprintf(stderr, "Could not map view of file (%ld).\n", GetLastError());
       CloseHandle(fd);

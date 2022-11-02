@@ -41,7 +41,7 @@ hi_los = [
 idx = 0
 
 while True:
-    time.sleep(5)
+    time.sleep(1)
     hi = hi_los[idx][0]
     lo = hi_los[idx][1]
     idx += 1

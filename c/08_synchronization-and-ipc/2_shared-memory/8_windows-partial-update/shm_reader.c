@@ -61,6 +61,8 @@ int read_shm(int* int_arr_ptr, char* dt_arr_ptr, double* dbl_arr_ptr, char* chr_
         lo = 0;
     } else {
         slice_line_count = (hi - lo + 1);
+
+        
         memcpy(int_arr_ptr, (char*)memptr + sizeof(size_t) + lo * sizeof(int),  slice_line_count * sizeof(int));
         memcpy( dt_arr_ptr, (char*)memptr + sizeof(size_t) + total_line_count * (sizeof(int)                                 ) + lo * char_col_size, slice_line_count * char_col_size);
         memcpy(dbl_arr_ptr, (char*)memptr + sizeof(size_t) + total_line_count * (sizeof(int) + char_col_size                 ) + lo * sizeof(double), slice_line_count * sizeof(double));

@@ -69,6 +69,9 @@ int read_shm(int* int_arr_ptr, int* dbl_arr_ptr,  char* chr_arr_ptr, int length)
    memcpy(int_arr_ptr, (char*)memptr + sizeof(size_t), line_count * sizeof(int));
    memcpy(dbl_arr_ptr, (char*)memptr + sizeof(size_t) + line_count * sizeof(int), line_count * sizeof(double));
    memcpy(chr_arr_ptr, (char*)memptr + sizeof(size_t) + line_count * sizeof(int) + line_count * sizeof(double), line_count * sizeof(char) * CHAR_COL_BUF_SIZE);
+   /* Memory scheme
+    * |8 bytes| all ints |         all doubles           |                                              all strings                                        |                    
+    */
    if (!ReleaseSemaphore(
       sem_ptr,  // handle to semaphore
       1,        // increase count by one
