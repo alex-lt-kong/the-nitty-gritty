@@ -109,7 +109,7 @@ int main()
             fprintf(stderr, "WaitForSingleObject() returns unknown value: %d\n", retval);
             break;
         }
-        int rnd_int = (((short)rand() << 8) + rand()) % MAX_LINE_COUNT;
+        int rnd_int = ((rand() << 8) + rand()) % MAX_LINE_COUNT;
         double rnd_dbl = ((double)rand() * (10 - (-10)) ) / (double)RAND_MAX + (-10);
         memoffset = rnd_int;
         int_col_offset = (unsigned char*)memptr + sizeof(line_count) + memoffset * sizeof(int);

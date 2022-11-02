@@ -44,6 +44,8 @@ confidently.
     ```
 
 * The `restrict` keyword.
+    * The idea is roughly the same--by adding this type qualifier, a programmer hints to the compiler that
+    for the lifetime of the pointer, no other pointer will be used to access the object to which it points.
     * It is defined in the C99 standard. If the declaration of intent is not followed and the object
     is accessed by an independent pointer, this will result in undefined behavior.
     * To use the keyword, first enable the `-fopt-info-vec-missed` option (in the case of `gcc`) to examine which

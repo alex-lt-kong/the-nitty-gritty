@@ -101,7 +101,7 @@ int main()
                 memcpy((unsigned char*)memptr + sizeof(line_count) + sizeof(int) * line_count, dbl_col_ptr, sizeof(double) * line_count);
                 memcpy((unsigned char*)memptr + sizeof(line_count) + sizeof(int) * line_count+ sizeof(double) * line_count, chr_col_ptr, sizeof(char) * line_count * CHAR_COL_BUF_SIZE);
                 /* Memory scheme
-                 * |8 bytes| all ints |         all doubles           |                                              all strings                                        |
+                 * |8 bytes| all ints |         all doubles           |                                              all strings                                        |                    
                 */
                 printf(
                     "[%.6lf] %llu KB of data loaded from files, shared memory size is %u KB\n",
