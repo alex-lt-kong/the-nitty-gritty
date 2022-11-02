@@ -16,6 +16,7 @@ is something most likely to be useful.
     ```
     export LD_PRELOAD=/opt/intel/oneapi/mkl/latest/lib/intel64/libmkl_core.so:/opt/intel/oneapi/mkl/latest/lib/intel64/libmkl_sequential.so
     ```
+
     * `INTEL MKL ERROR: ...libmkl_vml_avx2.so.2: undefined symbol: mkl_blas4vml_dptrmm.`,
     may consider this per [this link](https://stackoverflow.com/a/48195671/19634193): 
     ```
@@ -27,5 +28,6 @@ is something most likely to be useful.
   [an online tool](https://www.intel.com/content/www/us/en/developer/tools/oneapi/onemkl-link-line-advisor.html)
   to tweak them anyway...
 
-* `numpy` usually uses an accelerated linear algebra library to improve performance--typically either Intel MKL or OpenBLAS.
-To check which library it is actually using, issue `np.show_config()`
+* According to `numpy`'s [document](https://numpy.org/install/#numpy-packages--accelerated-linear-algebra-libraries),
+it usually uses an accelerated linear algebra library to improve performance--typically
+either OpenBLAS or Intel MKL. To check which library it is actually using, issue `np.show_config()`

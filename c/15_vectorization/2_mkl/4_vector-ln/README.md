@@ -1,4 +1,4 @@
-# Intel oneMKL
+# Compute natural logarithm of vector elements
 
 ```
 >>> py main.py 

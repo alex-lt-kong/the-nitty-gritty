@@ -1,4 +1,4 @@
-# Intel oneMKL
+# Compute a vector-vector dot product.
 
 * It is very likely that the dot product calculation is memory-bound--given the size of the data and the predictable
 pattern, prefetchers/caching should have already been fully operational. Perhaps we are
