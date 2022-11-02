@@ -16,7 +16,7 @@ int main() {
   uint8_t sum = 0;
   double delta, t0;
   size_t idx;
-  for (size_t step = 1; step < 2049; ++step) {
+  for (size_t step = 1; step < (8192) + 1; ++step) {
     timespec_get(&ts, TIME_UTC);
     t0 = ts.tv_sec + ts.tv_nsec / 1000.0 / 1000.0 / 1000.0;
     idx = 0;
