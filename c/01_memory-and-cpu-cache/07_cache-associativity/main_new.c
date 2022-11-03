@@ -4,9 +4,9 @@
 #include <time.h>
 #include <string.h>
 
-#define CACHE_SIZE       (32*1024*1024UL) // MUST be a power of 2
-#define CACHE_LINE_SIZE  64              // MUST be a power of 2
-#define MAX_STEP         8192            // MUST be a power of 2
+#define CACHE_SIZE       (8*1024*1024)    // MUST be a power of 2
+#define CACHE_LINE_SIZE  64               // MUST be a power of 2
+#define MAX_STEP         8192             // MUST be a power of 2
 #define ACCESSES         123435
 
 int main() {
@@ -25,7 +25,7 @@ int main() {
         exit(EXIT_FAILURE);
     }
 
-    for (uint64_t step = CACHE_LINE_SIZE; step <= MAX_STEP; step += 2) {
+    for (uint64_t step = CACHE_LINE_SIZE; step <= MAX_STEP; ++step) { // First revision
 
         test_size = (CACHE_SIZE / CACHE_LINE_SIZE) * step;
         test_size_mask = test_size - 1;
@@ -37,13 +37,7 @@ int main() {
             arr[idx] += step;
             sum += arr[idx];
             //idx = (idx + step) & test_size_mask;
-            idx = (idx + step) % test_size;
-           // if (((idx + step) & test_size_mask) != ((idx + step) % test_size)) {
-           //     printf(
-             //       "%lu vs %lu, test_size == %lu\n",
-                 //   ((idx + step) & test_size_mask), ((idx + step) % test_size), test_size
-               // );
-            //}
+            idx = (idx + step) % test_size;  // Second revision
         }
 
         timespec_get(&ts, TIME_UTC);
