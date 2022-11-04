@@ -38,7 +38,7 @@ stride: 4,      0.000011683,           0
 ### icc
 
 * 1st loop:
-```
+```Assembly
   for (int i = 0; i < ARR_SIZE; ++i) {
   401548:       83 c6 08                add    esi,0x8
     c1[i] += a[i] * b[i];

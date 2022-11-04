@@ -21,7 +21,7 @@
 ## Caveat
 
 * Compilers may not be able to vectorize the below loop, even if it does not appear to have any data dependency.
-```
+```C
 for (i = 0; i < size; i++) {
   c[i] = a[i] * b[i];
 }
@@ -31,7 +31,7 @@ for (i = 0; i < size; i++) {
 there is no way for a compiler to be sure if there are some overlaps among these memory blocks.
 
 * If we are sure there will never be data denepdency issues, we may hint compilers like the follows:
-```
+```C
 if defined( __INTEL_COMPILER)
 #pragma ivdep
 // Pragmas are specific for the compiler and platform in use. So the best bet is to look at compiler's documentation.

@@ -2,7 +2,7 @@
 
 * The concept of cache associativity is that let's say CPU wants to load a cache line from main memory from
 cache memory, and the cache line can only be stored in a few places of the cache, depending on its physical address. 
-A few informative videos explain this in a comprehensive manner:
+A few informative videos comprehensively explain this:
   * [Introduction to Cache Memory](https://www.youtube.com/watch?v=Ez_kyBS-y5w)
   * [Direct Memory Mapping](https://www.youtube.com/watch?v=V_QS1HzJ8Bc)
   * [Associative Mapping](https://www.youtube.com/watch?v=uwnsMaH-iV0)
@@ -29,6 +29,8 @@ depends on a hash of the physical address and not the raw address) breaks the ex
   * However, while users from [this post](https://stackoverflow.com/questions/74260504/why-i-cant-observe-the-effect-of-4-8-way-set-associative-cache-in-my-test-code/74261276?noredirect=1#comment131171636_74261276)
   mentioned about address swizzling, I failed to find a public Intel document that
   discloses how it is done. (Though a [patent application](https://patents.google.com/patent/US20150089183A1/en)
+  * A paper titled [Systematic Reverse Engineering of Cache Slice Selection in Intel Processors](https://eprint.iacr.org/2015/690.pdf)
+  seems to confirm that Intel doesn't make the details of its address swizzling public.
 
 * This is yet another case of why we should be extremely careful when formulating and theorizing optimization
 techniques--general understanding of how things work could diverge so greatly from the reality that
