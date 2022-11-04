@@ -22,22 +22,20 @@ arr_sizes = np.array(
 
 for arr_size in arr_sizes:
   print(f"Generating vector vec_in with {arr_size / 1_000:,}K random doubles...")
-  vec_in_master = np.random.random((arr_size,))
+  vec_in = np.random.random((arr_size,))
   rnd_idx = random.randint(0, arr_size - 1)
 
   time.sleep(1)
-  vec_in = vec_in_master.copy()
   vec_out = np.empty((arr_size, ), dtype=np.double)
   t0 = time.time()
   vec_out = np.log(vec_in)
   t1 = time.time()
   print(
-      f'numpy:    vec_out[{rnd_idx:,}] = {vec_out[rnd_idx]:,.5f}, '
+      f'numpy:    vec_out[{rnd_idx:,}] = ln({vec_in[rnd_idx]:,.5f}) = {vec_out[rnd_idx]:,.5f}, '
       f'takes {(t1 - t0) * 1000:8,.2f} (ms, per Python) /       NA (ms, per C)'
   )
 
   time.sleep(1)
-  vec_in = vec_in_master.copy()
   vec_out = np.empty((arr_size, ), dtype=np.double)
   t0 = time.time()
   elpased_ms = func.my_ln(
@@ -45,12 +43,11 @@ for arr_size in arr_sizes:
   )
   t1 = time.time()
   print(
-      f'my_ln():  vec_out[{rnd_idx:,}] = {vec_out[rnd_idx]:,.5f}, '
+      f'my_ln():  vec_out[{rnd_idx:,}] = ln({vec_in[rnd_idx]:,.5f}) = {vec_out[rnd_idx]:,.5f}, '
       f'takes {(t1 - t0) * 1000:8,.2f} (ms, per Python) / {elpased_ms:8,.2f} (ms, per C)'
   )
 
   time.sleep(1)
-  vec_in = vec_in_master.copy()
   vec_out = np.empty((arr_size, ), dtype=np.double)
   t0 = time.time()
   elpased_ms = func.mkl_ln(
@@ -58,7 +55,7 @@ for arr_size in arr_sizes:
   )
   t1 = time.time()
   print(
-      f'mkl_ln(): vec_out[{rnd_idx:,}] = {vec_out[rnd_idx]:,.5f}, '
+      f'mkl_ln(): vec_out[{rnd_idx:,}] = ln({vec_in[rnd_idx]:,.5f}) = {vec_out[rnd_idx]:,.5f}, '
       f'takes {(t1 - t0) * 1000:8,.2f} (ms, per Python) / {elpased_ms:8,.2f} (ms, per C)'
   )
 
