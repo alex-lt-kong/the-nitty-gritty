@@ -30,7 +30,7 @@ for (i = 0; i < size; i++) {
 * The issue is that, if we pass `a`, `b` and `c` as three pointers, instead of `malloc()`ing memory to them in-place,
 there is no way for a compiler to be sure if there are some overlaps among these memory blocks.
 
-* If we are sure there will never be data denepdency issues, we may hint compilers like the follows:
+* If we are sure there will never be data dependency issues, we may hint compilers like the follows:
 ```C
 if defined( __INTEL_COMPILER)
 #pragma ivdep
