@@ -10,6 +10,7 @@
         "stdlib.h": "c",
         "utils.h": "c",
         "semaphore.h": "c",
-        "types.h": "c"
+        "types.h": "c",
+        "iostream": "cpp"
     }
 }
