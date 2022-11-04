@@ -75,8 +75,8 @@ stride: 4,      0.000011683,           0
   }
 ```
 * 2nd loop:
-```
-const int stride = 4;
+```Assembly
+  const int stride = 4;
   for (int i = 0; i < ARR_SIZE; i += stride) {
   401651:       33 c0                   xor    eax,eax
   t0 = ts.tv_sec + ts.tv_nsec / 1000.0 / 1000.0 / 1000.0;
@@ -101,7 +101,7 @@ const int stride = 4;
 
 ### gcc
 * 1st loop:
-```
+```Assembly
   for (int i = 0; i < ARR_SIZE; ++i) {
     1193:       0f 1f 44 00 00          nop    DWORD PTR [rax+rax*1+0x0]
     c1[i] += a[i] * b[i];
@@ -128,7 +128,7 @@ const int stride = 4;
   }
 ```
 * 2nd loop:
-```
+```Assembly
   const int stride = 4;
   for (int i = 0; i < ARR_SIZE; i += stride) {
     12c8:       0f 1f 84 00 00 00 00    nop    DWORD PTR [rax+rax*1+0x0]
