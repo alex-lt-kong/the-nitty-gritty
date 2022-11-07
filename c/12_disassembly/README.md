@@ -49,7 +49,7 @@ rather than `0xDE`.
 
 ### Notes
 
-* In a typical assembly line, `opcode operand1 operand2`, which is `operand1` or `operand2` source or destination?
+* In a typical assembly line, `opcode operand1, operand2`, which is source and which is destination?
 Let's use `mov` as an example.
     * `mov dst, src` is called Intel syntax. (e.g. mov eax, 123)
     * `mov src, dst` is called AT&T syntax. (e.g. mov $123, %eax)
@@ -70,7 +70,7 @@ Let's use `mov` as an example.
 
 * [x64 Cheat Sheet](https://cs.brown.edu/courses/cs033/docs/guides/x64_cheatsheet.pdf)
 
-* x86 instruction reference: https://www.felixcloutier.com/x86/<opcode>
+* [x86 instruction reference](https://www.felixcloutier.com/x86/): `https://www.felixcloutier.com/x86/<opcode here>`
 
 ## Common compiler tricks
 
