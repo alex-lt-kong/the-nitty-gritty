@@ -122,7 +122,7 @@ int main() {
     1126:	e8 95 01 00 00       	call   12c0 <std::basic_ostream<char, std::char_traits<char> >& std::endl<char, std::char_traits<char> >(std::basic_ostream<char, std::char_traits<char> >&) [clone .isra.0]>
     
     double max_dbl;
-    double a_dbl = (double)rand() / rand(), b_dbl = (double)rand() / rand();
+    double a_dbl = (double)rand() / rand();
     112b:	e8 10 ff ff ff       	call   1040 <rand@plt>
     1130:	89 c3                	mov    ebx,eax
     1132:	e8 09 ff ff ff       	call   1040 <rand@plt>
@@ -132,6 +132,7 @@ int main() {
     1143:	f2 0f 2a c3          	cvtsi2sd xmm0,ebx
     1147:	f2 0f 5e c1          	divsd  xmm0,xmm1
     114b:	f2 0f 11 44 24 08    	movsd  QWORD PTR [rsp+0x8],xmm0
+    double b_dbl = (double)rand() / rand();
     1151:	e8 ea fe ff ff       	call   1040 <rand@plt>
     1156:	89 c3                	mov    ebx,eax
     1158:	e8 e3 fe ff ff       	call   1040 <rand@plt>
@@ -139,7 +140,7 @@ int main() {
     1161:	66 0f ef d2          	pxor   xmm2,xmm2
     return a > b ? a : b;
     1165:	f2 0f 10 44 24 08    	movsd  xmm0,QWORD PTR [rsp+0x8]
-    double a_dbl = (double)rand() / rand(), b_dbl = (double)rand() / rand();
+    double b_dbl = (double)rand() / rand();
     116b:	f2 0f 2a d0          	cvtsi2sd xmm2,eax
        *  These functions use the stream's current locale (specifically, the
        *  @c num_get facet) to perform numeric formatting.

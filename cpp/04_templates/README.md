@@ -86,7 +86,7 @@ machine code level.
 * To overcome the ["as-if" rule](https://en.cppreference.com/w/cpp/language/as_if) trap, in this program
 we make input dynamic--by using the `rand()` function.
 
-* The resultant assembly is closers to what we expect:
+* The resultant assembly code is closer to what we expect:
   ```assembly
       int a_int = rand(), b_int = rand();
       1104:	e8 37 ff ff ff       	call   1040 <rand@plt>
@@ -119,3 +119,55 @@ we make input dynamic--by using the `rand()` function.
     * The `as-if rule` is applies again--the function has been inlined--`g++` may think that it is not worth it
     to call the one-liner function give the extra work needed by making a function call. Instead, it simply
     copies and pastes the function body directly into the `main()` function.
+
+* The `double` version of `my_max()` shows something similar:
+  ```assembly
+    double max_dbl;
+    double a_dbl = (double)rand() / rand();
+    112b:	e8 10 ff ff ff       	call   1040 <rand@plt>
+    1130:	89 c3                	mov    ebx,eax
+    1132:	e8 09 ff ff ff       	call   1040 <rand@plt>
+    1137:	66 0f ef c0          	pxor   xmm0,xmm0
+    113b:	66 0f ef c9          	pxor   xmm1,xmm1
+    113f:	f2 0f 2a c8          	cvtsi2sd xmm1,eax
+    1143:	f2 0f 2a c3          	cvtsi2sd xmm0,ebx
+    1147:	f2 0f 5e c1          	divsd  xmm0,xmm1
+    114b:	f2 0f 11 44 24 08    	movsd  QWORD PTR [rsp+0x8],xmm0
+    double b_dbl = (double)rand() / rand();
+    1151:	e8 ea fe ff ff       	call   1040 <rand@plt>
+    1156:	89 c3                	mov    ebx,eax
+    1158:	e8 e3 fe ff ff       	call   1040 <rand@plt>
+    115d:	66 0f ef c9          	pxor   xmm1,xmm1
+    1161:	66 0f ef d2          	pxor   xmm2,xmm2
+    return a > b ? a : b;
+    1165:	f2 0f 10 44 24 08    	movsd  xmm0,QWORD PTR [rsp+0x8]
+    double b_dbl = (double)rand() / rand();
+    116b:	f2 0f 2a d0          	cvtsi2sd xmm2,eax
+       *  These functions use the stream's current locale (specifically, the
+       *  @c num_get facet) to perform numeric formatting.
+      */
+      __ostream_type&
+      operator<<(double __f)
+      { return _M_insert(__f); }
+    116f:	48 8d 3d 0a 2f 00 00 	lea    rdi,[rip+0x2f0a]        # 4080 <std::cout@@GLIBCXX_3.4>
+    1176:	f2 0f 2a cb          	cvtsi2sd xmm1,ebx
+    117a:	f2 0f 5e ca          	divsd  xmm1,xmm2
+    return a > b ? a : b;
+    117e:	f2 0f 5f c1          	maxsd  xmm0,xmm1
+    1182:	e8 39 ff ff ff       	call   10c0 <std::ostream& std::ostream::_M_insert<double>(double)@plt>
+    1187:	48 89 c7             	mov    rdi,rax
+	return __pf(*this);
+    118a:	e8 31 01 00 00       	call   12c0 <std::basic_ostream<char, std::char_traits<char> >& std::endl<char, std::char_traits<char> >(std::basic_ostream<char, std::char_traits<char> >&) [clone .isra.0]>
+    max_dbl = my_max(a_dbl, b_dbl);
+    cout << max_dbl << endl;
+    return 0;
+    118f:	48 83 c4 10          	add    rsp,0x10
+    1193:	31 c0                	xor    eax,eax
+    1195:	5b                   	pop    rbx
+    1196:	c3                   	ret    
+    1197:	66 0f 1f 84 00 00 00 	nop    WORD PTR [rax+rax*1+0x0]
+    119e:	00 00 
+  ```
+  * While the `double` version is much more complicated, it essentailly does the same:
+    * After generating two random doubles, at `117e`, `xmm0` stores `a_dbl` while `xmm1` stores `b_dbl`.
+    * `call`s something at `10c0`, which is believed to be the `cout` function.
