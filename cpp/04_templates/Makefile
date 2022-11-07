@@ -5,7 +5,7 @@ main: 1_hello-world.out 2_dynamic-input.out
 
 1_hello-world.out: 1_hello-world.cpp
 	g++ -o 1_hello-world.out 1_hello-world.cpp $(OPT)
-	objdump --disassembler-options "intel" --disassemble=main --source 1_hello-world.out > 1_hello-world.asm
+	objdump --disassembler-options "intel" --disassemble=main --demangle --source 1_hello-world.out > 1_hello-world.asm
 
 2_dynamic-input.out: 2_dynamic-input.cpp
 	g++ -o 2_dynamic-input.out 2_dynamic-input.cpp $(OPT)
