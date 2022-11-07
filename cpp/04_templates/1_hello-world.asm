@@ -24,7 +24,7 @@ int main() {
     max_int = my_max(1, 3);
     cout << max_int << endl;
     11f2:	be 03 00 00 00       	mov    esi,0x3
-    11f7:	48 8d 3d c2 2e 00 00 	lea    rdi,[rip+0x2ec2]        # 40c0 <_ZSt4cout@@GLIBCXX_3.4>
+    11f7:	48 8d 3d c2 2e 00 00 	lea    rdi,[rip+0x2ec2]        # 40c0 <std::cout@@GLIBCXX_3.4>
 int main() {
     11fe:	41 56                	push   r14
     1200:	41 55                	push   r13
@@ -44,7 +44,7 @@ int main() {
     1213:	53                   	push   rbx
     1214:	48 81 ec c8 00 00 00 	sub    rsp,0xc8
     cout << max_int << endl;
-    121b:	e8 f0 fe ff ff       	call   1110 <_ZNSolsEi@plt>
+    121b:	e8 f0 fe ff ff       	call   1110 <std::ostream::operator<<(int)@plt>
     1220:	48 89 c7             	mov    rdi,rax
       operator<<(__ostream_type& (*__pf)(__ostream_type&))
       {
@@ -52,7 +52,7 @@ int main() {
 	// DR 60. What is a formatted input function?
 	// The inserters for manipulators are *not* formatted output functions.
 	return __pf(*this);
-    1223:	e8 e8 04 00 00       	call   1710 <_ZSt4endlIcSt11char_traitsIcEERSt13basic_ostreamIT_T0_ES6_.isra.0>
+    1223:	e8 e8 04 00 00       	call   1710 <std::basic_ostream<char, std::char_traits<char> >& std::endl<char, std::char_traits<char> >(std::basic_ostream<char, std::char_traits<char> >&) [clone .isra.0]>
        *  These functions use the stream's current locale (specifically, the
        *  @c num_get facet) to perform numeric formatting.
       */
@@ -61,28 +61,28 @@ int main() {
       { return _M_insert(__f); }
     1228:	f2 0f 10 05 10 0e 00 	movsd  xmm0,QWORD PTR [rip+0xe10]        # 2040 <_IO_stdin_used+0x40>
     122f:	00 
-    1230:	48 8d 3d 89 2e 00 00 	lea    rdi,[rip+0x2e89]        # 40c0 <_ZSt4cout@@GLIBCXX_3.4>
-    1237:	e8 c4 fe ff ff       	call   1100 <_ZNSo9_M_insertIdEERSoT_@plt>
+    1230:	48 8d 3d 89 2e 00 00 	lea    rdi,[rip+0x2e89]        # 40c0 <std::cout@@GLIBCXX_3.4>
+    1237:	e8 c4 fe ff ff       	call   1100 <std::ostream& std::ostream::_M_insert<double>(double)@plt>
     123c:	48 89 c7             	mov    rdi,rax
 	return __pf(*this);
-    123f:	e8 cc 04 00 00       	call   1710 <_ZSt4endlIcSt11char_traitsIcEERSt13basic_ostreamIT_T0_ES6_.isra.0>
+    123f:	e8 cc 04 00 00       	call   1710 <std::basic_ostream<char, std::char_traits<char> >& std::endl<char, std::char_traits<char> >(std::basic_ostream<char, std::char_traits<char> >&) [clone .isra.0]>
     cout << my_max(chr_a, chr_b) << endl;
     1244:	4c 39 e5             	cmp    rbp,r12
     1247:	4c 89 e6             	mov    rsi,r12
-    124a:	48 8d 3d 6f 2e 00 00 	lea    rdi,[rip+0x2e6f]        # 40c0 <_ZSt4cout@@GLIBCXX_3.4>
+    124a:	48 8d 3d 6f 2e 00 00 	lea    rdi,[rip+0x2e6f]        # 40c0 <std::cout@@GLIBCXX_3.4>
     1251:	48 0f 43 f5          	cmovae rsi,rbp
-    1255:	e8 46 fe ff ff       	call   10a0 <_ZStlsISt11char_traitsIcEERSt13basic_ostreamIcT_ES5_PKc@plt>
+    1255:	e8 46 fe ff ff       	call   10a0 <std::basic_ostream<char, std::char_traits<char> >& std::operator<< <std::char_traits<char> >(std::basic_ostream<char, std::char_traits<char> >&, char const*)@plt>
     125a:	48 89 c7             	mov    rdi,rax
-    125d:	e8 ae 04 00 00       	call   1710 <_ZSt4endlIcSt11char_traitsIcEERSt13basic_ostreamIT_T0_ES6_.isra.0>
+    125d:	e8 ae 04 00 00       	call   1710 <std::basic_ostream<char, std::char_traits<char> >& std::endl<char, std::char_traits<char> >(std::basic_ostream<char, std::char_traits<char> >&) [clone .isra.0]>
     
     string a = "Hello";
     1262:	48 8d 7c 24 20       	lea    rdi,[rsp+0x20]
     1267:	48 89 ee             	mov    rsi,rbp
-    126a:	e8 01 04 00 00       	call   1670 <_ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEC2EPKcRKS3_.isra.0>
+    126a:	e8 01 04 00 00       	call   1670 <std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >::basic_string(char const*, std::allocator<char> const&) [clone .isra.0]>
     string b = "World!";
     126f:	48 8d 7c 24 40       	lea    rdi,[rsp+0x40]
     1274:	4c 89 e6             	mov    rsi,r12
-    1277:	e8 f4 03 00 00       	call   1670 <_ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEC2EPKcRKS3_.isra.0>
+    1277:	e8 f4 03 00 00       	call   1670 <std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >::basic_string(char const*, std::allocator<char> const&) [clone .isra.0]>
       _M_length(size_type __length)
       { _M_string_length = __length; }
 
@@ -110,7 +110,7 @@ int main() {
       { _M_construct(__str._M_data(), __str._M_data() + __str.length()); }
     12a1:	48 01 f2             	add    rdx,rsi
           _M_construct(__beg, __end, _Tag());
-    12a4:	e8 d7 04 00 00       	call   1780 <_ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE12_M_constructIPcEEvT_S7_St20forward_iterator_tag.isra.0>
+    12a4:	e8 d7 04 00 00       	call   1780 <void std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >::_M_construct<char*>(char*, char*, std::forward_iterator_tag) [clone .isra.0]>
       { return _M_dataplus._M_p; }
     12a9:	48 8b 74 24 20       	mov    rsi,QWORD PTR [rsp+0x20]
       { _M_construct(__str._M_data(), __str._M_data() + __str.length()); }
@@ -125,7 +125,7 @@ int main() {
       { _M_construct(__str._M_data(), __str._M_data() + __str.length()); }
     12c5:	48 01 f2             	add    rdx,rsi
           _M_construct(__beg, __end, _Tag());
-    12c8:	e8 b3 04 00 00       	call   1780 <_ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE12_M_constructIPcEEvT_S7_St20forward_iterator_tag.isra.0>
+    12c8:	e8 b3 04 00 00       	call   1780 <void std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >::_M_construct<char*>(char*, char*, std::forward_iterator_tag) [clone .isra.0]>
    *  @param __rhs  Second string.
    *  @return  True if @a __lhs follows @a __rhs.  False otherwise.
    */
@@ -227,7 +227,7 @@ int main() {
       // _GLIBCXX_RESOLVE_LIB_DEFECTS
       // 586. string inserter not a formatted function
       return __ostream_insert(__os, __str.data(), __str.size());
-    1399:	48 8d 3d 20 2d 00 00 	lea    rdi,[rip+0x2d20]        # 40c0 <_ZSt4cout@@GLIBCXX_3.4>
+    1399:	48 8d 3d 20 2d 00 00 	lea    rdi,[rip+0x2d20]        # 40c0 <std::cout@@GLIBCXX_3.4>
       { _M_string_length = __length; }
     13a0:	48 89 84 24 a8 00 00 	mov    QWORD PTR [rsp+0xa8],rax
     13a7:	00 
@@ -237,9 +237,9 @@ int main() {
     13b3:	00 
     13b4:	48 8b b4 24 a0 00 00 	mov    rsi,QWORD PTR [rsp+0xa0]
     13bb:	00 
-    13bc:	e8 ff fc ff ff       	call   10c0 <_ZSt16__ostream_insertIcSt11char_traitsIcEERSt13basic_ostreamIT_T0_ES6_PKS3_l@plt>
+    13bc:	e8 ff fc ff ff       	call   10c0 <std::basic_ostream<char, std::char_traits<char> >& std::__ostream_insert<char, std::char_traits<char> >(std::basic_ostream<char, std::char_traits<char> >&, char const*, long)@plt>
     13c1:	48 89 c7             	mov    rdi,rax
-    13c4:	e8 47 03 00 00       	call   1710 <_ZSt4endlIcSt11char_traitsIcEERSt13basic_ostreamIT_T0_ES6_.isra.0>
+    13c4:	e8 47 03 00 00       	call   1710 <std::basic_ostream<char, std::char_traits<char> >& std::endl<char, std::char_traits<char> >(std::basic_ostream<char, std::char_traits<char> >&) [clone .isra.0]>
       { return _M_dataplus._M_p; }
     13c9:	48 8b bc 24 a0 00 00 	mov    rdi,QWORD PTR [rsp+0xa0]
     13d0:	00 
@@ -256,7 +256,7 @@ int main() {
 	  }
 #endif
 	::operator delete(__p
-    13e2:	e8 c9 fc ff ff       	call   10b0 <_ZdlPvm@plt>
+    13e2:	e8 c9 fc ff ff       	call   10b0 <operator delete(void*, unsigned long)@plt>
       { return _M_dataplus._M_p; }
     13e7:	48 8b 7c 24 60       	mov    rdi,QWORD PTR [rsp+0x60]
 	if (!_M_is_local())
@@ -265,7 +265,7 @@ int main() {
       { _Alloc_traits::deallocate(_M_get_allocator(), _M_data(), __size + 1); }
     13f1:	48 8b 44 24 70       	mov    rax,QWORD PTR [rsp+0x70]
     13f6:	48 8d 70 01          	lea    rsi,[rax+0x1]
-    13fa:	e8 b1 fc ff ff       	call   10b0 <_ZdlPvm@plt>
+    13fa:	e8 b1 fc ff ff       	call   10b0 <operator delete(void*, unsigned long)@plt>
       { return _M_dataplus._M_p; }
     13ff:	48 8b bc 24 80 00 00 	mov    rdi,QWORD PTR [rsp+0x80]
     1406:	00 
@@ -276,7 +276,7 @@ int main() {
     140c:	48 8b 84 24 90 00 00 	mov    rax,QWORD PTR [rsp+0x90]
     1413:	00 
     1414:	48 8d 70 01          	lea    rsi,[rax+0x1]
-    1418:	e8 93 fc ff ff       	call   10b0 <_ZdlPvm@plt>
+    1418:	e8 93 fc ff ff       	call   10b0 <operator delete(void*, unsigned long)@plt>
       { return _M_dataplus._M_p; }
     141d:	48 8b 7c 24 40       	mov    rdi,QWORD PTR [rsp+0x40]
 	if (!_M_is_local())
@@ -286,7 +286,7 @@ int main() {
       { _Alloc_traits::deallocate(_M_get_allocator(), _M_data(), __size + 1); }
     142c:	48 8b 44 24 50       	mov    rax,QWORD PTR [rsp+0x50]
     1431:	48 8d 70 01          	lea    rsi,[rax+0x1]
-    1435:	e8 76 fc ff ff       	call   10b0 <_ZdlPvm@plt>
+    1435:	e8 76 fc ff ff       	call   10b0 <operator delete(void*, unsigned long)@plt>
       { return _M_dataplus._M_p; }
     143a:	48 8b 7c 24 20       	mov    rdi,QWORD PTR [rsp+0x20]
 	if (!_M_is_local())
@@ -296,7 +296,7 @@ int main() {
       { _Alloc_traits::deallocate(_M_get_allocator(), _M_data(), __size + 1); }
     1449:	48 8b 44 24 30       	mov    rax,QWORD PTR [rsp+0x30]
     144e:	48 8d 70 01          	lea    rsi,[rax+0x1]
-    1452:	e8 59 fc ff ff       	call   10b0 <_ZdlPvm@plt>
+    1452:	e8 59 fc ff ff       	call   10b0 <operator delete(void*, unsigned long)@plt>
     cout << my_max(a, b) << endl;
     return 0;
     1457:	48 81 c4 c8 00 00 00 	add    rsp,0xc8
@@ -343,7 +343,7 @@ int main() {
     14b4:	48 8d bc 24 a0 00 00 	lea    rdi,[rsp+0xa0]
     14bb:	00 
     14bc:	31 d2                	xor    edx,edx
-    14be:	e8 6d fc ff ff       	call   1130 <_ZNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEE9_M_createERmm@plt>
+    14be:	e8 6d fc ff ff       	call   1130 <std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >::_M_create(unsigned long&, unsigned long)@plt>
       { _M_dataplus._M_p = __p; }
     14c3:	48 89 84 24 a0 00 00 	mov    QWORD PTR [rsp+0xa0],rax
     14ca:	00 
@@ -378,7 +378,7 @@ int main() {
     1509:	e9 32 fe ff ff       	jmp    1340 <main+0x150>
 	  std::__throw_logic_error(__N("basic_string::"
     150e:	48 8d 3d f3 0a 00 00 	lea    rdi,[rip+0xaf3]        # 2008 <_IO_stdin_used+0x8>
-    1515:	e8 56 fb ff ff       	call   1070 <_ZSt19__throw_logic_errorPKc@plt>
+    1515:	e8 56 fb ff ff       	call   1070 <std::__throw_logic_error(char const*)@plt>
       { return _M_dataplus._M_p; }
     151a:	48 89 c3             	mov    rbx,rax
     151d:	e9 2e fc ff ff       	jmp    1150 <main.cold>

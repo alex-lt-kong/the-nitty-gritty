@@ -7,6 +7,11 @@ To dissamble a binary file to assembly code:
 * Dissamble only a function from a binary file:
     * `gdb`: `gdb --quiet --eval-command="set disassembly-flavor intel" --eval-command="disassemble /m <func name>" --batch <exe name>`.
     * `objdump`: `objdump --disassembler-options "intel" --disassemble=<func name> -S <exe name>`.
+* For C++, add `--demangle` to `objdump` to decode (a.k.a. demangle) low-level symbol names into user-level
+human-friendly names.
+    * Name mangling is the encoding of function and variable names into unique names so that linkers can separate
+    common names in the language. Name mangling is commonly used to facilitate the overloading feature and
+    visibility within different scopes.
 
 ## x86-64 register fundamentals
 

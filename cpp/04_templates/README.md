@@ -46,9 +46,9 @@ definitions for different data types is a nightmare. To awkwardly achieve the sa
   for different data types.
   * Well one can argue that quick sort isn't really complicated ¯\\_(ツ)_/¯
 
-* In C++, it is done with templates as shown [here](./1_hello-world.cpp). At first glance, it is plain and simple--
-`template<typename T>` is used to designate a "to-be-specified" data type. When a caller calls the function, the
-type is specified and the function runs smoothly.
+* In C++, it is done with templates as shown in [1_hello-world.cpp](./1_hello-world.cpp).
+At first glance, it is plain and simple--`template<typename T>` is used to designate a "to-be-specified"
+data type. When a caller calls the function, the type is specified and the function runs smoothly.
   * Well as always, the devil is in the details. The C++'s way is more than meets the eye...
   * Here we prepared a few demo programs to reveal how templates work.
 
@@ -65,7 +65,8 @@ type is specified and the function runs smoothly.
   max_int = my_max(1, 3);
   cout << max_int << endl;
   11f2:	be 03 00 00 00       	mov    esi,0x3
-  11f7:	48 8d 3d c2 2e 00 00 	lea    rdi,[rip+0x2ec2]        # 40c0 <_ZSt4cout@@GLIBCXX_3.4>
+  ...
+  121b:	e8 f0 fe ff ff       	call   1110 <std::ostream::operator<<(int)@plt>
   ```
   One can observe that there is no function calls at all! All the machine code does is put `0x3` to the
   `esi` register and call `cout` to print it.
@@ -73,18 +74,18 @@ type is specified and the function runs smoothly.
   `my_max()` function in runtime again and again? Let's just print `3`. Brilliant!
 
 * To summarize, in `1_hello-world.cpp`, we demonstrated how templates are written in C++'s source code--but after
-`g++`'s optimization, the `my_max()` function and all the templates stuff are nowhere to be found on the
+`g++`'s optimization, the `my_max()` function and all the templates stuff are nowhere to be found at the
 machine code level.
   * This is also one of the key reasons why C++ can be almost as fast as C--while it adds a lot of useful abstraction
   on top of C, at the bare metal level, all the abstraction goes away and the machine code should, hopefully, be
   as good as C (or, as good as "as-if" such abstraction never has existed).
   * This is also one reasons why C++ is usually slightly slower then C--some of its abstraction is
-  difficult or impossible to be optmize away, dragging the performance down a bit.
+  difficult or impossible to be optmized away, dragging the performance down a bit.
 
 ## [2_dynamic-input.cpp](./2_dynamic-input.cpp):
 
-* To overcome the ["as-if" rule](https://en.cppreference.com/w/cpp/language/as_if) trap, in this program
-we make input dynamic--by using the `rand()` function.
+* To overcome the ["as-if"](https://en.cppreference.com/w/cpp/language/as_if) trap, in this program
+we make input dynamic by using the `rand()` function.
 
 * The resultant assembly code is closer to what we expect:
   ```assembly
@@ -102,13 +103,13 @@ we make input dynamic--by using the `rand()` function.
   ```
   * It is good to know that we finally have a `cmp` instruction:
 
-    0. It `call`s `rand()` at 1040 and the return value is stored in `eax`.
+    0. It `call`s `rand()` at `1040` and the return value is stored in `eax`.
     0. It `mov`s value in `eax` to `ebx` to make place for the 2nd `rand()` call.
     0. It `call`s `rand()` again, storing the value in `eax`
     0. It `cmp`s `ebx` and `eax` and sets [`FLAGS` register](https://en.wikipedia.org/wiki/FLAGS_register) accordingly.
     0. It `cmovge`s, i.e., it conditionally moves value from source register to destination register
     by checking the value of a `FLAGS` register (probably the SF register)
-    0. It `call`s `<<` at 10d0 to print the result in `esi` to stdout.
+    0. It `call`s `<<` at `10d0` to print the result in `esi` to stdout.
     0. The above operations are doing essentially this:
     ```C
     int a_int = rand(), b_int = rand();
@@ -116,8 +117,8 @@ we make input dynamic--by using the `rand()` function.
     cout << max_int << endl;
     ```
   * But where is the function call?
-    * The `as-if rule` is applies again--the function has been inlined--`g++` may think that it is not worth it
-    to call the one-liner function give the extra work needed by making a function call. Instead, it simply
+    * The `as-if rule` is applied again--the function has been inlined--`g++` may think that it is not worth it
+    to call the one-liner function given the extra work needed by making a function call. Instead, it simply
     copies and pastes the function body directly into the `main()` function.
 
 * The `double` version of `my_max()` shows something similar:
