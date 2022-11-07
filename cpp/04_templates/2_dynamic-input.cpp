@@ -16,7 +16,8 @@ int main() {
     cout << max_int << endl;
     
     double max_dbl;
-    double a_dbl = (double)rand() / rand(), b_dbl = (double)rand() / rand();
+    double a_dbl = (double)rand() / rand();
+    double b_dbl = (double)rand() / rand();
     max_dbl = my_max(a_dbl, b_dbl);
     cout << max_dbl << endl;
     return 0;

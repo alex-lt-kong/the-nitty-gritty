@@ -12,8 +12,10 @@ To dissamble a binary file to assembly code:
 
 
 ### Purposes
-* `rdi`, `rsi`, `rdx` and other three registers: store arguments of a function call. Additional arguments are
-stored on the stack.
+* `rdi`, `rsi`, `rdx`, `rcx`, `r8` and `r9`: pass first 6 integer/pointer arguments of a function call.
+Additional arguments are stored on the stack.
+    * `xmm0` - `xmm7`: among other general purpose usage, can be used to pass first 8 float pointing arguments.
+    Additional arguments are stored on the stack.
 * `rax`: store return value of a function call.
 * `rbp`: register base pointer, which points to the base of the current stack frame.
 * `rsp`: register stack pointer, store the stack pointer.
@@ -45,9 +47,30 @@ keep `0x01 23 45 67` instead of `0xDE AD BE EF`. If we want to achieve this with
 we have to choose little-endian instead of big-endian byte order. That is, the first byte should store `0x67`
 rather than `0xDE`.
 
+### Notes
+
+* In a typical assembly line, `opcode operand1 operand2`, which is `operand1` or `operand2` source or destination?
+Let's use `mov` as an example.
+    * `mov dst, src` is called Intel syntax. (e.g. mov eax, 123)
+    * `mov src, dst` is called AT&T syntax. (e.g. mov $123, %eax)
+
+
+* Caller-saved and callee-saved registers
+
+    * Caller-saved registers (a.k.a. volatile registers, or call-clobbered) are used to hold temporary quantities
+    that need not be preserved across calls.
+    * Callee-saved registers (a.k.a. non-volatile registers, or call-preserved) are used to hold long-lived values
+    that should be preserved across calls.
+    * The so-called "callee-saved" means that the callee has to save the registers and then restore them at the
+    end of the call because they have the guarantee to the caller of containing the same values after the
+    function returns. The usual way to save the callee-saved registers is to push them onto the stack.
+
+
 ### References
 
 * [x64 Cheat Sheet](https://cs.brown.edu/courses/cs033/docs/guides/x64_cheatsheet.pdf)
+
+* x86 instruction reference: https://www.felixcloutier.com/x86/<opcode>
 
 ## Common compiler tricks
 
