@@ -172,3 +172,122 @@ we make input dynamic by using the `rand()` function.
   * While the `double` version is much more complicated, it essentailly does the same:
     * After generating two random doubles, at `117e`, `xmm0` stores `a_dbl` while `xmm1` stores `b_dbl`.
     * `call`s something at `10c0`, which is believed to be the `cout` function.
+
+## [3_noinline.cpp](./3_noinline.cpp)
+
+* There are a few ways that we can choose to prevent our templates functions being inlined. Here we pick the
+`g++`-specific one--we add the attribute `__attribute__((noinline))` to the templates function `my_max()`
+according to gcc's [official documentation](https://gcc.gnu.org/onlinedocs/gcc/Common-Function-Attributes.html#Common-Function-Attributes).
+
+* Now let's take a look at the assembly code generated for the int function call.
+  ```assembly
+    int max_int;
+    int a_int = rand(), b_int = rand();
+    1105:	e8 36 ff ff ff       	call   1040 <rand@plt>
+    110a:	89 c5                	mov    ebp,eax
+    110c:	e8 2f ff ff ff       	call   1040 <rand@plt>
+    max_int = my_max(a_int, b_int);
+    1111:	89 ef                	mov    edi,ebp
+    int a_int = rand(), b_int = rand();
+    1113:	89 c6                	mov    esi,eax
+    max_int = my_max(a_int, b_int);
+    1115:	e8 16 02 00 00       	call   1330 <int my_max<int>(int, int)>
+
+    ...
+
+    0000000000001330 <int my_max<int>(int, int)>:
+    return a > b ? a : b;
+    1330:	39 f7                	cmp    edi,esi
+    1332:	89 f0                	mov    eax,esi
+    1334:	0f 4d c7             	cmovge eax,edi
+  }
+    1337:	c3                   	ret    
+    1338:	0f 1f 84 00 00 00 00 	nop    DWORD PTR [rax+rax*1+0x0]
+    133f:	00 
+  ```
+  * Good, the function call is finally there. One can observe that opcodes/operands are pretty similar to those
+  generated for [2_dynamic-input.cpp](./2_dynamic-input.cpp), just a `call` instruction is added.
+
+* How about the double version of the call?
+  ```assembly
+    double max_dbl;
+    double a_dbl = (double)rand() / rand();
+    1130:	e8 0b ff ff ff       	call   1040 <rand@plt>
+    1135:	89 c3                	mov    ebx,eax
+    1137:	e8 04 ff ff ff       	call   1040 <rand@plt>
+    113c:	66 0f ef c0          	pxor   xmm0,xmm0
+    1140:	66 0f ef c9          	pxor   xmm1,xmm1
+    1144:	f2 0f 2a c8          	cvtsi2sd xmm1,eax
+    1148:	f2 0f 2a c3          	cvtsi2sd xmm0,ebx
+    114c:	f2 0f 5e c1          	divsd  xmm0,xmm1
+    1150:	f2 0f 11 44 24 08    	movsd  QWORD PTR [rsp+0x8],xmm0
+    double b_dbl = (double)rand() / rand();
+    1156:	e8 e5 fe ff ff       	call   1040 <rand@plt>
+    115b:	89 c3                	mov    ebx,eax
+    115d:	e8 de fe ff ff       	call   1040 <rand@plt>
+    1162:	66 0f ef c9          	pxor   xmm1,xmm1
+    1166:	66 0f ef d2          	pxor   xmm2,xmm2
+    max_dbl = my_max(a_dbl, b_dbl);
+    116a:	f2 0f 10 44 24 08    	movsd  xmm0,QWORD PTR [rsp+0x8]
+    double b_dbl = (double)rand() / rand();
+    1170:	f2 0f 2a d0          	cvtsi2sd xmm2,eax
+    1174:	f2 0f 2a cb          	cvtsi2sd xmm1,ebx
+    max_dbl = my_max(a_dbl, b_dbl);
+    1178:	f2 0f 5e ca          	divsd  xmm1,xmm2
+    117c:	e8 bf 01 00 00       	call   1340 <double my_max<double>(double, double)>
+
+    ...
+
+    0000000000001340 <double my_max<double>(double, double)>:
+    return a > b ? a : b;
+    1340:	f2 0f 5f c1          	maxsd  xmm0,xmm1
+  }
+    1344:	c3                   	ret    
+    1345:	66 2e 0f 1f 84 00 00 	nop    WORD PTR cs:[rax+rax*1+0x0]
+    134c:	00 00 00 
+    134f:	90                   	nop
+  ```
+  * The function call is there as well. Note that the signature of the call is `<double my_max<double>(double, double)>`
+  , i.e., at assembly code level, the templates function are gone--instead, a proper double function is created.
+
+* We finally come to the first important point about templates: it is [a parametrized description of a family of
+classes/functions](https://cppcon.digital-medium.co.uk/wp-content/uploads/2021/11/back_to_basics_templates_part_1__bob_steagall__cppcon_2021.pdf),
+not a class/function per see. To be specific, it means:
+  * templates classes/functions are not directly compiled to machine code as a "versitle" or "generic" function that
+  can magically take a few different parameters. Instead, the compiler generates a series of concrete
+  functions/classes, plugging in concrete data types, such as `int`, `double` as needed.
+  * This paradigm is called [generic programming](https://en.wikipedia.org/wiki/Generic_programming).
+  * It works a bit similar to Marco in C in the sense that both can "generate" code to be compiled. But templates
+  are more than just being prettier, it offers concrete benefits such as double-increment protection and type check.
+  Take this simple marco as an example:
+    ```C
+      #define max(a,b) (a) > (b) ? (a) : (b)
+    ```
+    At first glance, it is as capable as templates--all variables are properly parenthesized so we avoid
+    any unexpected "escape" or "truncation". However, it could still behave erroneously if some handpicked
+    arguments are "passed" to it:
+    ```C
+    int a = 1, b = 0;
+    max(a++, b);      // a is incremented twice, (because a > b is true)
+    max(a++, b+10);   // a is incremented once,  (becuase a > b is false)
+    max(a, "Hello");  // comparing ints and ptrs, doesn't make sense but may compile
+    ```
+    * According to [this presentation](https://cppcon.digital-medium.co.uk/wp-content/uploads/2021/11/back_to_basics_templates_part_1__bob_steagall__cppcon_2021.pdf), Marco and templates also differ in
+    another aspect: Marcos are parsed in the pre-processing stage and templates are parsed in the compilation stage
+    of the process that translates source code to machine code.
+  * C++'s templates also differ greatly from "generics" in Java/C#. Bjarne Stroustrup
+  [argues that](https://www.stroustrup.com/bs_faq2.html#generics) generics are
+  primarily syntactic sugar for abstract classes; that is, with generics, you program against precisely
+  defined interfaces and typically pay the cost of virtual function calls and/or dynamic casts to use arguments. 
+  * By taking the current approach, C++ is able to offer a similar level of flexibility while not compromising
+  on performance
+    * As all templates abstraction goes away at assembly level, C++ code with templates should be as performant
+    as its C counterpart.
+    * A less desirable result of the approach is late detection of errors and horrendously bad error messages.
+
+## [4_edge-cases.cpp](./4_edge-cases.cpp)
+
+* From users' (i.e., C++ programmers) point of view, the general use of templates should be straightforward.
+However, edge cases are everywhere and C++ has many detailed rules to make them well-defined.
+  * This kind of pursuit of completeness, as far as I am concerned, is also one of the main reasons why
+  C++ is usually considered more complicated than other high-level languages.

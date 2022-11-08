@@ -79,5 +79,5 @@ Let's use `mov` as an example.
 
 ## Common compiler tricks
 
-* `xor    eax,eax`: `xor`ing a register with itself is a faster way of setting
+* `xor    eax,eax`: `xor`ing/`pxor`ing a register with itself is a faster way of setting
 the register to zero.
