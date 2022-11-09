@@ -175,11 +175,11 @@ we make input dynamic by using the `rand()` function.
 
 ## [3_noinline.cpp](./3_noinline.cpp)
 
-* There are a few ways that we can choose to prevent our templates functions being inlined. Here we pick the
-`g++`-specific one--we add the attribute `__attribute__((noinline))` to the templates function `my_max()`
+* There are a few ways that we can choose to prevent our templates functions from being inlined. Here we pick the
+`g++`-specific approach--adding the attribute `__attribute__((noinline))` to the templates function `my_max()`
 according to gcc's [official documentation](https://gcc.gnu.org/onlinedocs/gcc/Common-Function-Attributes.html#Common-Function-Attributes).
 
-* Now let's take a look at the assembly code generated for the int function call.
+* Now let's take a look at the assembly code generated for the `int` function call.
   ```assembly
     int max_int;
     int a_int = rand(), b_int = rand();
@@ -248,14 +248,16 @@ according to gcc's [official documentation](https://gcc.gnu.org/onlinedocs/gcc/C
     134f:	90                   	nop
   ```
   * The function call is there as well. Note that the signature of the call is `<double my_max<double>(double, double)>`
-  , i.e., at assembly code level, the templates function are gone--instead, a proper double function is created.
+  , i.e., at assembly code level, the templates function are gone--instead, a proper `double` function is created.
 
 * We finally come to the first important point about templates: it is [a parametrized description of a family of
 classes/functions](https://cppcon.digital-medium.co.uk/wp-content/uploads/2021/11/back_to_basics_templates_part_1__bob_steagall__cppcon_2021.pdf),
 not a class/function per see. To be specific, it means:
-  * templates classes/functions are not directly compiled to machine code as a "versitle" or "generic" function that
-  can magically take a few different parameters. Instead, the compiler generates a series of concrete
-  functions/classes, plugging in concrete data types, such as `int`, `double` as needed.
+  * templates classes/functions are not directly compiled to machine code as one single "versitle" or "generic"
+  function/class that can magically take a few different parameters. Instead, the compiler generates a series
+  of concrete functions/classes, plugging in concrete data types, such as `int`, `double` as needed.
+    * Note that "as needed" means if a version is never used, it will not be generated. In our example,
+    only `int` and `double` versions are generated, all other versions, such as `string`, are not generated.
   * This paradigm is called [generic programming](https://en.wikipedia.org/wiki/Generic_programming).
   * It works a bit similar to Marco in C in the sense that both can "generate" code to be compiled. But templates
   are more than just being prettier, it offers concrete benefits such as double-increment protection and type check.
@@ -291,3 +293,98 @@ not a class/function per see. To be specific, it means:
 However, edge cases are everywhere and C++ has many detailed rules to make them well-defined.
   * This kind of pursuit of completeness, as far as I am concerned, is also one of the main reasons why
   C++ is usually considered more complicated than other high-level languages.
+
+* Explicit specification of typename
+  * Consider the following function template definition:
+  ```C++  
+  template<typename T>
+  __attribute__((noinline)) T my_max(T a, T b) {
+      return a > b ? a : b;
+  }
+  ```
+  * What if we pass an `int` to a and a `double` as b?
+  ```C++
+  int max_int;
+  int a_int = rand();
+  double b_dbl = (double)rand() / rand();
+  // max_dbl = my_max(a_dbl, b_int); won't compile, C++ doesn't know which type should be used
+  max_dbl = my_max<double>(a_dbl, b_int);
+  ```
+  * No, the code won't compile. While it is trival for human beings to note we mostly want to convert `int` to
+  `double` to make it work. C++ compilers won't do this for us--unless we make it explicit.
+
+* Partially available templates operations
+  * Consider the following class template definition:
+  ```C++
+  template<typename T>
+  class SimpleClass {
+  private:
+      T first;
+      T second;
+  public:
+      SimpleClass(T first, T second) {
+          this->first = first;
+          this->second = second;
+      }
+      ~SimpleClass() {}    
+      T getSum() {
+          return first + second;
+      }
+      T getProduct() {
+          return first * second;
+      }
+  };
+  ```
+  * instantiating an `int` version of the class template and invoke both methods are fine since both
+  `+` and `*` are defined for integers:
+  ```C++
+  SimpleClass<int> MyIntClass(1, 2);
+  MyIntClass.getSum();
+  MyIntClass.getProduct();
+  ```
+  * But only `+` operation is defined between two string while `*` isn't, we can instantiate a `string`
+  version of the class template?
+  ```C++
+  SimpleClass<string> MyStrClass(str1, str2);
+  MyStrClass.getSum();
+  // MyStrClass.getProduct()； won't work, as string * string is not defined.
+  ```
+    * The answer is affirmative--as long as we don't invoke the unsupported methods.
+  * This behavior is consistent with what we observed in [3_noinline.cpp](./3_noinline.cpp). The idea is that only
+  the versions actually being used are generated--so as long as we don't touch the unsupported methods, we 
+  are still good.
+
+## Templates in shared object files
+
+* It is not uncommon for people to pre-compile source code into `.so` files and distribute them along with a `.h` file
+for downstream users. How can we do this for templates functions/classes?
+  * No, this is impossible🤦
+
+* The reason lies in how templates are designed.
+  * Note that template functions/classes are not functions/classes themselves, the concrete functions/classes get 
+  generated after the `typename T` is fixed.
+  * When a source code file is compiled into a `.so` file, no function calls are known to the compiler and thus
+  there is no way for compilers to generate concrete functions/classes out of nothing.
+
+* But if this is the case, then how is the STL and other templates-enabled libraries are distributed?
+  * The common way is plain and simple--all the templates are defined in header files only, so no `.c`, `.cpp`
+  or whatever source code files are needed.
+  * We an STL or other functions are called, only the called version will be instantiated.
+
+* There is one exception though.
+  * If we know that only a few variants of the templates functions/classes will be used, we can instantiate those
+  versions explicity [this way](https://stackoverflow.com/a/1022676/19634193).
+  * These concrete functions/classes can be compiled into `.so` files. But this way, they fall back to a
+  series of common functions/classes and the concept and implementation of the "template" concept will be
+  totally gone.
+
+## An important note
+
+* As demonstrated above, a seemingly stragitforward feature can get really sophisticated in C++.
+* But let's not forget Bjarne Stroustrup's famous quote that
+[within C++, there is a much smaller and cleaner language struggling to get out](https://www.stroustrup.com/quotes.html).
+* The quote can be interpreted in a few different ways, but my take is: if we stick to templates in its common
+form, and we just don't touch those archaic and cryptic (although still well-defined) cases, templates should
+"just work".
+* On the other hand, if we try to go down the rabbit hole, the journey will be much more diffcult and mostly
+it doesn't really help solving practical engineering problems.
