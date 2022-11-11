@@ -118,8 +118,8 @@ we make input dynamic by using the `rand()` function.
     ```
   * But where is the function call?
     * The `as-if rule` is applied again--the function has been inlined--`g++` may think that it is not worth it
-    to call the one-liner function given the extra work needed by making a function call. Instead, it simply
-    copies and pastes the function body directly into the `main()` function.
+    to call the one-liner function given the functional-call overhead. Instead, it simply copies and pastes the
+    function body directly into the `main()` function.
 
 * The `double` version of `my_max()` shows something similar:
   ```assembly
