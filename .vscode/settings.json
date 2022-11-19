@@ -11,6 +11,7 @@
         "utils.h": "c",
         "semaphore.h": "c",
         "types.h": "c",
-        "iostream": "cpp"
+        "iostream": "cpp",
+        "sstream": "cpp"
     }
 }
