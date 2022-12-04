@@ -112,7 +112,7 @@ a concrete example, the above function `a_naive_function()` can be revised to us
 * There are a few concrete differences between references and pointers, my take is a that reference is a less
 flexible (i.e., less powerful) version of pointer. For example, a reference cannot:
   * be `NULL`/`nullptr`.
-  * be re-assigned: A pointer can be pointed to different addresses many time while reference cannot.
+  * be re-assigned: A pointer can be pointed to different addresses many time while a reference cannot.
   * have arithmetic operations: `*(ptr + sizeof() * n)` is valid but there isn't an equivalent for references.
   (for sure we can do something like `*(&ref + sizeof() * n)`, but it means we fall back to pointers)
 
