@@ -12,6 +12,7 @@
         "semaphore.h": "c",
         "types.h": "c",
         "iostream": "cpp",
-        "sstream": "cpp"
+        "sstream": "cpp",
+        "string": "cpp"
     }
 }
