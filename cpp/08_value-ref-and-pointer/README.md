@@ -64,7 +64,7 @@
     * A copy constructor takes a reference (i.e., `SimpleClass& obj`) and it can't take a value. If it were
     allowed to take a value then what could happen? The copy constructor will need to call another copy constructor to
     make a copy, which doesn't make sense!
-    * There aren't tricks such as copy-on-write (well at least at the source code level) and the copy constructor
+    * There aren't tricks such as [copy-on-write](#copy-on-write) (well at least at the source code level) and the copy constructor
     just naively copies everything.
 
 * After making the above point clear, the difference between references and pointers are not that significant. As
@@ -122,3 +122,26 @@ flexible (i.e., less powerful) version of pointer. For example, a reference cann
   that set C/C++ apart from other languages, without understanding/embracing the flexibility/peculiarity of
   pointers, why not using Java/C# instead?
   * However, there are a few cases where using references is mandatory, such as copy constructors.
+
+## Copy-on-write
+
+* Copy-on-write (CoW) is a loosely related topic which can also be covered here.
+  * CoW is mostly an implmentation details. As users of C++ we don't usually need to implement it. Being
+  aware of its existence and implication shall mostly suffice.
+  * According to [this answer](https://stackoverflow.com/questions/1649028/how-to-implement-copy-on-write), in a
+  multi-threaded environemnt (which is most of them nowadays) CoW is frequently a huge performance hit rather
+  than a gain. And with careful use of const references, it's not much of a performance
+  gain even in a single threaded environment.
+  * CoW is tricky to implement, and it's easy to make mistakes. CoW is also responsible for
+  [Dirty CoW](https://en.wikipedia.org/wiki/Dirty_COW), named as the
+  ["Most serious" Linux privilege-escalation bug](https://arstechnica.com/information-technology/2016/10/most-serious-linux-privilege-escalation-bug-ever-is-under-active-exploit/)
+  by some industry media.
+
+* The idea of CoW is this:
+  ```C++
+  std::string x("Hello");
+  std::string y = x;  // x and y use the same buffer.
+  y += ", World!";    // Now y uses a different buffer; x still uses the same old buffer.
+  ```
+  * Note that CoW implementation of `std::string` is "allowed" (not mandatory) in C++98 and banned in C++11.
+    * `g++`'s C++98 version does not implement CoW string.
