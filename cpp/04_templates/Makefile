@@ -1,6 +1,6 @@
 OPT = -O3 -Wall -g
 
-main: 1_hello-world.out 2_dynamic-input.out 3_noinline.out 4_edge-cases.out
+main: 1_hello-world.out 2_dynamic-input.out 3_noinline.out 4_edge-cases.out 5_test.out
 	g++ --version > gpp.version
 
 1_hello-world.out: 1_hello-world.cpp
@@ -17,6 +17,9 @@ main: 1_hello-world.out 2_dynamic-input.out 3_noinline.out 4_edge-cases.out
 	
 4_edge-cases.out: 4_edge-cases.cpp
 	g++ -o 4_edge-cases.out 4_edge-cases.cpp $(OPT)
+
+5_test.out: 5_test.cpp
+	g++ -o 5_test.out 5_test.cpp $(OPT)
 
 clean:
 	rm *.out
