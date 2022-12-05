@@ -144,4 +144,16 @@ flexible (i.e., less powerful) version of pointer. For example, a reference cann
   y += ", World!";    // Now y uses a different buffer; x still uses the same old buffer.
   ```
   * Note that CoW implementation of `std::string` is "allowed" (not mandatory) in C++98 and banned in C++11.
-    * `g++`'s C++98 version does not implement CoW string.
+  * `g++`'s C++98 version does not implement string with CoW.
+    ```C++
+    void test_cow_in_stl() {
+      string str1("Hello!");
+      string str2 = str1;
+      printf("%s, %s\n", str1.c_str(), str2.c_str());
+      printf("%p, %p\n", str1.data(), str2.data());
+    }
+    ```
+    ```
+    Hello!, Hello!
+    0x7ffd53de7450, 0x7ffd53de7470
+    ```
