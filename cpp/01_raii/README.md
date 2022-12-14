@@ -1,7 +1,7 @@
 # Resource acquisition is initialization
 
 * RAII is an awkward name for a useful feature. Essentially, it is equivalent to (if not better than) a `finally` keyword
-if properly used
+if properly used.
 
 * Let's consider this Python snippet:
     ```python
