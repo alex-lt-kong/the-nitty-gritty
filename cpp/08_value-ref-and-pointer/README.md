@@ -121,7 +121,10 @@ flexible (i.e., less powerful) version of pointer. For example, a reference cann
   * People holding this view usually point out the downsides of pointers which I don't really agree--it is pointers
   that set C/C++ apart from other languages, without understanding/embracing the flexibility/peculiarity of
   pointers, why not using Java/C# instead?
-  * However, there are a few cases where using references is mandatory, such as copy constructors and operator
+  * My take on when to use reference and pointer when passing parameters is like this:
+    * If we would like to make `NULL`/`nullptr` a valid possible value, use pointer; otherwise, if we want to treat
+    an object like a primitive, use reference.
+    * Also, there are a few cases where using references is mandatory, such as copy constructors and operator
   overloading.
 
 ## Copy-on-write
