@@ -24,21 +24,21 @@ the variable is not a variable-length array (VLA).
 
 * For VLA (a.k.a. variably modified type), bypassing declaration won't work.
   * Since the below code is valid:
-  ```C
-    int a;
-    a = 10;
-    int arr[a];
-  ```
-  What would you expect if it is skipped?:
-  ```C
-    goto output;
-    int a;
-    a = 10;
-    int arr[a];
-output:
-    printf("%d (%p)\n", arr[0], &arr);
-  ```
-  So let's just ban it instead!
+    ```C
+        int a;
+        a = 10;
+        int arr[a];
+    ```
+  * What would you expect if it is skipped?:
+    ```C
+            goto output;
+            int a;
+            a = 10;
+            int arr[a];
+        output:
+            printf("%d (%p)\n", arr[0], &arr);
+    ```
+  * So let's just ban it instead!
 
 * There are some edge cases where code can be compiled in C but not in C++.
 But let's not touch this in this repo...
@@ -46,3 +46,4 @@ But let's not touch this in this repo...
 ## Reference
 
 * [Skip variable declaration using goto?](https://stackoverflow.com/questions/29880836/skip-variable-declaration-using-goto)
+* [Is goto from outside a block past an initialized variable declaration guaranteed to give a compile error?](https://stackoverflow.com/questions/34081317/is-goto-from-outside-a-block-past-an-initialized-variable-declaration-guaranteed)
