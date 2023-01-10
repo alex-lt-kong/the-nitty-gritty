@@ -43,7 +43,7 @@ float, etc. For example:
     instead of on heap (i.e., `MyClass myObject = new MyClass();`), just like
     normal variables (e.g., `int a = 5;`);
     * This design is also closely related to the concept of
-    [RAII](https://github.com/alex-lt-kong/the-nitty-gritty/tree/main/cpp/01_raii),
+    [RAII](../01_raii),
     which is discussed separately.
 
 * This design also differ greatly from Java/C#, where almost all objects are
