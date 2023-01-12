@@ -59,9 +59,19 @@ in destructor and always call destructor even if an exception is thrown:
         * the destructor releases the resource and never throws exceptions; 
 
 
-* Similar to Python's Exception raised in `finally` section, if exception
-is thrown within destructors, it has to be handled manually. This is beyond
-the scope of RAII.
+* What if constructors or destructors throw exceptions? Things will get a bit
+messier here.
+
+    * In case of constructors:
+        * If a constructor throws an exception, the object’s destructor is *not*
+        run. If your object has already done something that needs to be undone
+        (such as allocating some memory, opening a file, or locking a semaphore),
+        this "stuff that needs to be undone" must be remembered by a data member
+        inside the object.
+    * In case of destructors:
+        * Similar to Python's Exception raised in `finally` section, if exception
+        is thrown within destructors, it has to be handled manually. This is beyond
+        the scope of RAII.
 
 * Apart from being handy for database connection management, etc
 RAII is also the underlying principle of [smart pointers](../10_smart-pointers).
@@ -77,3 +87,4 @@ memory and use its destructor to `free()` the memory--brilliant! a
 
 * [Microsoft - Smart pointers (Modern C++)](https://learn.microsoft.com/en-us/cpp/cpp/smart-pointers-modern-cpp?view=msvc-170)
 * [CPP Reference - smart pointers](https://en.cppreference.com/book/intro/smart_pointers)
+* [Standard C++ Foundation - How should I handle resources if my constructors may throw exceptions?](https://isocpp.org/wiki/faq/exceptions#selfcleaning-members)
