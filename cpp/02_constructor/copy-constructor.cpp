@@ -5,6 +5,7 @@ using namespace std;
 class Point {
 private:
     int x, y;
+    int* ptr;
     
 public:
     Point(int x1, int y1) {
