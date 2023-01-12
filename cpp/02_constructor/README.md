@@ -65,7 +65,11 @@ a difficult topic, let's skip it here), C++ compilers will implicitly create
 a copy constructor for us, if we don't define it explicitly.
     * But we can always create a copy constructor ourselves, usually its
     signature is just `MyClass::MyClass(const MyClass& myObject);`
-
+    * The implicit copy constructor could also be a trap. Say we have a
+    raw pointer as a non-static member of a class, the implicit copy constructor
+    could be added. But when we make a copy of the class, what will happen?
+    A copy of the pointer, not the memory on heap pointed by the pointer,
+    will be provided, causing issues.
 
 ## References
 
