@@ -1,6 +1,3 @@
-[submodule "notepad-minus-minus"]
-	path = notepad-minus-minus
-	url = https://github.com/alex-lt-kong/notepad-minus-minus.git
 [submodule "cpp/05_qt/notepad-minus-minus"]
 	path = cpp/05_qt/notepad-minus-minus
 	url = https://github.com/alex-lt-kong/notepad-minus-minus.git
