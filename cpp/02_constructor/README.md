@@ -46,7 +46,7 @@ float, etc. For example:
     [RAII](../01_raii),
     which is discussed separately.
 
-* This design also differ greatly from Java/C#, where almost all objects are
+* This design also differs greatly from Java/C#, where almost all objects are
 reference types which behave like pointers except they are garbage collected.
 
 * Copy constructor is an important function to support the above design--we
@@ -68,8 +68,10 @@ a copy constructor for us, if we don't define it explicitly.
     * The implicit copy constructor could also be a trap. Say we have a
     raw pointer as a non-static member of a class, the implicit copy constructor
     could be added. But when we make a copy of the class, what will happen?
-    A copy of the pointer, not the memory on heap pointed by the pointer,
-    will be provided, causing issues.
+    A copy of the pointer, not the memory on heap pointed by the pointer, i.e.,
+    a shallow copy, will be returned. If the original object owns the heap
+    memory, if the original object goes out of scope, the copy object may
+    refer to a memory address that is invalid.
 
 ## References
 
