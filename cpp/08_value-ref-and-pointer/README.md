@@ -42,8 +42,10 @@
   simple_obj.getVal()@a_naive_function(): 1234
   simple_obj.getVal()@test_parameters_passing(): 10
   ```
-  * Simply put, unless we explicitly ask C++, it passes arguments by value, not by address/pointer/reference, even if
-  it may seem to be more "natural" for programs to pass objects as references/pointers.
+  * Simply put, unless we make the request explicitly, C++ passes arguments by value, not by address/pointer/reference,
+  even if it may seem to be more "natural" for programs to pass objects as references/pointers.
+    * This design also differs greatly from Java/C#, where almost all objects are reference types which behave like
+    pointers except they are garbage collected.
   * But how is the object being able to be pass as value? It is simple: a copy of the object is created when it is 
   passed. This is done by a specific type of constructor called "copy constructor". Users can define a copy
   constructor explicitly, or the compiler will create one for us.
