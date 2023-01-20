@@ -83,7 +83,7 @@ memory and use its destructor to `free()` the memory--brilliant! a
     otherwise other pointers will end up pointing to nowhere, causing
     unexpected behaviors.
 
-## Pointers with RAII
+## Pointers with RAII and [the rule of three](https://en.cppreference.com/w/cpp/language/rule_of_three)
 
 * So far, so good--playing in the C++ playground, things are nice and tidy.
 However, as always, it becomes more interesting (or horrible if you wish) if
@@ -186,7 +186,6 @@ fails:
         int* curr_ptr0;
         int* curr_ptr1;
 
-
         Wallet () {
             printf("Wallet () called\n");
             mallocPtrs();
@@ -233,8 +232,9 @@ fails:
     as well
     * After `first_wallet` goes out of scope, we rightfully `free()` both
     pointers. But wait, what happens when `second_wallet`'s destructor is
-    called? `curr_ptr0` and `curr_ptr1` being free again! Nonono, this 
-    shouldn't happen. We need to prepare a copy constructor for it.
+    called? `curr_ptr0` and `curr_ptr1` are being `free()`ed again, it's
+    a [double free](https://encyclopedia.kaspersky.com/glossary/double-free/)!
+    Nonono, this shouldn't happen. We need to prepare a copy constructor for it.
     * Apart from the above, we also need to prepare a copy assignment operator.
 
 * A much robust version is like below. This is something known as
