@@ -27,7 +27,6 @@ public:
     int* curr_ptr0;
     int* curr_ptr1;
 
-
     Wallet () {
         printf("Wallet () called\n");
         mallocPtrs();
