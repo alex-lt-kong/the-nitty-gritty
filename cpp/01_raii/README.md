@@ -89,11 +89,12 @@ memory and use its destructor to `free()` the memory--brilliant! a
 However, as always, it becomes more interesting (or horrible if you wish) if
 C comes into play.
 
-* What if, for whatever reason, we need to to `malloc()` raw pointer in
-constructors and `free()` in destructors? Going down this rabbit hole, things
-start to become surreal.
+* What if, for whatever reason, we need to to `malloc()` raw pointers in a
+constructor and `free()` them in destructors? Going down this rabbit hole,
+things start to turn surreal.
 
-* Think about this naive implementation:
+* Think about this naive implementation. Memory is `malloc()`ed in constructor
+and `free()`ed in destructor, perfect RAII:
     ```C++
     class Wallet {
     private:
@@ -116,10 +117,10 @@ start to become surreal.
 
     };
     ```
-    * Things should work 99.9% of time if both `malloc()`s do not fail. But
-    what if, both of them fail? It means `curr_ptr0` and `curr_ptr1` will be
-    both `NULL`, and future dereference could cause unexpected result! We need
-    to prevent this.
+    * The code should work 99.9% of time if both `malloc()`s do not fail. But
+    what if *both* of them fail? It means `curr_ptr0` and `curr_ptr1` will be
+    both `NULL`, and any subsequent dereference could cause unexpected
+    result! We need to prevent this.
 
 * A slightly better version. Now we throw `bad_alloc` exception if `malloc()`
 fails. This should prevent NULL pointers dereference:
@@ -154,12 +155,12 @@ fails. This should prevent NULL pointers dereference:
     };
     ```
 
-    * Well yes, it doesn't suffer from NULL pointer dereference now. Awesome!
+    * Well yes, it doesn't suffer from NULL pointer dereference. Awesome!
     What if the first `malloc()` succeeds and the second `malloc()`
     fails? A `bad_alloc` exception will be thrown, RAII's principle is followed.
-    But wait, what happend to the large amount of memory pointed by `curr_ptr0`?
-    No one takes care of it. It will be left on heap lonely, forever! No, we
-    need to handle this as well.
+    But wait, what happend to the large amount of memory `malloc()`ed for abd
+    pointed by `curr_ptr0`? No one takes care of it. It will be left on heap
+    lonely, forever! No, we need to handle this as well.
 
 * Another version is prepared to handle this. Now we will manually `free()`
 the memory `malloc()`ed for the 1st pointer in case only the 2nd `malloc()`
@@ -234,7 +235,8 @@ fails:
     pointers. But wait, what happens when `second_wallet`'s destructor is
     called? `curr_ptr0` and `curr_ptr1` are being `free()`ed again, it's
     a [double free](https://encyclopedia.kaspersky.com/glossary/double-free/)!
-    Nonono, this shouldn't happen. We need to prepare a copy constructor for it.
+    Nonono, this shouldn't happen. We need to prepare a
+    [copy constructor](./constructor) for it.
     * Apart from the above, we also need to prepare a copy assignment operator.
 
 * A much robust version is like below. This is something known as
