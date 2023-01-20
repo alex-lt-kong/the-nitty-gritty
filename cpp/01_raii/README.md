@@ -83,8 +83,219 @@ memory and use its destructor to `free()` the memory--brilliant! a
     otherwise other pointers will end up pointing to nowhere, causing
     unexpected behaviors.
 
+## Pointers with RAII
+
+* So far, so good--playing in the C++ playground, things are nice and tidy.
+However, as always, it becomes more interesting (or horrible if you wish) if
+C comes into play.
+
+* What if, for whatever reason, we need to to `malloc()` raw pointer in
+constructors and `free()` in destructors? Going down this rabbit hole, things
+start to become surreal.
+
+* Think about this naive implementation:
+    ```C++
+    class Wallet {
+    private:
+        void mallocPtrs() {
+            this->curr_ptr0 = (int*)malloc(sizeof(int) * ARR_SIZE);
+            this->curr_ptr1 = (int*)malloc(sizeof(int) * ARR_SIZE);
+        }
+    public:
+        int* curr_ptr0;
+        int* curr_ptr1;
+
+        Wallet () {
+            printf("Wallet () called\n");
+            mallocPtrs();
+        }
+        ~Wallet () {
+            free(this->curr_ptr0);
+            free(this->curr_ptr1);
+        }
+
+    };
+    ```
+    * Things should work 99.9% of time if both `malloc()`s do not fail. But
+    what if, both of them fail? It means `curr_ptr0` and `curr_ptr1` will be
+    both `NULL`, and future dereference could cause unexpected result! We need
+    to prevent this.
+
+* A slightly better version. Now we throw `bad_alloc` exception if `malloc()`
+fails. This should prevent NULL pointers dereference:
+
+    ```C++
+    class Wallet {
+    private:
+        void mallocPtrs() {
+            this->curr_ptr0 = (int*)malloc(sizeof(int) * ARR_SIZE);
+            if (this->curr_ptr0 == NULL) {
+                std::bad_alloc exception;
+                throw exception;
+            }
+            this->curr_ptr1 = (int*)malloc(sizeof(int) * ARR_SIZE);
+            if (this->curr_ptr1== NULL) {
+                std::bad_alloc exception;
+                throw exception;
+            }
+        }
+    public:
+        int* curr_ptr0;
+        int* curr_ptr1;
+
+        Wallet () {
+            printf("Wallet () called\n");
+            mallocPtrs();
+        }
+        ~Wallet () {
+            free(this->curr_ptr0);
+            free(this->curr_ptr1);
+        }
+    };
+    ```
+
+    * Well yes, it doesn't suffer from NULL pointer dereference now. Awesome!
+    What if the first `malloc()` succeeds and the second `malloc()`
+    fails? A `bad_alloc` exception will be thrown, RAII's principle is followed.
+    But wait, what happend to the large amount of memory pointed by `curr_ptr0`?
+    No one takes care of it. It will be left on heap lonely, forever! No, we
+    need to handle this as well.
+
+* Another version is prepared to handle this. Now we will manually `free()`
+the memory `malloc()`ed for the 1st pointer in case only the 2nd `malloc()`
+fails:
+
+    ```C++
+    class Wallet {
+    private:
+        void mallocPtrs() {
+            this->curr_ptr0 = (int*)malloc(sizeof(int) * ARR_SIZE);
+            if (this->curr_ptr0 == NULL) {
+                std::bad_alloc exception;
+                throw exception;
+            }
+            this->curr_ptr1 = (int*)malloc(sizeof(int) * ARR_SIZE);
+            if (this->curr_ptr1== NULL) {
+                // handle the already malloc()'ed pointer manually.
+                free(this->curr_ptr0);
+                std::bad_alloc exception;
+                throw exception;
+            }
+        }
+    public:
+        int* curr_ptr0;
+        int* curr_ptr1;
+
+
+        Wallet () {
+            printf("Wallet () called\n");
+            mallocPtrs();
+        }
+        ~Wallet () {
+            free(this->curr_ptr0);
+            free(this->curr_ptr1);
+        }
+    };
+    ```
+* We are done? Not yet! Think about this common usage:
+
+    ```C++
+    Wallet first_wallet = Wallet();
+    first_wallet.curr_ptr0[0] = 1;
+    first_wallet.curr_ptr1[2] = 2147483647;
+    Wallet second_wallet = first_wallet;
+    second_wallet.curr_ptr0[0] = 31415926;
+    second_wallet.curr_ptr1[2] = -1;
+    ```
+    * As we don't define a copy constructor, the compiler will prepare one
+    for us. However, compiler doesn't know if we want to copy `curr_ptr0` and
+    `curr_ptr1` by reference or by value. But as we have two integer pointers,
+    the default copy constructor will copy only the value of these pointers.
+    That is, it is copy by reference.
+    * The most singificant implication is that two seemingly distinct objects
+    will share the same buffers. Meaning that changing one object's value
+    will impact the other's.
+    * But it is more than this, running the above code result in something
+    like below:
+
+    ```C++
+    Wallet () called
+    first_wallet: 1, 2147483647
+    first_wallet: 31415926, -1
+    second_wallet: 31415926, -1
+    Segmentation fault
+    ```
+    * Well we accept that there will be buffer sharing, but WTH is there a
+    Segfault?? It has to do with C++'s automatic memory management. When an
+    object goes out of scope, its destructor is automatically called. In the
+    above sample, `first_wallet` and `second_wallet` go out of scope one
+    after another and their destructor being called. This is what RAII requires
+    as well
+    * After `first_wallet` goes out of scope, we rightfully `free()` both
+    pointers. But wait, what happens when `second_wallet`'s destructor is
+    called? `curr_ptr0` and `curr_ptr1` being free again! Nonono, this 
+    shouldn't happen. We need to prepare a copy constructor for it.
+    * Apart from the above, we also need to prepare a copy assignment operator.
+
+* A much robust version is like below. This is something known as
+[the rule of three](https://en.cppreference.com/w/cpp/language/rule_of_three):
+
+    ```C++
+    class Wallet {
+    private:
+        void mallocPtrs() {
+            this->curr_ptr0 = (int*)malloc(sizeof(int) * ARR_SIZE);
+            if (this->curr_ptr0 == NULL) {
+                std::bad_alloc exception;
+                throw exception;
+            }
+            this->curr_ptr1 = (int*)malloc(sizeof(int) * ARR_SIZE);
+            if (this->curr_ptr1== NULL) {
+                free(this->curr_ptr0);
+                // Need to handle the already malloc()'ed pointer manually.
+                std::bad_alloc exception;
+                throw exception;
+            }
+        }
+    public:
+        int* curr_ptr0;
+        int* curr_ptr1;
+
+
+        Wallet () {
+            printf("Wallet () called\n");
+            mallocPtrs();
+        }
+        // Copy constructor
+        Wallet(const Wallet& w1) {
+            mallocPtrs();  
+            memcpy(this->curr_ptr0, w1.curr_ptr0, sizeof(int) * ARR_SIZE);
+            memcpy(this->curr_ptr1, w1.curr_ptr1, sizeof(int) * ARR_SIZE);
+            printf("copy Wallet() called\n");
+        }
+        // Copy assignment operator
+        Wallet& operator=(const Wallet& w1) {
+            memcpy(this->curr_ptr0, w1.curr_ptr0, sizeof(int) * ARR_SIZE);
+            memcpy(this->curr_ptr1, w1.curr_ptr1, sizeof(int) * ARR_SIZE);
+            printf("operator=(const Wallet& w1) called\n");
+            return *this;
+        }
+        ~Wallet () {
+            free(this->curr_ptr0);
+            free(this->curr_ptr1);
+        }
+    };
+    ```
+    * The difference between a copy constructor and a copy assignment operator
+    is that "a copy constructor is used to initialize a previously
+    UNinitialized object from some other object's data. An assignment
+    operator is used to replace the data of a previously INitialized object
+    with some other object's data. "
+
+
 ## References
 
 * [Microsoft - Smart pointers (Modern C++)](https://learn.microsoft.com/en-us/cpp/cpp/smart-pointers-modern-cpp?view=msvc-170)
 * [CPP Reference - smart pointers](https://en.cppreference.com/book/intro/smart_pointers)
 * [Standard C++ Foundation - How should I handle resources if my constructors may throw exceptions?](https://isocpp.org/wiki/faq/exceptions#selfcleaning-members)
+* [StackOverflow - What's the difference between assignment operator and copy constructor?](https://stackoverflow.com/questions/11706040/whats-the-difference-between-assignment-operator-and-copy-constructor)
