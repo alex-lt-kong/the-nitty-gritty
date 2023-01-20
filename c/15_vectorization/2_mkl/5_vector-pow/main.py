@@ -47,7 +47,7 @@ for arr_size in arr_sizes:
   )
   t1 = time.time()
   print(
-      f'mkl_pow(): vec_out[{rnd_idx:,}] = {vec_base[rnd_idx]:,.5f}^{vec_exp[rnd_idx]:,.5f} = {vec_out[rnd_idx]:,.5f}, '
+      f'mkl_ln():  vec_out[{rnd_idx:,}] = {vec_base[rnd_idx]:,.5f}^{vec_exp[rnd_idx]:,.5f} = {vec_out[rnd_idx]:,.5f}, '
       f'takes {(t1 - t0) * 1000:8,.2f} (ms, per Python) / {elpased_ms:8,.2f} (ms, per C)'
   )
 
