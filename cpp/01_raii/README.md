@@ -77,7 +77,8 @@ messier here.
 RAII is also the underlying principle of [smart pointers](../10_smart-pointers).
 Say we use a class to wrap a raw pointer, using constructor to `malloc()`
 memory and use its destructor to `free()` the memory--brilliant! a
-"smart pointer" smart pointer already!
+"smart pointer" already!
+
     * But sure, the issue is a bit more complicated than this. The above attempt
     only works if one heap memory object has only one pointer pointing to it;
     otherwise other pointers will end up pointing to nowhere, causing
@@ -95,6 +96,7 @@ things start to turn surreal.
 
 * Think about this naive implementation. Memory is `malloc()`ed in constructor
 and `free()`ed in destructor, perfect RAII:
+
     ```C++
     class Wallet {
     private:
