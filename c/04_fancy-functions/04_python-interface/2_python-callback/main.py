@@ -5,7 +5,7 @@ import time
 so_path = "./func.so"
 so = CDLL(so_path)
 
-arr_size = 2_000_000
+arr_size = 2_000_000_000
 sample_size = 10;
 arr = np.random.randint(0, arr_size, arr_size, dtype=np.int64)
 sample_idxes = np.random.randint(0, arr_size, sample_size, dtype=np.int64)

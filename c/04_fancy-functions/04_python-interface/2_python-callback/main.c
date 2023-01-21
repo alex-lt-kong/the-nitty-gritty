@@ -4,7 +4,7 @@
 #include<time.h>
 #include"func.h"
 
-#define ARR_SIZE 2000000000UL
+#define ARR_SIZE 200000000UL
 #define SAMPLE_SIZE 10
 
 int64_t apply(int64_t a) {
