@@ -1,31 +1,31 @@
 # C Function Callbacks to a Python Function
 
 * The idea is that we want to first invoke a C function from Python (host
-process). One parameter of the C function is a callback function in Python host.
-The C function will repetitively call the Python callback function as a
-callback.
+process). One parameter of the C function is a function pointer pointing
+to a function in Python host. The C function will then repetitively call
+the Python callback function using the function pointer.
 
 * So the PoC is a two-step test:
   0. We want to call a C function in a compiled shared object from Python
   host. This Python-to-C function call should pass a function pointer to
-  a Python callback function
+  a Python callback function.
   0. We want the C function to call the Python callback function repetitively.
-  Essentially, it means making a recursively C-to-Python function call.
+  Essentially, it means making a recursive C-to-Python function call.
 
 * It turns out that this is well-supported and documented in Python's official
 document [here](https://docs.python.org/3.9/library/ctypes.html#callback-functions).
 
 ## Comparison
 
-* While Python callback is not really slow, but C callback is MUCH faster...
+* While C-to-Python callback is not really slow, but C-to-C callback is 
+MUCH faster...
 
 * C-to-Python callback
 ```
 1,000,000,000-element array prepared.
-10 samples are:    678034294, 387013661, 173291902, 752546974, 334221935, 359489436, 469511013, 622748962, 617584042, 93050447, 
-10 samples become: 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
-Calling back 1,000M times takes: 269.18 sec (3,715,003 / sec)
-
+10 samples are:   114303050, 571202881, 38925011, 288658365, 410043202, 596894078, 360248691, 256052724, 499385069, 197724980, 
+10 samples become:114303049, 571202880, 38925010, 288658364, 410043201, 596894077, 360248690, 256052723, 499385068, 197724979, 
+Calling back 1,000M times takes: 166.26 sec (6,014,744 / sec)
 ```
 
 * C-to-C callback
