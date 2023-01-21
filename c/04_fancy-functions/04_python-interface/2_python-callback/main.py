@@ -1,27 +1,33 @@
 from ctypes import * 
 import numpy as np
-from numpy.ctypeslib import ndpointer
+import time
 
 so_file = "./func.so"
 funcs = CDLL(so_file)
 
-size = int(64)
-arr_np = np.random.randint(0, size, size, dtype=np.int32)  
-arr_c = arr_np
-#IntArray5 = c_int * 5
-#ia = IntArray5(5, 1, 7, 33, 99)
-qsort = funcs.qsort
-qsort.restype = None
+arr_size = 2_000_000_000
+sample_size = 10;
+arr = np.random.randint(0, arr_size, arr_size, dtype=np.int64)
+sample_idxes = np.random.randint(0, arr_size, sample_size, dtype=np.int64)
+print(f'{arr_size:,}-element array prepared.\n{sample_size} samples are:   ', end='')
+for i in range(sample_size):
+  print(arr[sample_idxes[i]], end=', ')
+print()
 
-CMPFUNC = CFUNCTYPE(c_int, POINTER(c_int), POINTER(c_int))
+CMPFUNC = CFUNCTYPE(c_int, c_int64)
 count = 0
-def py_cmp_func(a, b):
-  print("py_cmp_func", a[0], b[0])
-  return a[0] < b[0]
+def apply(a):
+  return a - 1
 
-cmp_func = CMPFUNC(py_cmp_func)
+apply_func = CMPFUNC(apply)
 
-funcs.qsort(arr_c.ctypes.data_as(POINTER(c_int)), size, sizeof(c_int), cmp_func) 
+start = time.time()
+funcs.manipulate_inplace(arr.ctypes.data_as(POINTER(c_int64)), arr_size, apply_func) 
+diff = time.time() - start
 
-for i in range(size):
-  print(arr_c[i], end=', ')
+print(f'{sample_size} samples become:', end='')
+for i in range(sample_size):
+  print(arr[sample_idxes[i]], end=', ')
+print()
+
+print(f'Calling back {arr_size/1_000_000:,.0f}mil times takes: {diff:.2f} sec ({arr_size/diff:,.0f} / sec)')
