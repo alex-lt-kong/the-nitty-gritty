@@ -1,20 +1,8 @@
-#include <Python.h>
+#include<stdlib.h>
+#include<stdint.h>
 
-/* the C standard library qsort function, just as an example! */
-extern void qsort (void *, size_t, size_t, int (*)(const void *, const void *));
-
-
-static struct PyModuleDef cModPyDem =
-{
-    PyModuleDef_HEAD_INIT,
-    "Some Name", "Some documentation",
-    -1,
-    NULL
-};
-
-PyMODINIT_FUNC
-PyInit_cos_module(void)
-{
-    return PyModule_Create(&cModPyDem);
+void manipulate_inplace(uint64_t* arr, uint64_t arr_len, int64_t (*func)(int64_t)) {
+    for (uint64_t i = 0; i < arr_len; ++i) {
+        arr[i] = func(arr[i]);
+    }
 }
-
