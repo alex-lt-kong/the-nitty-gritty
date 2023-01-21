@@ -1,8 +1,9 @@
 OPTS = -O3 -Wall -pedantic -Wc++-compat -Wextra 
 CC = clang
 
-main: func.c
-	$(CC) -fPIC -shared -O3 -o func.so func.c
-
+main:
+	$(CC) -fPIC -shared -o func.so func.c $(OPTS)
+	$(CC) -c func.c $(OPTS)
+	$(CC) main.c func.o -o main.out
 clean:
-	rm *.so
+	rm *.so *.o
