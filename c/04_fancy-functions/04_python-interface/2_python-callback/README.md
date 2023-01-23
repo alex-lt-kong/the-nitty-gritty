@@ -18,8 +18,8 @@ document [here](https://docs.python.org/3.9/library/ctypes.html#callback-functio
 
 ## Comparison
 
-* While C-to-Python callback is not really slow, but C-to-C callback is 
-MUCH faster...
+* While C-to-Python callback is not really slow, C-to-C callback is MUCH
+faster...
 
 * C-to-Python callback
 ```
