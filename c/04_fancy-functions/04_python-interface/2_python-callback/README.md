@@ -2,14 +2,14 @@
 
 * The idea is that we want to first invoke a C function from Python (host
 process). One parameter of the C function is a function pointer pointing
-to a function in Python host. The C function will then repetitively call
-the Python callback function using the function pointer.
+to a function in Python host (Python callback). The C function will then
+repetitively call the Python callback function using the function pointer.
 
 * So the PoC is a two-step test:
   0. We want to call a C function in a compiled shared object from Python
   host. This Python-to-C function call should pass a function pointer to
   a Python callback function.
-  0. We want the C function to call the Python callback function repetitively.
+  0. We want the C function to call the Python callback function in a loop.
   Essentially, it means making a recursive C-to-Python function call.
 
 * It turns out that this is well-supported and documented in Python's official
