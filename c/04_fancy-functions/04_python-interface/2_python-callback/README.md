@@ -6,6 +6,7 @@ to a function in Python host (Python callback). The C function will then
 repetitively call the Python callback function using the function pointer.
 
 * So the PoC is a two-step test:
+
   0. We want to call a C function in a compiled shared object from Python
   host. This Python-to-C function call should pass a function pointer to
   a Python callback function.
