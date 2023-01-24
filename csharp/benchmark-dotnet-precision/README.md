@@ -20,15 +20,15 @@ Intel Xeon CPU E5-1620 v4 3.50GHz, 1 CPU, 8 logical and 4 physical cores
 .NET SDK=6.0.202
   [Host]     : .NET 6.0.7 (6.0.722.32202), X64 RyuJIT AVX2
   DefaultJob : .NET 6.0.7 (6.0.722.32202), X64 RyuJIT AVX2
-
+```
 
 |             Method |                 Mean |              Error |             StdDev |
-|------------------- |---------------------:|-------------------:|-------------------:|
+|------------------- |--------------------- |------------------- |------------------- |
 | IterateManyPlusOne | 12,113,032,041.67 ns | 238,654,682.282 ns | 310,318,498.471 ns |
 |  IterateOnePlusOne |             12.54 ns |           0.272 ns |           0.731 ns |
 |        IterateMany | 11,819,881,834.38 ns | 235,026,384.899 ns | 365,907,766.429 ns |
 |         IterateOne |             11.17 ns |           0.262 ns |           0.575 ns |
-```
+
 
 * The result doesn't seem to be conclusive--guess it implies no performance
 penalties?
