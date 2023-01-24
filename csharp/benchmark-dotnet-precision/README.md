@@ -30,5 +30,8 @@ Intel Xeon CPU E5-1620 v4 3.50GHz, 1 CPU, 8 logical and 4 physical cores
 |         IterateOne |             11.17 ns |           0.262 ns |           0.575 ns |
 ```
 
-* It appears that there are sub-nanosecond performance penalties if we directly
-benchmark small functions.
+* The result doesn't seem to be conclusive--guess it implies no performance
+penalties?
+    * But for a 3.5GHz CPU it executes 3.5 instruction cycles per ns (
+i.e., 0.28 ns per cycle), how come BenchmarDotNet reports 2 decimal places for
+ns?
