@@ -53,32 +53,37 @@ namespace MyBenchmarks
             }
         }
     }
+    
     public class AbstractionCostTest
     {
         public UInt64 sum = 0;
-        private static IteratorWithInterface iteratorWithInterface = new IteratorWithInterface();
-        private static IteratorWithoutInterface iteratorWithoutInterface = new IteratorWithoutInterface();
-        private static IteratorWithInheritance iteratorWithInheritance = new IteratorWithInheritance();
+        private static IteratorWithInterface staticIteratorWithInterface = new IteratorWithInterface();
+        private static IteratorWithoutInterface staticIteratorWithoutInterface = new IteratorWithoutInterface();
+        private static IteratorWithInheritance staticIteratorWithInheritance = new IteratorWithInheritance();
         public void Iterate(UInt32 iterations)
         {
             for (int i = 0; i < iterations; ++i) {
                 ++sum;
             }
         }
+
         [Benchmark]
         public void IterateWithInterface()
-        {            
+        {          
+            IteratorWithInterface iteratorWithInterface = new IteratorWithInterface();
             iteratorWithInterface.Iterate(1024);
         }
         [Benchmark]
         public void IterateWithInheritance()
         {            
+            IteratorWithInheritance iteratorWithInheritance = new IteratorWithInheritance();
             iteratorWithInheritance.Iterate(1024);
         }
 
         [Benchmark]
         public void IterateWithoutInterface()
-        {            
+        {
+            IteratorWithoutInterface iteratorWithoutInterface = new IteratorWithoutInterface();
             iteratorWithoutInterface.Iterate(1024);
         }
         [Benchmark]
@@ -86,60 +91,28 @@ namespace MyBenchmarks
         {            
             Iterate(1024);
         }
+        [Benchmark]
+        public void StaticIterateWithInterface()
+        {            
+            AbstractionCostTest.staticIteratorWithInterface.Iterate(1024);
+        }
+        [Benchmark]
+        public void StaticIterateWithInheritance()
+        {            
+            AbstractionCostTest.staticIteratorWithInheritance.Iterate(1024);
+        }
+
+        [Benchmark]
+        public void StaticIterateWithoutInterface()
+        {            
+            AbstractionCostTest.staticIteratorWithoutInterface.Iterate(1024);
+        }
     }
 
     public class Program
-    {    
-        static UInt64 sum = 0;
-        public static void Iterate(UInt32 iterations)
-        {
-            for (int i = 0; i < iterations; ++i) {
-                ++sum;
-            }
-        }
-       	public static long GetNanoseconds()
-        {
-            double timestamp = Stopwatch.GetTimestamp();
-            double nanoseconds = 1_000_000_000.0 * timestamp / Stopwatch.Frequency;
-
-            return (long)nanoseconds;
-        }
+    {
         public static void Main(string[] args)
         {
-            
-            UInt32 TEST_COUNT = 10_000_000;
-            IteratorWithInterface iteratorWithInterface = new IteratorWithInterface();
-            IteratorWithoutInterface iteratorWithoutInterface = new IteratorWithoutInterface();
-            IteratorWithInheritance iteratorWithInheritance = new IteratorWithInheritance();
-
-            long start = GetNanoseconds();
-            for (int i = 0; i < TEST_COUNT; ++i) {
-                iteratorWithInterface.Iterate(1024);
-            }
-            long end = GetNanoseconds();
-            Console.WriteLine($"IterateWithInterface: {(end - start) / TEST_COUNT} ns");
-
-            start = GetNanoseconds();
-            for (int i = 0; i < TEST_COUNT; ++i) {
-                iteratorWithInheritance.Iterate(1024);
-            }
-            end = GetNanoseconds();
-            Console.WriteLine($"IterateWithInheritance: {(end - start) / TEST_COUNT} ns");
-
-            start = GetNanoseconds();
-            for (int i = 0; i < TEST_COUNT; ++i) {
-                iteratorWithoutInterface.Iterate(1024);
-            }
-            end = GetNanoseconds();
-            Console.WriteLine($"IterateWithoutInterface: {(end - start) / TEST_COUNT} ns");
-
-            start = GetNanoseconds();
-            for (int i = 0; i < TEST_COUNT; ++i) {
-                Iterate(1024);
-            }
-            end = GetNanoseconds();
-            Console.WriteLine($"IterateWithoutAnything: {(end - start) / TEST_COUNT} ns");
-            Console.ReadLine();
             BenchmarkRunner.Run<AbstractionCostTest>();
         }
     }
