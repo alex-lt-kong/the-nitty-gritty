@@ -30,6 +30,18 @@ reducing O(whatever) time complexity to O(1).
         return 24;
     }
     ```
+    This is exactly how `gcc` handles the snippet. Disassembling the binary
+    from the above code, we get:
+    ```asm
+    0000000000001040 <main>:
+        1040:	b8 18 00 00 00       	mov    eax,0x18
+        1045:	c3                   	ret    
+        1046:	66 2e 0f 1f 84 00 00 	nop    WORD PTR cs:[rax+rax*1+0x0]
+        104d:	00 00 00 
+
+    ```
+    whoa, everything is gone--no variables defined, no function call, no 
+    nothing. Let's just return 0x18 (i.e., 24)!
 
 * But does something similar exist in C#? We will find it out.
 
