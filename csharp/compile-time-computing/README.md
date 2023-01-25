@@ -37,10 +37,10 @@ reducing O(whatever) time complexity to O(1).
 
 * For a very simple function:
     ```C#
-        public static int GetConstantId() {
-            int id = 1 + 2 + 3 + 4 + 5;
-            return id;
-        }
+    public static int GetConstantId() {
+        int id = 1 + 2 + 3 + 4 + 5;
+        return id;
+    }
     ```
     source code compiler does turn it into a constant:
     ```C#
@@ -58,7 +58,7 @@ reducing O(whatever) time complexity to O(1).
     } // end of method Program::GetConstantId
     ```
     But the function is neither optimized away nor inlined:
-    ```C#
+    ```csharp
     {
         // ...
         // int constantId = GetConstantId();
@@ -79,8 +79,8 @@ reducing O(whatever) time complexity to O(1).
         return result;
     }
     ```
-    almost no optimization is done at CIL bytecode level:
-    ```C#
+    almost no optimization is done at the CIL bytecode level:
+    ```csharp
     // int value = Factorial(4);
 	IL_0006: ldc.i4.4
 	IL_0007: call int32 MyProgram.Program::Factorial(int32)
@@ -89,3 +89,28 @@ reducing O(whatever) time complexity to O(1).
 
 * However, as C# has a second chance during the JIT compilation, this test is
 not conclusive, yet.
+
+* To dig a bit deeper, we want to examine the ultimate machine code generated
+by the JIT compiler:
+
+    ```nasm
+            21:         public static void Main(string[] args)
+            22:         {
+            23:             int id = GetConstantId();
+        00007FFF30E43FD0  push        rbp  
+        00007FFF30E43FD1  sub         rsp,50h  
+        00007FFF30E43FD5  lea         rbp,[rsp+50h]  
+        00007FFF30E43FDA  vxorps      xmm4,xmm4,xmm4  
+        00007FFF30E43FDE  vmovdqa     xmmword ptr [rbp-30h],xmm4  
+        00007FFF30E43FE3  vmovdqa     xmmword ptr [rbp-20h],xmm4  
+        00007FFF30E43FE8  vmovdqa     xmmword ptr [rbp-10h],xmm4  
+        00007FFF30E43FED  mov         qword ptr [rbp+10h],rcx  
+        00007FFF30E43FF1  call        qword ptr [CLRStub[MethodDescPrestub]@00007FFF30F1BF90 (07FFF30F1BF90h)]  
+        00007FFF30E43FF7  mov         dword ptr [rbp-4],eax  
+            24:             int f4 = Factorial(4);
+        00007FFF30E43FFA  mov         ecx,4  
+        00007FFF30E43FFF  call        qword ptr [CLRStub[MethodDescPrestub]@00007FFF30F1BF78 (07FFF30F1BF78h)]  
+        00007FFF30E44005  mov         dword ptr [rbp-8],eax  
+    ```
+    * It seems that none of the function calls are optimized away.
+    
