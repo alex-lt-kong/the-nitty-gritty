@@ -120,3 +120,13 @@ them:
     } // end of method AbstractionCostTest::StaticIterateWithInheritance
 
     ```
+
+* The above observation is consistent with
+[this MSDN article](https://learn.microsoft.com/en-us/archive/msdn-magazine/2015/february/compilers-what-every-programmer-should-know-about-compiler-optimizations)
+on DotNet optimization: For C# there is a source code compiler (C# compiler)
+and a JIT compiler. The source code compiler performs only minor optimizations.
+For example, it doesn’t perform function inlining and loop optimizations.
+Instead, these optimizations are handled by the JIT compiler. The JIT compiler
+that ships with the .NET Framework 4.5.1 and later versions, called RyuJIT,
+supports SIMD.
+
