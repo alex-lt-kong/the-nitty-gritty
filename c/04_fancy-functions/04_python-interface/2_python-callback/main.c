@@ -7,7 +7,7 @@
 #define ARR_SIZE 1000000000UL
 #define SAMPLE_SIZE 10
 
-int64_t apply(int64_t a) {
+uint64_t apply(uint64_t a) {
     return a + 1;
 }
 

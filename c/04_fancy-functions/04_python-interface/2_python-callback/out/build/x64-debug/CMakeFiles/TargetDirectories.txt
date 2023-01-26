@@ -1,0 +1,3 @@
+W:/my-repos/the-nitty-gritty/c/04_fancy-functions/04_python-interface/2_python-callback/out/build/x64-debug/CMakeFiles/python-callback.dir
+W:/my-repos/the-nitty-gritty/c/04_fancy-functions/04_python-interface/2_python-callback/out/build/x64-debug/CMakeFiles/edit_cache.dir
+W:/my-repos/the-nitty-gritty/c/04_fancy-functions/04_python-interface/2_python-callback/out/build/x64-debug/CMakeFiles/rebuild_cache.dir
