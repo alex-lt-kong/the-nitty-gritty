@@ -13,6 +13,7 @@
         "types.h": "c",
         "iostream": "cpp",
         "sstream": "cpp",
-        "string": "cpp"
+        "string": "cpp",
+        "libs.h": "c"
     }
 }
