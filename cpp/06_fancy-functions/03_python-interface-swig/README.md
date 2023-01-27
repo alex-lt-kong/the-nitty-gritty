@@ -11,7 +11,7 @@
 ## Windows
 
 * Install `swig` from [here](https://www.swig.org/download.html).
-    * This step can cause confusion as the `swigwin` installer provided
+    * This step can cause confusion as the `swigwin` installer
      does not contain a `Lib` subdirectory. `swig.exe` will complain things
      like "Unable to find 'swig.swg'" if it does not find *.swg files in `Lib`.
     * We can download the `Lib` directory from SWIG's
