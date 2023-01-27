@@ -2,19 +2,31 @@
 
 * This project is a continuation of its [C version](../../../c/04_fancy-functions/04_python-interface/3_calling-c-from-python-swig/)
 
-* To generate SWIG files: `swig -c++ -python mylibs.i`
+* To generate SWIG wrapper files from an interface file:
+`swig -c++ -python mylibs.i`
 
-* To make it work on Windows is a bit more complicated:
-    1. make sure a proper Python is installed. A "proper" Python should have
-    at least an interpreter, an `include` directory and `libs` directory
-    for SWIG to compile and link.
-    1. Make sure SWIG is properly installed.
-    1. Change the `include_directories()` and `link_directories()` in
-    `CMakeLists.txt` to make sure build tools can link all the components
-    together.
+## Windows
+
+* Install `swig` and make sure that its `Lib` can be accessed.
+* Generate SWIG wrapper files.
+* Run `python3 .\build.py build`
+* Play
+```
+cd build\lib.win-amd64-3.8
+python3
+>>> import mylibs
+>>> mc = mylibs.MyClass()
+>>> mc.Scores[2]
+12.3
+>>> mc.Print()
+Id: 31415
+Name: MyObjectName
+PhoneNumber: 1234567890
+>>>
+```
 
 ## References
 
-* https://swig.org/Doc3.0/Python.html#Python_nn20
+* https://www.swig.org/Doc3.0/SWIGDocumentation.html#Python_nn6
 * https://stackoverflow.com/questions/8776328/swig-interfacing-c-library-to-python-creating-iterable-python-data-type-from/8828454#8828454
 * https://stackoverflow.com/questions/12392703/what-is-the-cleanest-way-to-call-a-python-function-from-c-with-a-swig-wrapped
