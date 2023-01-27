@@ -1,13 +1,13 @@
 /*
 If %module is followed by libs, the shared object must be named "_libs.so"
 */
-%module libs
+%module mylibs
 %{
 /* Put header files here or function declarations like below */
 
-#include "libs.h"
+#include "mylibs.h"
 %}
-%include "libs.h"
+%include "mylibs.h"
 %include "std_string.i"
 
 %extend Transcript {
