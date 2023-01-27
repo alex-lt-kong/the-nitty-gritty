@@ -8,7 +8,6 @@ If %module is followed by libs, the shared object must be named "_libs.so"
 #include "mylibs.h"
 %}
 %include "mylibs.h"
-%include "std_string.i"
 
 %extend Transcript {
   double __getitem__(size_t i) {

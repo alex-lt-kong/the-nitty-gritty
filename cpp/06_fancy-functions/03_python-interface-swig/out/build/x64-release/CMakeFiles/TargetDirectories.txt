@@ -1,5 +1,0 @@
-W:/my-repos/the-nitty-gritty/cpp/06_fancy-functions/03_python-interface-swig/out/build/x64-release/CMakeFiles/libs.dir
-W:/my-repos/the-nitty-gritty/cpp/06_fancy-functions/03_python-interface-swig/out/build/x64-release/CMakeFiles/libs_wrap.dir
-W:/my-repos/the-nitty-gritty/cpp/06_fancy-functions/03_python-interface-swig/out/build/x64-release/CMakeFiles/_libs.dir
-W:/my-repos/the-nitty-gritty/cpp/06_fancy-functions/03_python-interface-swig/out/build/x64-release/CMakeFiles/edit_cache.dir
-W:/my-repos/the-nitty-gritty/cpp/06_fancy-functions/03_python-interface-swig/out/build/x64-release/CMakeFiles/rebuild_cache.dir

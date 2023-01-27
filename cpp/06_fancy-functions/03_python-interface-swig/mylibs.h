@@ -4,6 +4,7 @@ typedef struct TranscriptStruct{
     double Scores[5];
 } Transcript;
 
+
 class MyClass {
 
 public:
