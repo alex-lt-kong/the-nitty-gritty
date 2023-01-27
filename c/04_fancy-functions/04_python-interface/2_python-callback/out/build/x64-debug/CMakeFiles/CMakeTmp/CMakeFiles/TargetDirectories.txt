@@ -1,3 +1,0 @@
-W:/my-repos/the-nitty-gritty/c/04_fancy-functions/04_python-interface/2_python-callback/out/build/x64-debug/CMakeFiles/CMakeTmp/CMakeFiles/cmTC_66523.dir
-W:/my-repos/the-nitty-gritty/c/04_fancy-functions/04_python-interface/2_python-callback/out/build/x64-debug/CMakeFiles/CMakeTmp/CMakeFiles/edit_cache.dir
-W:/my-repos/the-nitty-gritty/c/04_fancy-functions/04_python-interface/2_python-callback/out/build/x64-debug/CMakeFiles/CMakeTmp/CMakeFiles/rebuild_cache.dir

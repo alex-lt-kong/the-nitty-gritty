@@ -6,6 +6,7 @@
 .venv/
 venv/
 build/
+out/
 *_wrap.cxx
 # mypy cache
 .mypy_cache
