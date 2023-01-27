@@ -1,2 +1,0 @@
-#pragma code_page(65001)
-2 /* CREATEPROCESS_MANIFEST_RESOURCE_ID */ 24 /* RT_MANIFEST */ "W:/my-repos/the-nitty-gritty/c/04_fancy-functions/04_python-interface/2_python-callback/out/build/x64-debug/CMakeFiles/python-callback.dir/embed.manifest"
