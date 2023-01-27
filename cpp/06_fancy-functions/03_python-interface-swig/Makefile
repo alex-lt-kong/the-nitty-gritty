@@ -1,14 +1,14 @@
 OPTS = -O3 -Wall -pedantic -Wc++-compat -Wextra 
 CC=clang++
 
-main: libs.o
-	swig -c++ -python libs.i
-	$(CC) $(OPTS) -fPIC -c libs_wrap.cxx -I/usr/include/python3.9/
-	$(CC) $(OPTS) -shared libs.o libs_wrap.o -o _libs.so
+main: mylibs.o
+	swig -c++ -python mylibs.i
+	$(CC) $(OPTS) -fPIC -c mylibs_wrap.cxx -I/usr/include/python3.9/
+	$(CC) $(OPTS) -shared mylibs.o mylibs_wrap.o -o _mylibs.so
 
-libs.o: libs.cpp
-	$(CC) $(OPTS) -fPIC -c libs.cpp
+mylibs.o: mylibs.cpp
+	$(CC) $(OPTS) -fPIC -c mylibs.cpp
 
 clean:
 	rm *.o *.so
-	rm libs_wrap.cxx
+	rm mylibs_wrap.cxx

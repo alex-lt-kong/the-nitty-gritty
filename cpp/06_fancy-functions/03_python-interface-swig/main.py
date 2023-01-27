@@ -1,11 +1,12 @@
-import libs
+import mylibs
 
-mc = libs.MyClass()
+mc = mylibs.MyClass()
 print(mc.Id)
 print(mc.Name)
 print(mc.PhoneNumber)
-print(mc.Scores[0])
+for i in range(5):
+    print(mc.Scores[i], end=', ')
+print('\n')
 
-
-print('=== mc.Print ===')
+print('=== mc.Print()@mylib.so ===')
 mc.Print()
