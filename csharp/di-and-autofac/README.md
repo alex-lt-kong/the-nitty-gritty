@@ -14,7 +14,7 @@ simple.
 
         public void DoStuff() {
             // ...
-            dataClass data = myProvider.GetData();
+            int[] data = myProvider.GetData();
             // ...
         }
     } 
@@ -37,7 +37,7 @@ the above sample, does the code snippet show the `Example` class has any
 * Okay, `myProvider` is the dependency. But why do we want to "inject" them?
     * Examining the example, one can notice that `myProvider.GetData()` is
     defined somewhere else. As long as `myProvider.GetData()` exists and it 
-    returns an object of `dataClass`, the program should work.
+    returns an `int[]`, the program should work.
     * So theoretically different users (i.e., developers) can design their own
     `myProvider.GetData()`. For example, one user's `GetData()` may get data
     from a SQLite database, another user's `GetData()` may get data from an 
@@ -156,7 +156,7 @@ help of abstract class in C#:
                 Console.WriteLine();
             }
         }
-        
+
         public class Program
         {
             public static void Main(string[] args)
