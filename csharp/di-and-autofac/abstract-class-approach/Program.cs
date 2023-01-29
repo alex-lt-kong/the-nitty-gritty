@@ -10,6 +10,8 @@ namespace MyProgram
 
     public class dataProviderSQLite : dataProvider
     {
+        // There isn't any SQLite backend of course, we name it his way...
+        // just for fun.
         public override int[] GetData() {
             int[] data ={3, 1, 4, 1, 5, 9} ;
             return data;
@@ -18,6 +20,8 @@ namespace MyProgram
     
     public class dataProviderREST : dataProvider
     {
+        // There isn't any RESTful call course, we name it his way...
+        // just for fun.
         public override int[] GetData() {
             int[] data = {6, 5, 5, 3, 6} ;
             return data;

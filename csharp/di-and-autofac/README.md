@@ -38,13 +38,13 @@ the above sample, does the code snippet show the `Example` class has any
     * Examining the example, one can notice that `myProvider.GetData()` is
     defined somewhere else. As long as `myProvider.GetData()` exists and it 
     returns an `int[]`, the program should work.
-    * So theoretically different users (i.e., developers) can design their own
+    * So different users (i.e., developers) can design their own
     `myProvider.GetData()`. For example, one user's `GetData()` may get data
-    from a SQLite database, another user's `GetData()` may get data from an 
+    from an SQLite database, and another user's `GetData()` may get data from an 
     RPC call.
 
-* This requirement can be easily met by applying a naive OOP paradigm, with the
-help of abstract class in C#:
+* This requirement can be straightforwardly met by applying an OOP
+paradigm, with the help of abstract class in C#:
 
     ```C#
     namespace MyProgram
@@ -56,6 +56,8 @@ help of abstract class in C#:
 
         public class dataProviderSQLite : dataProvider
         {
+            // There isn't any SQLite backend of course, we name it his way...
+            // just for fun.
             public override int[] GetData() {
                 int[] data ={3, 1, 4, 1, 5, 9} ;
                 return data;
@@ -64,6 +66,8 @@ help of abstract class in C#:
         
         public class dataProviderREST : dataProvider
         {
+            // There isn't any RESTful call course, we name it his way...
+            // just for fun.
             public override int[] GetData() {
                 int[] data = {6, 5, 5, 3, 6} ;
                 return data;
