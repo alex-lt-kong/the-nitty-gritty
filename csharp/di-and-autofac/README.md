@@ -56,7 +56,7 @@ paradigm, with the help of abstract class in C#:
 
         public class dataProviderSQLite : dataProvider
         {
-            // There isn't any SQLite backend of course, we name it his way...
+            // There isn't any SQLite backend of course, we name it this way...
             // just for fun.
             public override int[] GetData() {
                 int[] data ={3, 1, 4, 1, 5, 9} ;
@@ -66,7 +66,7 @@ paradigm, with the help of abstract class in C#:
         
         public class dataProviderREST : dataProvider
         {
-            // There isn't any RESTful call course, we name it his way...
+            // There isn't any RESTful call of course, we name it this way...
             // just for fun.
             public override int[] GetData() {
                 int[] data = {6, 5, 5, 3, 6} ;
