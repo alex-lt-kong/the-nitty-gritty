@@ -102,6 +102,80 @@ help of abstract class in C#:
 
     }
     ```
+    ```
+    Data from MyProgram.dataProviderSQLite@MyProgram.ExampleWithObject:
+    3, 1, 4, 1, 5, 9, 
+    Data from MyProgram.dataProviderREST@MyProgram.ExampleWithObject:
+    6, 5, 5, 3, 6, 
+    ```
+
+    * With a bit more effort, we can reduce the lines of code needed from users
+    by using reflection:
+
+    ```C#
+    using System;
+    using System.Diagnostics;
+
+    namespace MyProgram
+    {
+        public abstract class dataProvider
+        {
+            public abstract int[] GetData();
+        }
+
+        public class dataProviderSQLite : dataProvider
+        {
+            public override int[] GetData() {
+                int[] data ={3, 1, 4, 1, 5, 9} ;
+                return data;
+            }
+        }
+        
+        public class dataProviderREST : dataProvider
+        {
+            public override int[] GetData() {
+                int[] data = {6, 5, 5, 3, 6} ;
+                return data;
+            }
+        }
+
+        public class ExampleWithClassName {
+            private dataProvider? myProvider;
+
+            public ExampleWithClassName(string className) {
+                Type t = Type.GetType(className); 
+                myProvider = (dataProvider?)Activator.CreateInstance(t);
+            }
+
+            public void DoStuff() {
+                int[] data = myProvider.GetData();
+                Console.WriteLine($"Data from {this.myProvider}@{this}:");
+                for (int i = 0; i < data.Length; ++i) {
+                    Console.Write($"{data[i]}, ");
+                }
+                Console.WriteLine();
+            }
+        }
+        
+        public class Program
+        {
+            public static void Main(string[] args)
+            {
+                ExampleWithClassName example3 = new ExampleWithClassName("MyProgram.dataProviderSQLite");
+                example3.DoStuff();
+                ExampleWithClassName example4 = new ExampleWithClassName("MyProgram.dataProviderREST");
+                example4.DoStuff();
+            }
+        }
+
+    }
+    ```
+    ```
+    Data from MyProgram.dataProviderSQLite@MyProgram.ExampleWithClassName:
+    3, 1, 4, 1, 5, 9,
+    Data from MyProgram.dataProviderREST@MyProgram.ExampleWithClassName:
+    6, 5, 5, 3, 6, 
+    ```
 
 ## References
 
