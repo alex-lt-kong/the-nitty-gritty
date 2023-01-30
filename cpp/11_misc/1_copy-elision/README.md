@@ -38,3 +38,4 @@ This is commonly referred to as the "as-if rule".
 * [Wikipedia - Copy elision](https://en.wikipedia.org/wiki/Copy_elision)
 * [Working Draft, Standard for Programming Language C++](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2020/n4849.pdf)
 * [Cppconference.com - Copy elision](https://en.cppreference.com/w/cpp/language/copy_elision)
+* [stackoverflow.com - Move or Named Return Value Optimization (NRVO)?](https://stackoverflow.com/questions/6233879/move-or-named-return-value-optimization-nrvo)
