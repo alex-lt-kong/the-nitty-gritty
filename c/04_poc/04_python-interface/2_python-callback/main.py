@@ -4,7 +4,7 @@ import os
 import numpy as np
 import time
 
-default_so_path = './func.o'
+default_so_path = './func.so'
 if os.path.exists(default_so_path):
     so_path = default_so_path
 else:
