@@ -1,11 +1,18 @@
 from ctypes import * 
+
+import os
 import numpy as np
 import time
 
-so_path = r"./out/build/x64-debug/python-callback.dll"
+default_so_path = './func.o'
+if os.path.exists(default_so_path):
+    so_path = default_so_path
+else:
+    print(f'{default_so_path} not found.')
+    so_path = './out/build/x64-release/python-callback.dll'
 so = CDLL(so_path)
 
-arr_size = 1_000_000
+arr_size = 10_000_000
 sample_size = 10
 
 
