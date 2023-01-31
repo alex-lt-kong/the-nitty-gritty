@@ -73,7 +73,7 @@
     C++-specific casts (i.e., casts involving object pointers/references),
     it would be safer to use the dedicated one.
 
-### static_cast<new_type>()
+### static_cast<new_type>(old_type)
 
 * `static_cast` is used for ordinary typecasting when we know an object can be
 cast to another:
@@ -92,15 +92,49 @@ cast to another:
     *No runtime checks are performed and thus users should somehow know
     they don't cast the source object into something incompatible.
 
-### dynamic_cast<new_type>()
+### dynamic_cast<new_type>(old_type)
 
 * The primary purpose of the dynamic_cast operator is to perform type-safe
 downcasts, that is, a cast from a parent class to a child class.
     * This doesn't seem to be needed in the short term, let's skip its 
     intricacies, for now.
 
+### reinterpret_cast<new_type>(old_type)
+
+* This is mostly for low-level operations. Essentially, it treats
+`old_type`'s bit representation as `new_type` and no runtime checks are
+performed, hoping that somehow, magically, `new_type` is compatible with the
+same memory layout.
+    * For example, we define a float and reinterpret_cast it to an int:
+    ```C++
+    float a = 3.14159;
+    uint32_t* b = reinterpret_cast<uint32_t*>(&a);
+    ```
+    we will see:
+    ```
+    a: 3.141590   (0xd00f4940)
+    b: 1078530000 (0xd00f4940)
+    ```
+    as they share the same bit representation.
+    * This also implies that the function may not be portable as the endianness
+    of different architectures could be different.
 
 
+### const_cast<new_type>(old_type)
+*  It is used to change the constant value of any object or we can say it is
+used to remove the constant nature of any object:
+    ```C++
+    int x = 50;
+    const int* y = &x;
+    int* z = const_cast<int *>(y);
+    *z = 100;
+    printf("x:%d, y: %d, z: %d\n", x, *y, *z);
+    ```
+    ```
+    x:100, y: 100, z: 100
+    ```
+    * For the time being, I can't think of any reason why we want to override
+    the `const` keyword so forcefully...
 
 ## References
 * [cplusplus.com - Type conversions](https://cplusplus.com/doc/tutorial/typecasting/)
@@ -108,3 +142,5 @@ downcasts, that is, a cast from a parent class to a child class.
 * [stackoverflow.com - Does signed to unsigned casting in C changes the bit values](https://stackoverflow.com/questions/58415764/does-signed-to-unsigned-casting-in-c-changes-the-bit-values)
 * [stackoverflow.com - Regular cast vs. static_cast vs. dynamic_cast](https://stackoverflow.com/questions/28002/regular-cast-vs-static-cast-vs-dynamic-cast)
 * [IBM - The dynamic_cast operator (C++ only)](https://www.ibm.com/docs/en/zos/2.4.0?topic=expressions-dynamic-cast-operator-c-only)
+* [stackoverflow.com - When to use reinterpret_cast?](https://stackoverflow.com/questions/573294/when-to-use-reinterpret-cast)
+* [Floating Point to Hex Converter](https://gregstoll.com/~gregstoll/floattohex/)

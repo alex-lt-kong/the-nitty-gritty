@@ -70,9 +70,39 @@ void standard_conversion_value_changed() {
     printf(")\n\n");
 }
 
+void test_reinterpret_cast() {
+    printf("Test reinterpret_cast\n");
+    float a = 3.14159;
+    uint32_t* b = reinterpret_cast<uint32_t*>(&a);
+    uint8_t* f32_ptr = (uint8_t*)&a;    
+    printf("a: %f   (0x", a);
+    for (size_t i = 0; i < sizeof(float); ++i) {
+        printf("%02x", *(f32_ptr + i));
+    }
+    printf(")\n");
+    uint8_t* ui32_ptr = (uint8_t*)b;  
+    printf("b: %u (0x", *b);
+    for (size_t i = 0; i < sizeof(uint32_t); ++i) {
+        printf("%02x", *(ui32_ptr + i));
+    }
+    printf(")\n\n");
+}
+
+void test_const_cast() {
+    printf("Test const_cast\n");
+    int x = 50;
+    const int* y = &x;
+    int* z = const_cast<int *>(y);
+    // *y = 100; cant do this
+    *z = 100;
+    printf("x:%d, y: %d, z: %d\n", x, *y, *z);
+}
+
 int main() {
     standard_conversion_copy_only();
     standard_conversion_copy_plus();
     standard_conversion_value_changed();
+    test_reinterpret_cast();
+    test_const_cast();
     return 0;
 }

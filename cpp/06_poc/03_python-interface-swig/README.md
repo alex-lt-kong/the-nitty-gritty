@@ -1,6 +1,6 @@
 # Python interface - SWIG
 
-* This project is a continuation of its [C version](../../../c/04_fancy-functions/04_python-interface/3_calling-c-from-python-swig/)
+* This project is a continuation of its [C version](../../../c/04_poc/04_python-interface/3_calling-c-from-python-swig/)
 
 ## Linux
 
