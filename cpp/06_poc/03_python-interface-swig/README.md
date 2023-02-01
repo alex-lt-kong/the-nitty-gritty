@@ -7,6 +7,7 @@
 * Install SWIG: `apt install swig`
 * To generate SWIG wrapper code files from an interface file:
 `swig -c++ -python mylibs.i`
+* `make`
 
 ## Windows
 
@@ -39,3 +40,4 @@ PhoneNumber: 1234567890
 * https://www.swig.org/Doc3.0/SWIGDocumentation.html#Python_nn6
 * https://stackoverflow.com/questions/8776328/swig-interfacing-c-library-to-python-creating-iterable-python-data-type-from/8828454#8828454
 * https://stackoverflow.com/questions/12392703/what-is-the-cleanest-way-to-call-a-python-function-from-c-with-a-swig-wrapped
+* [stackoverflow.com - SWIG+c+Python: Passing and receiving c arrays](https://stackoverflow.com/questions/36222455/swigcpython-passing-and-receiving-c-arrays)
