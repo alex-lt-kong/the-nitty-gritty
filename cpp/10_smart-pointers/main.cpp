@@ -40,6 +40,9 @@ void smart_func_converted_from_dumb_func(size_t arr_size)
 
 
     int* dynamic_int_arr = (int*)malloc(sizeof(int) * arr_size);
+    // In reality, malloc() should be some deep-rooted C functions,
+    // probably in a compiled so file. Here we simplify the scenario by
+    // directly using a malloc()
     for (int i = 0; i < arr_size; i++) {
         dynamic_int_arr[i] = i;
     }
