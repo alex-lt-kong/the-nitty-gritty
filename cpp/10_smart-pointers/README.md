@@ -31,14 +31,20 @@ Library algorithm that requires copies to be made.
     unique_ptr<int> smart_int_arr2 = std::move(smart_int_arr);
     ```
 
-* As always, the first hellow world program looks sane and simple, but...things
+* As always, the first hello world program looks sane and simple, but...things
 becomes more complicated, when we try to incoporate existing C code into C++.
-    * Consider the following example, we want to convert the use of raw pointers
-    to the use of smart pointers. We do it by handing over the ownership
-    of a raw pointer to a smart pointer and forget the raw pointer:
+    * Consider the following example, we get (and own) a dynamic integer
+    array from an existing C function. Current implementation means we need to
+    manually `free()` it after use. We want to convert the use of raw pointers
+    to smart pointers. We do it by handing over the ownership of a raw pointer
+    to a smart pointer and forget the raw pointer, and then memory management
+    will be automatically handled by the smart pointer's destructor.:
 
         ```C++
         int* dynamic_int_arr = (int*)malloc(sizeof(int) * arr_size);
+        // In reality, malloc() should be some deep-rooted C functions,
+        // probably in a compiled so file. Here we simplify the scenario by
+        // directly using a malloc()
         for (int i = 0; i < arr_size; i++) {
             dynamic_int_arr[i] = i;
         }
