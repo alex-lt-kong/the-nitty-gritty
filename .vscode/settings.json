@@ -14,6 +14,7 @@
         "iostream": "cpp",
         "sstream": "cpp",
         "string": "cpp",
-        "libs.h": "c"
+        "libs.h": "c",
+        "new": "cpp"
     }
 }
