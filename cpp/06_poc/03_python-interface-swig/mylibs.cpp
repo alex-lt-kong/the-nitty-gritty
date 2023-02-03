@@ -17,4 +17,11 @@ void MyClass::Print() {
          << endl;
 }
 
+void MyClass::PrintOther(MyClass mc) {
+    cout << "Id: " << mc.Id
+         << "\nName: " << mc.Name
+         << "\nPhoneNumber: " << mc.PhoneNumber
+         << endl;
+}
+
 MyClass::~MyClass() {}

@@ -61,6 +61,8 @@ class _SwigNonDynamicMeta(type):
     __setattr__ = _swig_setattr_nondynamic_class_variable(type.__setattr__)
 
 
+import weakref
+
 class Transcript(object):
     thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
     __repr__ = _swig_repr
@@ -86,16 +88,57 @@ class MyClass(object):
 
     def __init__(self):
         _mylibs.MyClass_swiginit(self, _mylibs.new_MyClass())
-
-    def EventLoop(self, arr, arr_len):
-        return _mylibs.MyClass_EventLoop(self, arr, arr_len)
     __swig_destroy__ = _mylibs.delete_MyClass
 
     def Print(self):
         return _mylibs.MyClass_Print(self)
 
+    def PrintOther(self, mc):
+        return _mylibs.MyClass_PrintOther(self, mc)
+
 # Register MyClass in _mylibs:
 _mylibs.MyClass_swigregister(MyClass)
+
+class Student(object):
+    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
+    __repr__ = _swig_repr
+    score1 = property(_mylibs.Student_score1_get, _mylibs.Student_score1_set)
+    score2 = property(_mylibs.Student_score2_get, _mylibs.Student_score2_set)
+    score3 = property(_mylibs.Student_score3_get, _mylibs.Student_score3_set)
+
+    def __init__(self):
+        _mylibs.Student_swiginit(self, _mylibs.new_Student())
+    __swig_destroy__ = _mylibs.delete_Student
+
+# Register Student in _mylibs:
+_mylibs.Student_swigregister(Student)
+
+class MyIf(object):
+    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
+    __repr__ = _swig_repr
+    count = property(_mylibs.MyIf_count_get, _mylibs.MyIf_count_set)
+    stu = property(_mylibs.MyIf_stu_get, _mylibs.MyIf_stu_set)
+
+    def __init__(self):
+        if self.__class__ == MyIf:
+            _self = None
+        else:
+            _self = self
+        _mylibs.MyIf_swiginit(self, _mylibs.new_MyIf(_self, ))
+
+    def myfunc(self, a):
+        return _mylibs.MyIf_myfunc(self, a)
+
+    def start(self, iter):
+        return _mylibs.MyIf_start(self, iter)
+    __swig_destroy__ = _mylibs.delete_MyIf
+    def __disown__(self):
+        self.this.disown()
+        _mylibs.disown_MyIf(self)
+        return weakref.proxy(self)
+
+# Register MyIf in _mylibs:
+_mylibs.MyIf_swigregister(MyIf)
 
 
 

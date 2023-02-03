@@ -10,9 +10,10 @@ static PyObject* helloworld(PyObject* self, PyObject* args)
 static PyObject* call_arbitrary_pyfunc(PyObject* self, PyObject *args) {
     PyObject* func;
     int iter_count;
-    int ok = PyArg_ParseTuple(args, "Oi", &func, &iter_count);
+    PyObject* cust;
+    int ok = PyArg_ParseTuple(args, "OiO", &func, &iter_count, &cust);
     for (long i = 0; i < iter_count; ++i)
-        PyObject_CallOneArg(func, PyLong_FromLong(i));
+        PyObject_CallOneArg(func, cust);
     return Py_None;
     // plus whatever other code you need (e.g. reference counting, return value handling)
 }
