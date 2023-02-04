@@ -1,6 +1,13 @@
 # Python interface - SWIG
 
 * This project is a continuation of its [C version](../../../c/04_poc/04_python-interface/3_calling-c-from-python-swig/)
+but it is much more complicated.
+
+* We would like to achieve so-called [Cross language polymorphism](https://www.swig.org/Doc4.1/Python.html#Python_directors)
+with SWIG.
+    * In practice, this fancy term means that we can define a base class in
+    C++, inherit it in target languages (e.g., Python/C#/etc), override its
+    methods in target languages and call the overrided method in C++.
 
 ## Linux
 
