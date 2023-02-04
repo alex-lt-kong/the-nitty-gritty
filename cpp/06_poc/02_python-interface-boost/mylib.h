@@ -1,5 +1,6 @@
 #include <stdint.h>
 #include <vector>
+#include <boost/python.hpp>
 
 using namespace std;
 
@@ -17,8 +18,7 @@ public:
     double score3;
     double score4;
     inline Student() {};
-    inline Student(string name, double score1, double score2,
-      double score3, double score4) {
+    inline Student(string name, double score1, double score2, double score3, double score4) {
         this->name = name;
         this->score1 = score1;
         this->score2 = score2;
@@ -29,11 +29,14 @@ public:
 
 class LIBRARY_API StudentHandler {
 public:
+    boost::python::object object;
     uint32_t studentCount;
+    uint32_t iterCount;
     vector<Student> students;
-    StudentHandler(uint32_t studentCount);
+    StudentHandler(uint32_t studentCount, boost::python::object object);
+    StudentHandler();
     void prepareStudentData();
-    virtual void onStudentIterated(Student stu) = 0;
+    void onStudentIterated(Student stu);
     uint32_t GetStudentCount();
     virtual ~StudentHandler();
     void start();

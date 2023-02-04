@@ -8,11 +8,11 @@ from sys import version_info as _swig_python_version_info
 if _swig_python_version_info < (2, 7, 0):
     raise RuntimeError("Python 2.7 or later required")
 
-# Import the low-level C/C++ module
+# Pull in all the attributes from the low-level C/C++ module
 if __package__ or "." in __name__:
-    from . import _mylib
+    from ._mylib import *
 else:
-    import _mylib
+    from _mylib import *
 
 try:
     import builtins as __builtin__
@@ -63,49 +63,7 @@ class _SwigNonDynamicMeta(type):
 
 import weakref
 
-class Student(object):
-    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
-    __repr__ = _swig_repr
-    score1 = property(_mylib.Student_score1_get, _mylib.Student_score1_set)
-    score2 = property(_mylib.Student_score2_get, _mylib.Student_score2_set)
-    score3 = property(_mylib.Student_score3_get, _mylib.Student_score3_set)
 
-    def __init__(self):
-        _mylib.Student_swiginit(self, _mylib.new_Student())
-    __swig_destroy__ = _mylib.delete_Student
-
-# Register Student in _mylib:
-_mylib.Student_swigregister(Student)
-
-class StudentHandler(object):
-    thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
-    __repr__ = _swig_repr
-    studentCount = property(_mylib.StudentHandler_studentCount_get, _mylib.StudentHandler_studentCount_set)
-    stu = property(_mylib.StudentHandler_stu_get, _mylib.StudentHandler_stu_set)
-
-    def __init__(self):
-        if self.__class__ == StudentHandler:
-            _self = None
-        else:
-            _self = self
-        _mylib.StudentHandler_swiginit(self, _mylib.new_StudentHandler(_self, ))
-
-    def onStudentIterated(self, stu):
-        return _mylib.StudentHandler_onStudentIterated(self, stu)
-
-    def GetStudentCount(self):
-        return _mylib.StudentHandler_GetStudentCount(self)
-    __swig_destroy__ = _mylib.delete_StudentHandler
-
-    def start(self, iter):
-        return _mylib.StudentHandler_start(self, iter)
-    def __disown__(self):
-        self.this.disown()
-        _mylib.disown_StudentHandler(self)
-        return weakref.proxy(self)
-
-# Register StudentHandler in _mylib:
-_mylib.StudentHandler_swigregister(StudentHandler)
 
 
 
