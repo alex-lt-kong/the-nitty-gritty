@@ -26,10 +26,8 @@ with SWIG.
         * `myclass.py`
 
         ```Python
-        class MyPhthonClass(MyClass):
-            # inherit MyClass from C++  "natively"
-            def onCallback(self):
-                # Override virtual method onCallback()
+        class MyPhthonClass(MyClass): # inherit MyClass from C++ "natively"
+            def onCallback(self): # Override virtual method
                 print('Hello world from Python')
         
         mpc = MyPhthonClass()
@@ -40,12 +38,10 @@ with SWIG.
         ```
 
         * `myclass.cs`
-        
+
         ```C#
-        class MyCSharpClass : MyClass {
-            // inherit MyClass from C++ "natively"    
-            public override void onCallback() {
-            // override virtual method onCallback()                    
+        class MyCSharpClass : MyClass { // inherit MyClass from C++ "natively"    
+            public override void onCallback() { // override virtual method
                 Console.WriteLine("Hello world from CSharp");
             }
         }
