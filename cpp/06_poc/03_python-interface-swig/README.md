@@ -7,7 +7,7 @@ but it is much more complicated.
 with SWIG.
     * In practice, this fancy term means that we can define a base class in
     C++, inherit it in target languages (e.g., Python/C#/etc), override its
-    methods in target languages and call the overrided method in C++:
+    methods in target languages and call the overridden method in C++:
 
     ```C++
     class MyClass {
@@ -22,7 +22,7 @@ with SWIG.
     ```
     ```Python
     class MyPhthonClass(MyClass):
-        # inherit MyClass from C++ as MyPhthonClass
+        # inherit MyClass from C++  "natively"
         def onCallback(self):
             # Override virtual method onCallback()
             print('Hello world from Python')
@@ -34,22 +34,16 @@ with SWIG.
     # >>> Hello world from Python
     ```
     ```C#
-    class MyCSharpClass : MyClass 
-    // inherit MyClass from C++ as MyCSharpClass
-    {
-        public override void onCallback()
-        // override virtual method onCallback()
-        {            
+    class MyCSharpClass : MyClass {
+        // inherit MyClass from C++ "natively"    
+        public override void onCallback() {
+        // override virtual method onCallback()                    
             Console.WriteLine("Hello world from CSharp");
         }
     }
-    public class Program
-    {
-        public static void Main(string[] args)
-        {
-            MyCSharpClass mcc = new MyCSharpClass();
-            mcc.start(); // defined in C++, call transparently.
-        }
+    public static void Main(string[] args) {
+        MyCSharpClass mcc = new MyCSharpClass();
+        mcc.start(); // defined in C++, call transparently.
     }
     // >>> Hello world from CSharp
     // >>> Hello world from CSharp
