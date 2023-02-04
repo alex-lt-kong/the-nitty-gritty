@@ -1,5 +1,5 @@
-OPTS = -O2 -Wall -pedantic -Wextra 
-CC=g++
+OPTS = -O3 -Wall -pedantic -Wextra 
+CC=clang++
 
 main: mylibs.o
 	swig -c++ -python mylibs.i
@@ -8,6 +8,12 @@ main: mylibs.o
 	
 mylibs.o: mylibs.cpp
 	$(CC) $(OPTS) -fPIC -c mylibs.cpp
+
+windows:
+	$(CC) $(OPTS) -c mylibs.h
+	$(CC) $(OPTS) -c mylibs_wrap.cxx
+	$(CC) $(OPTS) -shared mylibs.o mylibs_wrap.o -o mylibs.dll
+	
 
 clean:
 	rm *.o *.so

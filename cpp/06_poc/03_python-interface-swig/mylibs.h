@@ -1,37 +1,24 @@
 using namespace std;
 
-typedef struct TranscriptStruct{
-    double Scores[5];
-} Transcript;
+#if defined(_WIN32)
+  #define LIBRARY_API __declspec(dllexport)
+#else
+  #define LIBRARY_API
+#endif
 
-
-class MyClass {
-
-public:
-    int Id;
-    char* Name;
-    unsigned int PhoneNumber;
-    Transcript Scores;
-
-    MyClass();
-    ~MyClass();
-    void Print();
-    void PrintOther(MyClass mc);
-};
-
-class Student {
+class LIBRARY_API Student {
 public:
     double score1;
     double score2;
     double score3;
     Student() {
-        score1 = 0.0;
-        score2 = 0.0;
-        score3 = 0.0;
+        score1 = 1.23;
+        score2 = 3.14;
+        score3 = 1.414;
     }
 };
 
-class MyIf {
+class LIBRARY_API MyIf {
 public:
     uint32_t count;
     Student stu;
@@ -39,7 +26,11 @@ public:
         count = 0;
         stu = Student();
     }
-    virtual void myfunc(Student a) {};
+    virtual void myfunc(Student) = 0;
+    inline int testFUnc() {
+        return 10;
+    }
+    inline ~MyIf() {};
     inline void start(uint32_t iter) {
         for (uint32_t i = 0; i < iter; ++i) {
             myfunc(stu);
