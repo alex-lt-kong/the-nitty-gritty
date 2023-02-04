@@ -3,17 +3,17 @@
 
 using namespace std;
 
-StudentHandler::StudentHandler() {}
+DepartmentHandler::DepartmentHandler() {}
 
 
-StudentHandler::StudentHandler(uint32_t studentCount, boost::python::object object) {
+DepartmentHandler::DepartmentHandler(uint32_t studentCount, boost::python::object object) {
     srand(time(NULL));
     this->object = object;
     this->studentCount = studentCount;
     students = vector<Student>(studentCount);
 }
 
-void StudentHandler::prepareStudentData() {
+void DepartmentHandler::prepareStudentData() {
     
     for (size_t i = 0; i < studentCount; ++i) {
         students[i] = Student(string("Test Name"), 1.0 * rand() / rand(), 
@@ -21,31 +21,31 @@ void StudentHandler::prepareStudentData() {
     }
 }
 
-uint32_t StudentHandler::GetStudentCount() {
+uint32_t DepartmentHandler::GetStudentCount() {
     return studentCount;
 }
 
-void StudentHandler::start() {
+void DepartmentHandler::start() {
     auto func = object.attr("onStudentIterated");
     for (uint32_t i = 0; i < studentCount; ++i) {
         func(students[i]);
     }
 }
 
-void StudentHandler::onStudentIterated(Student stu) {
+void DepartmentHandler::onStudentIterated(Student stu) {
     cout << stu.score1 << endl;
 }
 
-StudentHandler::~StudentHandler() {}
+DepartmentHandler::~DepartmentHandler() {}
 
 using namespace boost::python;
 
 BOOST_PYTHON_MODULE(mylib)
 {
-    boost::python::class_<StudentHandler>("StudentHandler", init<uint32_t, object>())
-        .def("start", &StudentHandler::start)
-        .def("prepareStudentData", &StudentHandler::prepareStudentData)
-        .def("onStudentIterated", &StudentHandler::onStudentIterated)
+    boost::python::class_<DepartmentHandler>("StudentHandler", init<uint32_t, object>())
+        .def("start", &DepartmentHandler::start)
+        .def("prepareStudentData", &DepartmentHandler::prepareStudentData)
+        .def("onStudentIterated", &DepartmentHandler::onStudentIterated)
     ;
     boost::python::class_<Student>("Student")
         .def_readwrite("name", &Student::name)
