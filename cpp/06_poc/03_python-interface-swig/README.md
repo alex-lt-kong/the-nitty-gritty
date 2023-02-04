@@ -7,7 +7,54 @@ but it is much more complicated.
 with SWIG.
     * In practice, this fancy term means that we can define a base class in
     C++, inherit it in target languages (e.g., Python/C#/etc), override its
-    methods in target languages and call the overrided method in C++.
+    methods in target languages and call the overrided method in C++:
+
+    ```C++
+    class MyClass {
+    public:
+        virtual void onCallback() = 0; // A virtual method to be overridden
+        inline void start() {
+            for (int i = 0; i < 3; ++i) {
+                onCallback(); // To be overridden by target languages
+            }
+        }
+    };
+    ```
+    ```Python
+    class MyPhthonClass(MyClass):
+        # inherit MyClass from C++ as MyPhthonClass
+        def onCallback(self):
+            # Override virtual method onCallback()
+            print('Hello world from Python')
+    
+    mpc = MyPhthonClass()
+    mpc.start() # defined in C++, call transparently.
+    # >>> Hello world from Python
+    # >>> Hello world from Python
+    # >>> Hello world from Python
+    ```
+    ```C#
+    class MyCSharpClass : MyClass 
+    // inherit MyClass from C++ as MyCSharpClass
+    {
+        public override void onCallback()
+        // override virtual method onCallback()
+        {            
+            Console.WriteLine("Hello world from CSharp");
+        }
+    }
+    public class Program
+    {
+        public static void Main(string[] args)
+        {
+            MyCSharpClass mcc = new MyCSharpClass();
+            mcc.start(); // defined in C++, call transparently.
+        }
+    }
+    // >>> Hello world from CSharp
+    // >>> Hello world from CSharp
+    // >>> Hello world from CSharp
+    ```
 
 ## Linux
 
@@ -49,5 +96,6 @@ PhoneNumber: 1234567890
 * https://stackoverflow.com/questions/12392703/what-is-the-cleanest-way-to-call-a-python-function-from-c-with-a-swig-wrapped
 * [stackoverflow.com - SWIG+c+Python: Passing and receiving c arrays](https://stackoverflow.com/questions/36222455/swigcpython-passing-and-receiving-c-arrays)
 * [stackoverflow - How to wrap a c++ function which takes in a function pointer in python using SWIG](https://stackoverflow.com/questions/22923696/how-to-wrap-a-c-function-which-takes-in-a-function-pointer-in-python-using-swi)
-https://stackoverflow.com/questions/9040669/how-can-i-implement-a-c-class-in-python-to-be-called-by-c
+* [How can I implement a C++ class in Python, to be called by C++?](https://stackoverflow.com/questions/9040669/how-can-i-implement-a-c-class-in-python-to-be-called-by-c)
 https://iamsorush.com/posts/cpp-csharp-swig/
+* [SWIG 4.0 - Python]https://www.swig.org/Doc4.0/Python.html

@@ -2,7 +2,7 @@ OPTS = -O3 -Wall -pedantic -Wextra
 CC=clang++
 
 main: mylib.o
-	swig -c++ -python mylib.i
+	swig -c++ -python -builtin mylib.i
 	python3 setup.py build
 	yes | cp ./build/lib.linux-x86_64-3.9/* ./python-wrapper/
 
