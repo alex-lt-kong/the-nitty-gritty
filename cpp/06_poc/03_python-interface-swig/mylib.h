@@ -27,15 +27,23 @@ public:
     }
 };
 
-class LIBRARY_API StudentHandler {
+class LIBRARY_API Department {
 public:
+    // void onStudentIterated(Student stu) {cout<<"default"<<endl;};
+    virtual void onStudentIterated(Student stu) = 0;
+    virtual ~Department() {};
+};
+
+
+class LIBRARY_API DepartmentHandler {
+  
+public:
+    Department& _dept;
     uint32_t studentCount;
     vector<Student> students;
-    StudentHandler(uint32_t studentCount);
-    void prepareStudentData();
-    virtual void onStudentIterated(Student stu) = 0;
+    DepartmentHandler(Department& dept, uint32_t studentCount);
+    void prepareStudentData();    
     uint32_t GetStudentCount();
-    virtual ~StudentHandler();
     void start();
 
 };
