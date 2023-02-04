@@ -43,3 +43,4 @@ PhoneNumber: 1234567890
 * [stackoverflow.com - SWIG+c+Python: Passing and receiving c arrays](https://stackoverflow.com/questions/36222455/swigcpython-passing-and-receiving-c-arrays)
 * [stackoverflow - How to wrap a c++ function which takes in a function pointer in python using SWIG](https://stackoverflow.com/questions/22923696/how-to-wrap-a-c-function-which-takes-in-a-function-pointer-in-python-using-swi)
 https://stackoverflow.com/questions/9040669/how-can-i-implement-a-c-class-in-python-to-be-called-by-c
+https://iamsorush.com/posts/cpp-csharp-swig/
