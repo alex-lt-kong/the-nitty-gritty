@@ -1,3 +1,5 @@
+#include <stdint.h>
+
 using namespace std;
 
 #if defined(_WIN32)
@@ -18,22 +20,17 @@ public:
     }
 };
 
-class LIBRARY_API MyIf {
+class LIBRARY_API StudentHandler {
 public:
-    uint32_t count;
+    uint32_t studentCount;
     Student stu;
-    inline MyIf() {
-        count = 0;
-        stu = Student();
-    }
-    virtual void myfunc(Student) = 0;
-    inline int testFUnc() {
-        return 10;
-    }
-    inline ~MyIf() {};
+    StudentHandler();
+    virtual void onStudentIterated(Student stu) = 0;
+    uint32_t GetStudentCount();
+    virtual ~StudentHandler();
     inline void start(uint32_t iter) {
         for (uint32_t i = 0; i < iter; ++i) {
-            myfunc(stu);
+            onStudentIterated(stu);
         }
     }
 

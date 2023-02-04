@@ -1,13 +1,13 @@
 from distutils.core import setup, Extension
 
 
-my_module = Extension('_mylibs', sources=['mylibs_wrap.cxx', 'mylibs.cpp'])
+my_module = Extension('_mylib', sources=['mylib_wrap.cxx', 'mylib.cpp'])
 
 setup (
-    name = 'mylibs',
+    name = 'mylib',
     version = '0.1',
     author      = "SWIG Docs",
     description = """Simple swig example from docs""",
     ext_modules = [my_module],
-    py_modules = ["mylibs"],
+    py_modules = ["mylib"],
 )

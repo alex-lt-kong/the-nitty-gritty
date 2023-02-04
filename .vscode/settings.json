@@ -4,18 +4,8 @@
     "python.linting.enabled": true,
     "makefile.extensionOutputFolder": "./.vscode",
     "files.associations": {
-        "string.h": "c",
-        "time.h": "c",
-        "func.h": "c",
-        "stdlib.h": "c",
-        "utils.h": "c",
-        "semaphore.h": "c",
-        "types.h": "c",
-        "iostream": "cpp",
-        "sstream": "cpp",
-        "string": "cpp",
-        "libs.h": "c",
-        "new": "cpp",
-        "python.h": "c"
+        "bitset": "cpp",
+        "chrono": "cpp",
+        "algorithm": "cpp"
     }
 }
