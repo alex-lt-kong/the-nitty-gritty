@@ -10,11 +10,12 @@ with SWIG.
     methods in target languages and call the overridden method in C++:
 
         * `myclass.cpp`
+
         ```C++
         class MyClass {
         public:
             virtual void onCallback() = 0; // A virtual method to be overridden
-            inline void start() {
+            void start() {
                 for (int i = 0; i < 3; ++i) {
                     onCallback(); // To be overridden by target languages
                 }
@@ -23,6 +24,7 @@ with SWIG.
         ```
 
         * `myclass.py`
+
         ```Python
         class MyPhthonClass(MyClass):
             # inherit MyClass from C++  "natively"
@@ -36,7 +38,9 @@ with SWIG.
         # >>> Hello world from Python
         # >>> Hello world from Python
         ```
+
         * `myclass.cs`
+        
         ```C#
         class MyCSharpClass : MyClass {
             // inherit MyClass from C++ "natively"    
