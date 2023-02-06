@@ -5,7 +5,13 @@ main: mylib.o
 	swig -c++ -python -builtin mylib.i
 	python3 setup.py build
 	yes | cp ./build/lib.linux-x86_64-3.9/* ./python-wrapper/
-windows: mylib.o
+
+windows-python: mylib.o
+	swig -c++ -python -builtin mylib.i
+	python3 setup.py build
+	powershell cp ./build/lib.win-amd64-3.8/* ./python-wrapper/
+
+windows-csharp: mylib.o
 	swig -c++ -csharp -outdir ./csharp-wrapper/csharp-wrapper/swig-files/ mylib.i
 	$(CC) $(OPTS) -shared mylib.o mylib_wrap.cxx -o ./csharp-wrapper/csharp-wrapper/swig-files/mylib.dll
 

@@ -3,7 +3,8 @@
 * This project is a continuation of its [C version](../../../c/04_poc/04_python-interface/3_calling-c-from-python-swig/)
 but it is much more complicated.
 
-* We would like to achieve so-called [cross language polymorphism](https://www.swig.org/Doc4.1/Python.html#Python_directors)
+* We would like to achieve so-called transparent
+[cross language polymorphism](https://www.swig.org/Doc4.1/Python.html#Python_directors)
 with SWIG.
     * In practice, this fancy term means that we can define a base class in
     C++, inherit it in target languages (e.g., Python/C#/etc), override its
@@ -26,11 +27,11 @@ with SWIG.
         * `myclass.py`
 
         ```Python
-        class MyPhthonClass(MyClass): # inherit MyClass from C++ "natively"
+        class MyPythonClass(MyClass): # inherit MyClass from C++ "natively"
             def onCallback(self): # Override virtual method
                 print('Hello world from Python')
         
-        mpc = MyPhthonClass()
+        mpc = MyPythonClass()
         mpc.start() # defined in C++, call transparently.
         # >>> Hello world from Python
         # >>> Hello world from Python
@@ -57,10 +58,16 @@ with SWIG.
 ## Linux
 
 * Install SWIG: `apt install swig`
-* To generate SWIG wrapper code files from an interface file:
-`swig -c++ -python mylibs.i`
-* `make`
-* `python3 ./python-wrapper/main.py`
+* `make` `// This also handles swig interface files generation`
+
+### Python
+
+    * `python3 ./python-wrapper/main.py`
+
+### C#
+
+    * This is not tested on Linux, one may consult the Windows version to 
+    figure it out.
 
 ## Windows (MinGW)
 
@@ -71,8 +78,16 @@ with SWIG.
     * We can download the `Lib` directory from SWIG's
     [official repository](https://github.com/swig/swig/tree/master/Lib)
     and set `SWIG_LIB` to `Lib`'s path to let `swig.exe` have the library files.
-* `make windows`
-* Open `csharp-wrapper` in Visual Studio and build/run.
+
+### C#
+
+    * `make windowscsharp`
+    * Open `csharp-wrapper` in Visual Studio and build/run.
+
+### Python
+
+    * `mingw32-make.exe windows-python`
+    * `python3 ./python-wrapper/main.py`
 
 ## References
 
