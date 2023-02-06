@@ -60,16 +60,16 @@ with SWIG.
 * Install SWIG: `apt install swig`
 * `make` `// This also handles swig interface files generation`
 
-### Python
+* **Python**
 
     * `python3 ./python-wrapper/main.py`
 
-### C#
+* **C#**
 
     * This is not tested on Linux, one may consult the Windows version to 
     figure it out.
 
-## Windows (MinGW)
+## Windows (MinGW+clang)
 
 * Install `swig` from [here](https://www.swig.org/download.html).
     * This step can cause confusion as the `swigwin` installer
@@ -79,13 +79,14 @@ with SWIG.
     [official repository](https://github.com/swig/swig/tree/master/Lib)
     and set `SWIG_LIB` to `Lib`'s path to let `swig.exe` have the library files.
 
-### C#
+* **C#**
+    * `make windows-csharp`
+    * Open the `csharp-wrapper` solution in Visual Studio and build/run.
+        * If the `Program.cs` compiles but throws runtime exception on dll not
+        found, you may need to manually copy `swig-files/mylib.dll` to the
+        build directory (e.g., `bin\Release\net6.0`)
 
-    * `make windowscsharp`
-    * Open `csharp-wrapper` in Visual Studio and build/run.
-
-### Python
-
+* **Python**
     * `mingw32-make.exe windows-python`
     * `python3 ./python-wrapper/main.py`
 
