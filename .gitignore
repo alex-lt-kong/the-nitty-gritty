@@ -8,6 +8,7 @@ venv/
 build/
 out/
 # swig wrapper files
+swig-files/
 *_wrap.cxx
 *_wrap.h
 # mypy cache

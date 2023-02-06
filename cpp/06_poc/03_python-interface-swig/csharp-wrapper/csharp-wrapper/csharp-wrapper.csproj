@@ -8,12 +8,14 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 <ItemGroup>
-    <None Include="W:\\my-repos\\the-nitty-gritty\\cpp\\06_poc\\03_python-interface-swig\\build\\mylibs.dll" Condition="$([MSBuild]::IsOSPlatform('Windows'))">
+    <None Include="mylibs.so" Condition="$([MSBuild]::IsOSPlatform('Linux'))">
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="mylibs.so" Condition="$([MSBuild]::IsOSPlatform('Linux'))" >
-            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
+</ItemGroup>
+<ItemGroup>
+  <None Update="swig-files\mylib.dll">
+    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+  </None>
 </ItemGroup>
 
 </Project>
