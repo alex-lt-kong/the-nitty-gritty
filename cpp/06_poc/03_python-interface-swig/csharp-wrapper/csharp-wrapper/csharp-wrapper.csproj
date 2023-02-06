@@ -14,7 +14,7 @@
 </ItemGroup>
 <ItemGroup>
   <None Update="swig-files\mylib.dll">
-    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
   </None>
 </ItemGroup>
 
