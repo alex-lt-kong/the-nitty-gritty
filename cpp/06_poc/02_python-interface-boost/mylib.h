@@ -27,18 +27,18 @@ public:
     }
 };
 
-class LIBRARY_API StudentHandler {
+class LIBRARY_API DepartmentHandler {
 public:
     boost::python::object object;
     uint32_t studentCount;
     uint32_t iterCount;
     vector<Student> students;
-    StudentHandler(uint32_t studentCount, boost::python::object object);
-    StudentHandler();
+    DepartmentHandler(uint32_t studentCount, boost::python::object object);
+    DepartmentHandler();
     void prepareStudentData();
     void onStudentIterated(Student stu);
     uint32_t GetStudentCount();
-    virtual ~StudentHandler();
+    virtual ~DepartmentHandler();
     void start();
 
 };
