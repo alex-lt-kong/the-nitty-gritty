@@ -58,7 +58,7 @@ with SWIG.
 ## Linux
 
 * Install SWIG: `apt install swig`
-* `make` `// This also handles swig interface files generation`
+* `make`
 
 * **Python**
 
