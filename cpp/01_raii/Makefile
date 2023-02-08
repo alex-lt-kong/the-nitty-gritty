@@ -1,4 +1,4 @@
-OPTS = -O3 -Wall -pedantic -Wc++-compat -Wextra 
+OPTS = -O3 -Wall -pedantic -Wextra 
 CC = g++
 
 main:

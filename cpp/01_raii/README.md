@@ -87,7 +87,7 @@ memory and use its destructor to `free()` the memory--brilliant! a
 ## Pointers with RAII and [the rule of three](https://en.cppreference.com/w/cpp/language/rule_of_three)
 
 * So far, so good--playing in the C++ playground, things are nice and tidy.
-However, as always, it becomes more interesting (or horrible if you wish) if
+However, as always, it becomes more interesting (or horrible if you wish) when
 C comes into play.
 
 * What if, for whatever reason, we need to to `malloc()` raw pointers in a
@@ -265,23 +265,22 @@ fails:
         int* curr_ptr0;
         int* curr_ptr1;
 
-
         Wallet () {
             printf("Wallet () called\n");
             mallocPtrs();
         }
         // Copy constructor
-        Wallet(const Wallet& w1) {
+        Wallet(const Wallet& rhs) {
             mallocPtrs();  
-            memcpy(this->curr_ptr0, w1.curr_ptr0, sizeof(int) * ARR_SIZE);
-            memcpy(this->curr_ptr1, w1.curr_ptr1, sizeof(int) * ARR_SIZE);
+            memcpy(this->curr_ptr0, rhs.curr_ptr0, sizeof(int) * ARR_SIZE);
+            memcpy(this->curr_ptr1, rhs.curr_ptr1, sizeof(int) * ARR_SIZE);
             printf("copy Wallet() called\n");
         }
         // Copy assignment operator
-        Wallet& operator=(const Wallet& w1) {
-            memcpy(this->curr_ptr0, w1.curr_ptr0, sizeof(int) * ARR_SIZE);
-            memcpy(this->curr_ptr1, w1.curr_ptr1, sizeof(int) * ARR_SIZE);
-            printf("operator=(const Wallet& w1) called\n");
+        Wallet& operator=(const Wallet& rhs) {
+            memcpy(this->curr_ptr0, rhs.curr_ptr0, sizeof(int) * ARR_SIZE);
+            memcpy(this->curr_ptr1, rhs.curr_ptr1, sizeof(int) * ARR_SIZE);
+            printf("operator=(const Wallet& rhs) called\n");
             return *this;
         }
         ~Wallet () {
@@ -296,6 +295,77 @@ fails:
     operator is used to replace the data of a previously INitialized object
     with some other object's data. "
 
+* The above sample works fine, but it still hides some important complexity
+because `ARR_SIZE` is something predefined and fixed, so that we can always
+re-use existing `malloc()`ed memory . What if `ARR_SIZE` is dynamic? It makes
+copy constructor and copy assignment operator much more complicated.
+
+```C++
+
+class DynamicWallet {
+private:
+    void mallocPtrs() {
+        curr_ptr0 = (int*)malloc(sizeof(int) * wallet_size);
+        if (curr_ptr0 == NULL) {
+            std::bad_alloc exception;
+            throw exception;
+        }
+        curr_ptr1 = (int*)malloc(sizeof(int) * wallet_size);
+        if (curr_ptr1== NULL) {
+            free(curr_ptr0);
+            // Need to handle the already malloc()'ed pointer manually.
+            std::bad_alloc exception;
+            throw exception;
+        }
+    }
+public:
+    int* curr_ptr0;
+    int* curr_ptr1;
+    size_t  wallet_size;
+    DynamicWallet (size_t wallet_size) {
+        cout << "DynamicWallet () called" << endl;
+        this->wallet_size = wallet_size;
+        mallocPtrs();
+    }
+    // Copy constructor
+    DynamicWallet(const DynamicWallet& rhs) {
+        wallet_size = rhs.wallet_size;
+        mallocPtrs();
+        memcpy(curr_ptr0, rhs.curr_ptr0, sizeof(int) * wallet_size);
+        memcpy(curr_ptr1, rhs.curr_ptr1, sizeof(int) * wallet_size);
+        cout << "copy DynamicWallet() called" << endl;
+    }
+    // Copy assignment operator
+    DynamicWallet& operator=(const DynamicWallet& rhs) {
+        this->wallet_size = rhs.wallet_size;
+        free(curr_ptr0);
+        free(curr_ptr1);
+        mallocPtrs();
+        memcpy(curr_ptr0, rhs.curr_ptr0, sizeof(int) * wallet_size);
+        memcpy(curr_ptr1, rhs.curr_ptr1, sizeof(int) * wallet_size);
+        cout << "operator=(const DynamicWallet& rhs) called" << endl;
+        return *this;
+    }
+    ~DynamicWallet () {
+        free(curr_ptr0);
+        free(curr_ptr1);
+    }
+```
+
+    * If `wallet_size` is dynamic, we need to `free()` previously `malloc()`ed
+    memory and then `malloc()` again.
+
+    * But is the above example good enough? Unfortunately, the answer is no.
+    What could go wrong if we do the following?:
+
+    ```C++
+    DynamicWallet first_dwallet = DynamicWallet(2048);
+    first_dwallet.curr_ptr0[0] = 3;
+    first_dwallet.curr_ptr1[2047] = 666;
+    first_dwallet = first_dwallet
+    ```
+
+* A version that corrects this bug can be found [here](./pointer.cpp)
 
 ## References
 
@@ -303,3 +373,4 @@ fails:
 * [CPP Reference - smart pointers](https://en.cppreference.com/book/intro/smart_pointers)
 * [Standard C++ Foundation - How should I handle resources if my constructors may throw exceptions?](https://isocpp.org/wiki/faq/exceptions#selfcleaning-members)
 * [StackOverflow - What's the difference between assignment operator and copy constructor?](https://stackoverflow.com/questions/11706040/whats-the-difference-between-assignment-operator-and-copy-constructor)
+* [Back to Basics: RAII and the Rule of Zero - Arthur O'Dwyer - CppCon 2019](https://www.youtube.com/watch?v=7Qgd9B1KuMQ)
