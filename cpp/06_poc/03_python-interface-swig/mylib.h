@@ -31,6 +31,7 @@ class LIBRARY_API Department {
 public:
     // void onStudentIterated(Student stu) {cout<<"default"<<endl;};
     virtual void onStudentIterated(Student& stu) = 0;
+    // Passing Student by reference/pointer could significantly boost performance
     virtual ~Department() {};
 };
 
