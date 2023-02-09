@@ -17,26 +17,27 @@ float, etc. For example:
     then modify the object, the object being passed won't be changed.
     * Assigning an object to another object will create a new object, instead
     of creating a pointer pointing to the same memory location.
+
     ```C++
-        MyItemType a;
-        MyItemType b;
-        a.someNumber = 5;
-        b = a;
+    MyItemType a;
+    MyItemType b;
+    a.someNumber = 5;
+    b = a;
 
-        cout << a.someNumber << endl;
-        cout << b.someNumber << endl;
+    cout << a.someNumber << endl;
+    cout << b.someNumber << endl;
 
-        b.someNumber = 10;
+    b.someNumber = 10;
 
-        cout << a.someNumber << endl;
-        cout << b.someNumber << endl;
+    cout << a.someNumber << endl;
+    cout << b.someNumber << endl;
     ``` 
     Output:
     ```
-        5  
-        5
-        5
-        10
+    5  
+    5
+    5
+    10
     ```
     * Objects will go out of scope and being automatically released as long as
     it is defined on stack (i.e., `MyClass myObject = MyClass();`)
@@ -73,8 +74,13 @@ a copy constructor for us, if we don't define it explicitly.
     memory, if the original object goes out of scope, the copy object may
     refer to a memory address that is invalid.
 
+
+## Move constructor
+
 ## References
 
 * [CPP Reference - Copy constructors](https://en.cppreference.com/w/cpp/language/copy_constructor)
 * [Stackoverflow - Does C++ treat Class Objects like value types if initialized without the new operator?](https://stackoverflow.com/questions/13633824/does-c-treat-class-objects-like-value-types-if-initialized-without-the-new-ope)
 * [GeeksForGeeks - Copy Constructor in C++](https://www.geeksforgeeks.org/copy-constructor-in-cpp/)
+* [Stackoverflow - What is move semantics?](https://stackoverflow.com/questions/3106110/what-is-move-semantics)
+* [Microsoft Learn - Move Constructors and Move Assignment Operators (C++)](https://learn.microsoft.com/en-us/cpp/cpp/move-constructors-and-move-assignment-operators-cpp?view=msvc-170)
