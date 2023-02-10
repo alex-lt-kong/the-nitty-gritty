@@ -150,14 +150,14 @@ its content from the rvalue to `foobar`. Isn't it wonderful?
 
 * There is a separate scenario where we want the move constructor to be called:
 
-```C++
-std::string hel = std::string("hello");
-// using std::move, we explicity transfer the ownership of "hello " from hel
-// to hell
-std::string hell = std::move(hel);
-cout << hel << endl; // UB!
-cout << hell << endl; // prints "hello "
-```
+    ```C++
+    std::string hel = std::string("hello");
+    // using std::move, we explicity transfer the ownership of "hello " from hel
+    // to hell
+    std::string hell = std::move(hel);
+    cout << hel << endl; // UB!
+    cout << hell << endl; // prints "hello "
+    ```
 
     * This is a bit similar to Rust.
 
