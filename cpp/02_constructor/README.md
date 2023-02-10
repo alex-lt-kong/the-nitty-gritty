@@ -158,6 +158,7 @@ std::string hell = std::move(hel);
 cout << hel << endl; // UB!
 cout << hell << endl; // prints "hello "
 ```
+
     * This is a bit similar to Rust.
 
 
