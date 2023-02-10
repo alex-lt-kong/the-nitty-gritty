@@ -6,7 +6,7 @@ class NaiveString {
 private:
     char* _str;
 public:
-    
+    // Must be a null-terminated C-string
     NaiveString(char* str) {
         cout << "[Interal] constructor called" << endl;
         _str = (char*)malloc(sizeof(char) * (strlen(str) + 1));
@@ -29,13 +29,16 @@ public:
 
     // Move constructor
     NaiveString(NaiveString&& rhs) {
-        cout << "[Interal] move constructor called" << endl;
+        cout << "[Interal] move constructor called, rhs._str: [" << rhs._str
+             << "]" << endl;
         _str = rhs._str;
         rhs._str = nullptr;
     }
 
 
     NaiveString operator+(const NaiveString &rhs) {
+        cout << "[Interal] addition operator called, rhs._str: ["
+             << rhs._str << "]" << endl;
         char* temp = (char*)malloc(sizeof(char) *
             (strlen(rhs._str) + strlen(this->_str) + 1));
         if (temp == NULL) {
