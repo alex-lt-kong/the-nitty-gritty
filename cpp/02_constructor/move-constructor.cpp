@@ -31,7 +31,7 @@ public:
     NaiveString(NaiveString&& rhs) {
         cout << "[Interal] move constructor called, rhs._str: [" << rhs._str
              << "]" << endl;
-        _str = rhs._str;
+        _str = rhs._str; // "Ownership transfer"
         rhs._str = nullptr;
     }
 
@@ -82,6 +82,9 @@ public:
         return *this;
     }
 
+    void PrintInternalPointerAddress() {
+        cout << "_str: " << (void *)_str << endl;
+    }
 
     friend ostream& operator<<(ostream& os, const NaiveString& ns)
     {
@@ -124,6 +127,10 @@ int main()
     ns_fb = ns_hw1;
     cout << "ns_fb: " << ns_fb << endl << endl;
 
-
+    cout << "Test 6" << endl;
+    ns_fb.PrintInternalPointerAddress();
+    NaiveString ns_fb1 = move(ns_fb);
+    ns_fb.PrintInternalPointerAddress();
+    ns_fb1.PrintInternalPointerAddress();
     return 0;
 }
