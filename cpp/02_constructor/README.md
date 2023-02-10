@@ -146,7 +146,7 @@ its content from the rvalue to `foobar`. Isn't it wonderful?
     }
     ```
 
-    * `NavieString&& rhs` is called a 
+    * `NavieString&& rhs` is called an `rvalue reference` introduced in C++11.
 
 * There is a separate scenario where we want the move constructor to be called:
 
