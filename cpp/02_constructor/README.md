@@ -161,6 +161,10 @@ its content from the rvalue to `foobar`. Isn't it wonderful?
 
     * This is a bit similar to Rust.
 
+* Move constructors of all the types used with STL containers, for example,
+need to be declared `noexcept`. Otherwise STL will choose copy constructors
+instead. The same is valid for move assignment operations.
+
 
 ## Copy elision (a.k.a., return value optimization or RVO)
 
@@ -235,6 +239,7 @@ standard to allow this counter-intuitive behavior.
 * [Microsoft Learn - Move Constructors and Move Assignment Operators (C++)](https://learn.microsoft.com/en-us/cpp/cpp/move-constructors-and-move-assignment-operators-cpp?view=msvc-170)
 * [C++ Rvalue References Explained ](http://thbecker.net/articles/rvalue_references/section_01.html)
 * [Stackoverflow - What is move semantics?](https://stackoverflow.com/questions/3106110/what-is-move-semantics)
+* [Extra Clang Tools 17.0.0git documentation](https://clang.llvm.org/extra/clang-tidy/checks/performance/noexcept-move-constructor.html)
 
 ### Copy elision
 * [Wikipedia - Copy elision](https://en.wikipedia.org/wiki/Copy_elision)

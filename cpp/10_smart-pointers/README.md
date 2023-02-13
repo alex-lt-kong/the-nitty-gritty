@@ -83,11 +83,52 @@ becomes more complicated, when we try to incoporate existing C code into C++.
         std::unique_ptr<int[], decltype([](void *p){std::free(p);})>
     ```
     
+## Is `unique_ptr` a zero-cost wrapper on top of raw pointer?
 
+* No.
 
+* When we say we "use" a pointer, we usually mean by using either `operator*`
+or `operator->`. In this regard, `unique_ptr` IS a zero-cost wrapper. It is
+trivial for a compiler to optimize the abstraction away and make the smart
+pointer work as if it is a raw pointer.
+
+* The hidden cost arises when we want to enjoy the benefit of RAII. RAII makes
+the program safe at a cost.
+    * This cost will be more pronounced if we use RAII frequently:
+
+    ```C++
+    void bar(int* ptr) noexcept;
+
+    void baz(unique_ptr<int>&& ptr) noexcept;
+
+    void foo(unique_ptr<int>&& ptr) {
+        if (*ptr > 42) {
+            bar(ptr.get());
+            *ptr = 42;
+        }
+        baz(std::move(ptr));
+    }
+    ```
+
+    * If we do it this way, the compiler could emit unexpected instructions
+    which may need to have extra memory hit.
+
+* Another hidden cost is the use of move semantics.
+    * When we `std::move()` the resource managed by one `unique_ptr`, (`a`) to
+    anthoer `unique_ptr`, (`b`), we need to set the internal raw pointer of
+    `a` to something like `nullptr`.
+    * Also, `a`'s destructor will be called anyway, even if we set `a`'s
+    internal raw pointer to `nullptr`. Calling the "almost empty" destructor
+    incurres another cost.
+
+* While the "normal use" of a `unique_ptr` should be exactly the same as a raw
+pointer, one has to be careful when moving/passing around a `unique_ptr`
+frequently--it could be significantly worse than its hand-written C version.
 
 ## References
 
 * [Microsoft - Smart pointers (Modern C++)](https://learn.microsoft.com/en-us/cpp/cpp/smart-pointers-modern-cpp?view=msvc-170)
 * [Wikipedia - Smart pointer](https://en.wikipedia.org/wiki/Smart_pointer)
 * [CPP Reference - Smart pointers](https://en.cppreference.com/book/intro/smart_pointers)
+* [CppCon 2019 - Chandler Carruth "There Are No Zero-cost Abstractions"](https://www.youtube.com/watch?v=rHIkrotSwcc)
+* [C++ Move Semantics Considered Harmful (Rust is better)](https://www.thecodedmessage.com/posts/cpp-move/)
