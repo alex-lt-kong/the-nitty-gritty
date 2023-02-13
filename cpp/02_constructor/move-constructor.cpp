@@ -28,7 +28,7 @@ public:
     }
 
     // Move constructor
-    NaiveString(NaiveString&& rhs) {
+    NaiveString(NaiveString&& rhs) noexcept {
         cout << "[Interal] move constructor called, rhs._str: [" << rhs._str
              << "]" << endl;
         _str = rhs._str; // "Ownership transfer"
@@ -66,7 +66,7 @@ public:
     }
 
     // Move assignment operator
-    NaiveString operator=(NaiveString &&rhs) {
+    NaiveString operator=(NaiveString &&rhs) noexcept {
         
         cout << "[Interal] move assignment operator called, ";
         if (this != &rhs) {
