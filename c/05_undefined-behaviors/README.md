@@ -51,6 +51,18 @@ by the omission of any explicit definition of behavior."
     </td>
   </tr>
   <tr>
+    <td>Shift pass bit width</td>
+    <td>
+    <code>
+      1 << 35;
+    </code>
+    </td>
+    <td>
+      8, equal to      
+      <code>1 << 3</code>
+    </td>
+  </tr>
+  <tr>
     <td>Initial value of <code>malloc()'ed</code> memory</td>
     <td>
     <code>
