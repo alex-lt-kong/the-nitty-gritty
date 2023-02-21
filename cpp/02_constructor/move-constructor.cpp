@@ -128,6 +128,11 @@ int main()
     cout << "ns_fb: " << ns_fb << endl << endl;
 
     cout << "Test 6" << endl;
+    NaiveString ns_fh = NaiveString((char*)"foobar") + 
+        NaiveString((char*)"Hello!");
+    cout << "ns_fh: " << ns_fh << endl << endl;
+
+    cout << "Test 7" << endl;
     ns_fb.PrintInternalPointerAddress();
     NaiveString ns_fb1 = move(ns_fb);
     ns_fb.PrintInternalPointerAddress();
