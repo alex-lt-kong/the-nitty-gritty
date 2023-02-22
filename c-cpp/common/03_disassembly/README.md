@@ -89,7 +89,7 @@ of setting the register to zero.
 specific variables.
 * `mov [ebx],eax`: it roughly means `*ebx = eax`, i.e., moves the value in
 `eax` to the memory address contained in `ebx`.
-* `mov edx, [ebx + 8*eax + 4]` and `mov edx, [ebx + 8*eax + 4]`:
+* `mov edx, [ebx + 8*eax + 4]` and `lea edx, [ebx + 8*eax + 4]`:
     * Say we have a struct:
     ```C
     struct Point {
