@@ -50,6 +50,9 @@ value of this register.
 | rsi             | esi         | si         | sil        |
 | rsp             | esp         | sp         | spl        |
 | rbp             | ebp         |            |            |
+    
+    * The `e` in `eax`,`ebx`,etc compared with `ax`, `bx` means "extended",
+    meaning that 16-bit registers are "extended" to 32 bits.
 
 * This design is also related to Intel's choice of using little-endian byte
 order. For example, if a 64-bit register stores `0xDE AD BE EF 01 23 45 67`
@@ -83,27 +86,51 @@ which is destination? Let's use `mov` as an example.
 
 * `xor eax,eax`: `xor`ing/`pxor`ing a register with itself is a faster way
 of setting the register to zero.
-* `sub rsp,0x88`: `rsp` is the register stack pointer pointing to the
+
+* `sub rsp,0x88`: `esp`/`rsp` is the register stack pointer pointing to the
 "top" of the call stack. `sub`tracting `0x88` from `rsp` means we allocate
 `0x88` bytes to the new stack frame, i.e., to be used to store function-
 specific variables.
+
 * `mov [ebx],eax`: it roughly means `*ebx = eax`, i.e., moves the value in
 `eax` to the memory address contained in `ebx`.
+
 * `mov edx, [ebx + 8*eax + 4]` and `lea edx, [ebx + 8*eax + 4]`:
     * Say we have a struct:
+
     ```C
     struct Point {
         int xcoord;
         int ycoord;
     };
     ```
-    and an array of `Point points[]`.
+
+        and an array of `Point points[]`.
     * In C we do `int y = points[i].ycoord;`, which could be translated to
     `mov edx, [ebx + 8*eax + 4]` if `ebx` stores the base pointer `&points[0]`
     and `eax` stores `i`. We have `8*eax` because each `Point` is 8-byte long.
     * In C we do `int* ptr = &(points[i].ycoord);`, which could be translated to
     `lea edx, [ebx + 8*eax + 4]`.
 
+* `pop`/`push`: they change `esp`/`rsp` implicitly.
+    * `pop esi` is roughly the same as:
+
+    ```asm
+    mov esi, [esp]
+    add esp, 4  ; for x86; 8 for x64
+    ```
+
+    * `push esi` roughly means:
+
+    ```asm
+    sub esp, 4   ; for x86; 8 for x64
+    mov [esp], esi 
+    ```
+
+    * As stack stores data from the top down, we perform `add` for `pop` and
+    `sub` for `push`.
+
+    * `call` implicitly invokes `push` but it performs much more than `push`.
 
 ### References
 

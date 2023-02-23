@@ -3,7 +3,7 @@
 
 * Calling a function is similar to (but slightly more than jmp to an address):
 
-```
+```asm
 0000000000001125 <add>:
     1125:       55                      push   rbp
     1126:       48 89 e5                mov    rbp,rsp
