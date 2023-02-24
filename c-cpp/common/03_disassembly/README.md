@@ -50,9 +50,9 @@ value of this register.
 | rsi             | esi         | si         | sil        |
 | rsp             | esp         | sp         | spl        |
 | rbp             | ebp         |            |            |
-    
-    * The `e` in `eax`,`ebx`,etc compared with `ax`, `bx` means "extended",
-    meaning that 16-bit registers are "extended" to 32 bits.
+
+* The `e` in `eax`,`ebx`,etc compared with `ax`, `bx` means "extended",
+meaning that 16-bit registers are "extended" to 32 bits.
 
 * This design is also related to Intel's choice of using little-endian byte
 order. For example, if a 64-bit register stores `0xDE AD BE EF 01 23 45 67`
