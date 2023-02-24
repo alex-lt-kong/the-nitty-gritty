@@ -1,20 +1,20 @@
 # Undefined behaviors
 
 * While the general idea of undefined behavior is not difficult to understand,
-the exact wording may vary. In
-[C99 standard](https://www.open-std.org/jtc1/sc22/wg14/www/docs/n1256.pdf),
-undefined behavior is defined as "otherwise indicated in this International
-Standard by the words "undefined behavior" or by the omission of any explicit
-definition of behavior."
-  * In the C community, undefined behavior may be humorously referred to as
-  "nasal demons", after a comp.std.c post that explained undefined behavior as
-  allowing the compiler to do anything it chooses, even "to make demons
-  fly out of your nose".
-  * It is common for programmers, even experienced ones, to rely on undefined
-  behavior either by mistake, or simply because they are not well-versed in
-  the rules of the language that can span hundreds of pages. This can result
-  in bugs that are exposed when a different compiler or lead to security
-  vulnerabilities in software.
+the exact wording may vary. [C11 standard][1], defines undefined behavior as
+follows:
+  > fined behavior is otherwise indicated in this International Standard by
+  > the words ‘‘undefined behavior’’ or by the omission of any explicit
+  > definition of behavior.
+* In the C community, undefined behavior may be humorously referred to as
+"nasal demons", after a comp.std.c post that explained undefined behavior as
+allowing the compiler to do anything it chooses, even "to make demons
+fly out of your nose".
+* It is common for programmers, even experienced ones, to rely on undefined
+behavior either by mistake, or simply because they are not well-versed in
+the rules of the language that can span hundreds of pages. This can result
+in bugs that are exposed when a different compiler or lead to security
+vulnerabilities in software.
 
 * But if undefined behaviors are so bad, why don't we just define them?
   * Documenting an operation as undefined behavior allows compilers to assume
@@ -28,7 +28,7 @@ definition of behavior."
 
 ### [1. Format specifier without argument](./01_format-specifier-without-argument/)
 
-* Source: para. 2 of section of 7.16.1.1 of [c11][1]:
+* Source: para. 2 of section of 7.16.1.1 of [C11][1]:
 
   > If there is no actual next argument, or if type is not compatible with
   > the type of the actual next argument (as promoted according to
@@ -40,11 +40,11 @@ definition of behavior."
 
 ### [2. Signed integer overflow](./02_integer-overflow/)
 
-* Source: para. 3 of section 3.4.3 of [c11][1]:
+* Source: para. 3 of section 3.4.3 of [C11][1]:
   > An example of undefined behavior is the behavior on integer overflow.
 
 * gcc's behavior:
-  * `-O1`: `INT_MAT + 1 == INT_MIN`, i.e., `2147483647 + 1` becomes `-2147483648`
+  * `-O1`: `INT_MAX + 1 == INT_MIN`, i.e., `2147483647 + 1` becomes `-2147483648`
   * `-O2`/`-O3`: still observe the above, but the loop won't quit after `i`
   reaches `100`. The program will be trapped in an infinite loop.
   * This is likely because gcc relies on the no-overflow assumption
@@ -56,13 +56,14 @@ definition of behavior."
   `true`.
 
 
-### [3. Shift pass bit width/oversized Shift Amounts](./03_shift-overflow/)
+### [3. Shift pass bit width/oversized shift amount](./03_shift-overflow/)
 
-* Source: para. 3 of section 6.5.7 of [c11][1]:
+* Source: para. 3 of section 6.5.7 of [C11][1]:
   > If the value of the right operand is negative or is greater than or equal
   > to the width of the promoted left operand, the behavior is undefined
 
-* gcc's behavior: `1 << 35 == 8`, which is equal to `1 << (35 % sizeof(int))`
+* gcc's behavior: `1 << 35 == 8`, which is equal to
+`1 << (35 % (sizeof(int) * CHAR_BIT))`
 
 * Why don't we define it?
   *  [One source][2] says that this originated because the underlying
@@ -77,7 +78,7 @@ definition of behavior."
 
 ### 4. Pass a non-null-terminated C-string to `strlen()`
 
-* Source: para. 3 of section 7.24.6.3 of [c11][1]:
+* Source: para. 3 of section 7.24.6.3 of [C11][1]:
   > The `strlen` function returns the number of characters that precede the
   > terminating null character.
 
@@ -92,40 +93,39 @@ points to and whether a '\0' is near the bound of the c-string.
 
 ### [5. Use of unintilized unsigned integer](./05_use-of-uninitialized-variable)
 
-* Source: para. 2 of section 6.3.2.1 of [c11][1]:
+* Source: para. 2 of section 6.3.2.1 of [C11][1]:
   > If the lvalue designates an object of automatic storage duration that
   > could have been declared with the register storage class (never had its
   > address taken), and that object is uninitialized (not declared with an
   > initializer and no assignment to it has been performed prior to use),
   > the behavior is undefined.
 
-* This is one of the more jargon-heavy definition of undefined behaviors that
-involve a lot of concepts: 
+* This is one of the more jargon-heavy definitions of undefined behaviors.
 
-  * lvalue: this is a loaded concept. Long story short, if an expression can
-  appear on the left-hand side of `=`, it is an lvalue; otherwise it is an
-  rvalue. For example, we define `int a = 0, b = 1`:
-    * Variable `a` is an lvalue, as we can do `a = 3;`
-    * Expression `a + b` is an rvalue, as it doesn't make sense to have
-    `a + b = 3`;
-    * `3` is also an rvalue.
-  * Automatic storage duration: if a variable is with automatic storage
-  duration, it roughly means that the variable is stored on "stack".
-    * For what does "stack" mean anyway? It has to do with the popular
-    instruction pointer protocol supported by common `call` and `ret`
-    instructions. It doesn't tell us anything about the lifetime of an
-    object, except through a historical association to object lifetimes in
-    C, due to popular stack frame conventions.
-  * Register storage class: is used to define local variables that should
-  be stored in a register instead of RAM. This implies two important things:
-    1. The variable has a maximum size equal to the register size (usually
-    one word);
-    1. The variable can't have the unary `&` operator applied to it. That is,
-    for a variable `a`, `&a` is illegal as it doesn't have an address since
-    the very beginning.
-  * never had its address taken: for variable `a`, we have never done `&a`.
-  "could have been declared with the register storage class" and "never had its
-  address taken" should mean the same.
+* lvalue: this is a loaded concept. Long story short, if an expression can
+appear on the left-hand side of `=`, it is an lvalue; otherwise it is an
+rvalue. For example, we define `int a = 0, b = 1`:
+  * Variable `a` is an lvalue, as we can do `a = 3;`
+  * Expression `a + b` is an rvalue, as it doesn't make sense to have
+  `a + b = 3`;
+  * `3` is also an rvalue.
+* Automatic storage duration: if a variable is with automatic storage
+duration, it roughly means that the variable is stored on "stack".
+  * But what does "stack" mean anyway? It has to do with the popular
+  instruction pointer protocol supported by common `call` and `ret`
+  instructions. It doesn't tell us anything about the lifetime of an
+  object, except through a historical association to object lifetimes in
+  C, due to popular stack frame conventions.
+* Register storage class: is used to define local variables that should
+be stored in a register instead of RAM. This implies two important things:
+  1. The variable has a maximum size equal to the register size (usually
+  one word);
+  1. The variable can't have the unary `&` operator applied to it. That is,
+  for a variable `a`, `&a` is illegal as it doesn't have an address since
+  the very beginning.
+* never had its address taken: for variable `a`, we have never done `&a`.
+"could have been declared with the register storage class" and "never had its
+address taken" should mean the same.
 
 
 * gcc's behavior: variables that are not explicitly initialized are implictly
