@@ -1,9 +1,9 @@
 # Undefined behaviors
 
 * While the general idea of undefined behavior is not difficult to understand,
-the exact wording may vary. [C11 standard][1], defines undefined behavior as
+the exact wording may vary. [C11 standard][1] defines undefined behavior as
 follows:
-  > fined behavior is otherwise indicated in this International Standard by
+  > undefined behavior is otherwise indicated in this International Standard by
   > the words ‘‘undefined behavior’’ or by the omission of any explicit
   > definition of behavior.
 * In the C community, undefined behavior may be humorously referred to as
@@ -63,7 +63,7 @@ vulnerabilities in software.
   > to the width of the promoted left operand, the behavior is undefined
 
 * gcc's behavior: `1 << 35 == 8`, which is equal to
-`1 << (35 % (sizeof(int) * CHAR_BIT))`
+`1 << (35 % (sizeof(int) * CHAR_BIT))` or `1 << (35 % 32)`.
 
 * Why don't we define it?
   *  [One source][2] says that this originated because the underlying
