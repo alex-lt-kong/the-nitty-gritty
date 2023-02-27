@@ -16,6 +16,7 @@ def convert_naive_dt(naive_dt: dt.datetime, src_tz: str, dst_tz: str) -> dt.date
     dst_localtime = dt.datetime.fromtimestamp(
         unix_ts, pytz.timezone(dst_tz)
     ).replace(tzinfo=None)
+    # replace(tzinfo) drops timezone awareness.
     return dst_localtime
 
 
