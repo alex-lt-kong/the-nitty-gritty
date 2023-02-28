@@ -155,7 +155,7 @@ where `call` is executed at `0x1166` and `ret` is executed at `0x1145`:
     1166:       e8 ba ff ff ff          call   1125 <add>
     116b:       89 45 f4                mov    DWORD PTR [rbp-0xc],eax
     116e:       8b 45 f4                mov    eax,DWORD PTR [rbp-0xc]
-    ```.
+    ```
 
     * `call` instruction does the following things:
         1. it `push`es the return address (i.e., the address of
