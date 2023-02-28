@@ -91,7 +91,17 @@ Theoretically, results could vary depending on where the pointer currently
 points to and whether a '\0' is near the bound of the c-string.
 
 
-### [5. Use of unintilized unsigned integer](./05_use-of-uninitialized-variable)
+### [5. Use of uninitialized unsigned integer](./05_use-of-uninitialized-variable)
+
+* As unsigned integer types don't have trap representation (i.e., all possible
+bit combinations are valid values), programers may think that using
+uninitialized unsigned integer will be spared from undefined behaviors. The
+implicit argument is that no matter what the uninitizlied memory blocks
+contain, the wrost case scenario is we read some rubbish bits (yet still
+valid unsigned int) from it.
+  * Unfortunately, the trust is misplaced. This is because compilers are
+  free to **not** reserving memory blocks for uninitilized variables, rendering
+  merely reading from them (i.e., non-existent memory) undefined.
 
 * Source: para. 2 of section 6.3.2.1 of [C11][1]:
   > If the lvalue designates an object of automatic storage duration that
@@ -142,12 +152,15 @@ unsigned integer type is always defined.
   * This is not the case though.
 
 * Source: para. 1 of section 6.3.1.4 of [C11][1]:
+
   > When a finite value of real floating type is converted to an integer
   > type other than **_Bool**, the fractional part is discarded (i.e., the
   > value is truncated toward zero). If the value of the integral part
   > cannot be represented by the integer type, the behavior is undefined.
   > <sup>61)</sup>
+
   and footnote 61:
+
   > The remaindering operation performed when a value of integer type is
   > converted to unsigned type need not be performed when a value of real
   > floating type is converted to unsigned type. Thus, the range of
