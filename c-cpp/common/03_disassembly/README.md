@@ -135,6 +135,7 @@ convention". An informative video can be found
 [here](./0_assets/x86-calling-convention.mp4). We are going to describe
 how they work with a toy example extracted from [here](./5_function-call/),
 where `call` is executed at `0x1166` and `ret` is executed at `0x1145`:
+
     ```asm
     1125:       55                      push   rbp
     1126:       48 89 e5                mov    rbp,rsp
@@ -155,6 +156,7 @@ where `call` is executed at `0x1166` and `ret` is executed at `0x1145`:
     116b:       89 45 f4                mov    DWORD PTR [rbp-0xc],eax
     116e:       8b 45 f4                mov    eax,DWORD PTR [rbp-0xc]
     ```.
+
     * `call` instruction does the following things:
         1. it `push`es the return address (i.e., the address of
         the instruction immediately after the `call` instruction. In the
