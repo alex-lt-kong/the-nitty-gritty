@@ -24,9 +24,9 @@ arguments of a function call. Additional arguments are stored on the stack.
     first 8 float pointing arguments. Additional arguments are stored on the
     stack.
 * `rax`: store return value of a function call.
-* `rbp`: register base pointer, which points to the base of the current stack
-frame.
-* `rsp`: register stack pointer, store the stack pointer.
+* `rbp`/`ebp`: register base pointer, which points to the base of the current
+stack frame.
+* `rsp`/`esp`: register stack pointer, store the stack pointer.
 * `xmm0`-`xmm15`: use by an SIMD instruction set to vectorize array operation, etc.
 * `rip`, `eip` is a 64bit/32bit register. It holds the "Extended Instruction
 Pointer" for the stack. In other words, it tells the CPU where to go next to
@@ -130,7 +130,48 @@ specific variables.
     * As stack stores data from the top down, we perform `add` for `pop` and
     `sub` for `push`.
 
-    * `call` implicitly invokes `push` but it performs much more than `push`.
+* `call`/`ret`: the way `call` and `ret` work is called the "calling
+convention". An informative video can be found here. We are going to describe
+how they work with a toy example extracted from [here](./5_function-call/):
+    ```asm
+        1125:       55                      push   rbp
+        1126:       48 89 e5                mov    rbp,rsp
+        1129:       89 7d ec                mov    DWORD PTR [rbp-0x14],edi
+        112c:       89 75 e8                mov    DWORD PTR [rbp-0x18],esi
+        112f:       c7 45 fc 00 00 00 00    mov    DWORD PTR [rbp-0x4],0x0
+        1136:       8b 55 ec                mov    edx,DWORD PTR [rbp-0x14]
+        1139:       8b 45 e8                mov    eax,DWORD PTR [rbp-0x18]
+        113c:       01 d0                   add    eax,edx
+        113e:       89 45 fc                mov    DWORD PTR [rbp-0x4],eax
+        1141:       8b 45 fc                mov    eax,DWORD PTR [rbp-0x4]
+        1144:       5d                      pop    rbp
+        1145:       c3                      ret
+        ...
+        1162:       89 d6                   mov    esi,edx
+        1164:       89 c7                   mov    edi,eax
+        1166:       e8 ba ff ff ff          call   1125 <add>
+        116b:       89 45 f4                mov    DWORD PTR [rbp-0xc],eax
+        116e:       8b 45 f4                mov    eax,DWORD PTR [rbp-0xc]
+    ```
+    1. `call` instruction `push`es the return address (i.e., the address of
+    the instruction immediately after the `call` instruction. In the
+    example, the address being `push`ed is `0x116b`) to the stack.
+    1. `call` instruction `jmp`s to the address of being called. In
+    the above example, `0x1125`. Internally, it sets the `eip` register to
+    `0x1125`.
+    * Note that `call` instruction only saves return address (e.g., `0x116b`) to
+    the stack but it does not create a new stack frame. The new stack frame
+    is created by the callee itself at `0x1125` and `0x1126`.
+
+* `ret` is the reverse of `call`.
+    * Note that in the entire function call we `push`ed twice. The 1st `push`
+    is implicitly invoked by `call`, which stores the return address to the
+    stack. The 2nd `push` is explicitly executed in the callee function (at
+    `0x1125`), storing the base of the previous stack frame to the stack.
+    * Similarly, `ret` involves two `pop`s.
+        * The 1st `pop` is explicitly executed at `0x1144`.
+        * the 2nd one is done implicitly by `ret`, which `pop`s the return
+        address (in this case, `0x116b`) from stack and `jmp` to it.
 
 ### References
 
