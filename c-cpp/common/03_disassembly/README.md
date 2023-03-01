@@ -5,8 +5,8 @@ To dissamble a binary file to assembly code:
 * Dissamble the entire binary file:
     * `objdump --disassembler-options "intel" -S ./main.out`
 * Dissamble only a function from a binary file:
-    * `gdb`: `gdb --quiet --eval-command="set disassembly-flavor intel" --eval-command="disassemble /m <func name>" --batch <exe name>`.
-    * `objdump`: `objdump --disassembler-options "intel" --disassemble=<func name> -S <exe name>`.
+    * `gdb`: `gdb --quiet --eval-command="set disassembly-flavor intel" --eval-command="disassemble /m <func_name>" --batch <binary_file>`.
+    * `objdump`: `objdump --disassembler-options "intel" --disassemble=<func_name> --source <binary_file>`.
 * For C++, add `--demangle` to `objdump` to decode (a.k.a. demangle) low-level
 symbol names into user-level
 human-friendly names.
@@ -137,45 +137,86 @@ how they work with a toy example extracted from [here](./5_function-call/),
 where `call` is executed at `0x1166` and `ret` is executed at `0x1145`:
 
     ```asm
-    1125:       55                      push   rbp
-    1126:       48 89 e5                mov    rbp,rsp
-    1129:       89 7d ec                mov    DWORD PTR [rbp-0x14],edi
-    112c:       89 75 e8                mov    DWORD PTR [rbp-0x18],esi
-    112f:       c7 45 fc 00 00 00 00    mov    DWORD PTR [rbp-0x4],0x0
-    1136:       8b 55 ec                mov    edx,DWORD PTR [rbp-0x14]
-    1139:       8b 45 e8                mov    eax,DWORD PTR [rbp-0x18]
-    113c:       01 d0                   add    eax,edx
-    113e:       89 45 fc                mov    DWORD PTR [rbp-0x4],eax
-    1141:       8b 45 fc                mov    eax,DWORD PTR [rbp-0x4]
-    1144:       5d                      pop    rbp
-    1145:       c3                      ret
     ...
-    1162:       89 d6                   mov    esi,edx
-    1164:       89 c7                   mov    edi,eax
-    1166:       e8 ba ff ff ff          call   1125 <add>
-    116b:       89 45 f4                mov    DWORD PTR [rbp-0xc],eax
-    116e:       8b 45 f4                mov    eax,DWORD PTR [rbp-0xc]
+    1135:	push   rbp                       # previous base pointer's address is pushed to the call stack...
+    1136:	mov    rbp,rsp                   # so that we can assign new stack pointer and the new base pointer
+    1139:	mov    QWORD PTR [rbp-0x18],rdi  # a/product
+    113d:	mov    QWORD PTR [rbp-0x20],rsi  # b/multiplicand
+    1141:	mov    QWORD PTR [rbp-0x8],0x0   # sum    
+    1158:	mov    rax,QWORD PTR [rbp-0x8]   # rax stores return value
+    115c:	pop    rbp                      
+    115d:	ret                              # pop's another element from the call stack, i.e., the return address, which was push'ed to the call stack at 
+    ...
+    1188:	mov    rsi,rdx                   # rsi (2nd param in func call) stores a/multiplicand
+    118b:	mov    rdi,rax                   # rdi (1st param) stores product
+    118e:	call   1135 <add>                # return address, i.e., 1193, is implicitly pushed to the call stack before jmp'ing to 1135
+    1193:	mov    QWORD PTR [rbp-0x8],rax   # jmp'ed from 115d
+    ...
     ```
 
     * `call` instruction does the following things:
         1. it `push`es the return address (i.e., the address of
         the instruction immediately after the `call` instruction. In the
-        example, the address being `push`ed is `0x116b`) to the stack.
+        example, the address being `push`ed is `1193`) to the stack.
         1. it `jmp`s to the address of being called. In
-        the above example, `0x1125`. Internally, it sets the `eip` register to
-        `0x1125`.
-        * Note that `call` instruction only saves return address (e.g., `0x116b`
+        the above example, `1135`. Internally, it sets the `eip` register to
+        `1135`.
+        * Note that `call` instruction only saves return address (e.g., `1193`
         ) to the stack but it does not create a new stack frame. The new stack
-        frame is created by the callee itself at `0x1125` and `0x1126`.
+        frame is created by the callee itself at `1135` and `1136`. More one
+        stack frame set up will be explained in the next section (about
+        `enter` and `leave)
     * `ret` is the reverse of `call`.
         * Note that during the "function call" we `push`ed twice. The 1st `push`
         is implicitly invoked by `call`, which stores the return address to the
         stack. The 2nd `push` is explicitly executed in the callee function (at
         `0x1125`), storing the base of the previous stack frame to the stack.
         * Similarly, `ret` involves two `pop`s.
-            1. The 1st `pop` is explicitly executed at `0x1144`.
+            1. The 1st `pop` is explicitly executed at `115c`.
             1. The 2nd one is done implicitly by `ret`, which `pop`s the return
-            address (in this case, `0x116b`) from stack and `jmp`s to it.
+            address (in this case, `1193`) from stack and `jmp`s to it.
+    * In this example, we dont have `enter` and `leave`, probably due to the
+    fact that add() is at the bottom of the call stack, so that we don't need
+    to further delimit the stack frame for subsequent calls.
+
+* `enter`/`leave`: they are closely related to `call`/`ret`.
+    * The `enter` instruction sets up a stack frame by first pushing
+    `rbp` onto the stack and then copies `rsp` into `rbp` (`115e` and `115f`).
+    * `leave` does the opposite, i.e. copy `rbp` to `rsp` and then restore
+    the old `rbp` from the stack.
+    * Note that `enter` instruction is very slow and compilers don't use it,
+    but `leave` is fine.
+    * The following toy example from [here](./5_function-call/) demonstrates
+    this:
+    ```asm
+    115e:	push   rbp                        # previous base pointer's address is pushed to the call stack...
+    115f:	mov    rbp,rsp                    # so that we can assign new stack pointer and the new base pointer
+    1162:	sub    rsp,0x20                   # allocate 0x20 bytes for local vars
+    # The above three instructions can be replaced with enter 0x20, 0. But enter is slow
+    # so compilers generally don't use it. But compilers still use leave.
+    1166:	mov    QWORD PTR [rbp-0x18],rdi   # rdi stores a/multiplicand
+    116a:	mov    QWORD PTR [rbp-0x20],rsi   # rsi stores b/multiplier
+    116e:	mov    QWORD PTR [rbp-0x8],0x0    # initialize local variable product
+    1176:	mov    QWORD PTR [rbp-0x10],0x0   # it is unclear what *(rbp-0x10) stores until 1197. It turns out to be i
+    117e:	jmp    119c <multiply+0x3e>
+    1180:	mov    rdx,QWORD PTR [rbp-0x18]     
+    1184:	mov    rax,QWORD PTR [rbp-0x8]       
+    1188:	mov    rsi,rdx                    # rsi (2nd param in func call) stores a/multiplicand
+    118b:	mov    rdi,rax                    # rdi (1st param) stores product
+    118e:	call   1135 <add>                 # return address, i.e., 118e, is implicitly pushed to the call stack before jmp'ing to 1135
+    1193:	mov    QWORD PTR [rbp-0x8],rax    # jmp'ed from 115d
+    1197:	add    QWORD PTR [rbp-0x10],0x1
+    119c:	mov    rax,QWORD PTR [rbp-0x10]       
+    11a0:	cmp    rax,QWORD PTR [rbp-0x20]   # *(rbp-0x20) stores b/multiplier
+    11a4:	jb     1180 <multiply+0x22>
+    11a6:	mov    rax,QWORD PTR [rbp-0x8]    # prepare retval, product
+    11aa:	leave
+    11ab:	ret    
+    ```
+    * Comparing with the example in `call`/`ret`, one may notice that in this
+    example, `rsp` is changed to allocate 0x20 btesm so we need to `leave`
+    to restore it from the call stack. In the previous example, `rsp` is not
+    changed, so `leave` is not executed.
 
 ### References
 
