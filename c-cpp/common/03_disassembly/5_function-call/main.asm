@@ -100,54 +100,77 @@ Disassembly of section .text:
     1130:	jmp    10b0 <register_tm_clones>
 
 0000000000001135 <add>:
+#include <stdio.h>
+#include <stdlib.h>
+
+size_t add(size_t a, size_t b) {
     1135:	push   rbp
     1136:	mov    rbp,rsp
     1139:	mov    QWORD PTR [rbp-0x18],rdi
     113d:	mov    QWORD PTR [rbp-0x20],rsi
+    size_t sum = 0;
     1141:	mov    QWORD PTR [rbp-0x8],0x0
+    sum = a + b;
     1149:	mov    rdx,QWORD PTR [rbp-0x18]
     114d:	mov    rax,QWORD PTR [rbp-0x20]
     1151:	add    rax,rdx
     1154:	mov    QWORD PTR [rbp-0x8],rax
+    return sum;
     1158:	mov    rax,QWORD PTR [rbp-0x8]
+}
     115c:	pop    rbp
     115d:	ret    
 
 000000000000115e <multiply>:
+
+size_t multiply(size_t multiplicand, size_t multiplier) {
     115e:	push   rbp
     115f:	mov    rbp,rsp
     1162:	sub    rsp,0x20
     1166:	mov    QWORD PTR [rbp-0x18],rdi
     116a:	mov    QWORD PTR [rbp-0x20],rsi
+    size_t product = 0;
     116e:	mov    QWORD PTR [rbp-0x8],0x0
+    for (size_t i = 0; i < multiplier; ++i  ) {
     1176:	mov    QWORD PTR [rbp-0x10],0x0
     117e:	jmp    119c <multiply+0x3e>
+        product = add(product, multiplicand);
     1180:	mov    rdx,QWORD PTR [rbp-0x18]
     1184:	mov    rax,QWORD PTR [rbp-0x8]
     1188:	mov    rsi,rdx
     118b:	mov    rdi,rax
     118e:	call   1135 <add>
     1193:	mov    QWORD PTR [rbp-0x8],rax
+    for (size_t i = 0; i < multiplier; ++i  ) {
     1197:	add    QWORD PTR [rbp-0x10],0x1
     119c:	mov    rax,QWORD PTR [rbp-0x10]
     11a0:	cmp    rax,QWORD PTR [rbp-0x20]
     11a4:	jb     1180 <multiply+0x22>
+    }
+    return product;
     11a6:	mov    rax,QWORD PTR [rbp-0x8]
+}
     11aa:	leave  
     11ab:	ret    
 
 00000000000011ac <main>:
+
+int main() {
     11ac:	push   rbp
     11ad:	mov    rbp,rsp
     11b0:	sub    rsp,0x20
+    size_t a = 12, b = 34;
     11b4:	mov    QWORD PTR [rbp-0x8],0xc
     11bc:	mov    QWORD PTR [rbp-0x10],0x22
+    size_t product;
+    product = multiply(a, b);
     11c4:	mov    rdx,QWORD PTR [rbp-0x10]
     11c8:	mov    rax,QWORD PTR [rbp-0x8]
     11cc:	mov    rsi,rdx
     11cf:	mov    rdi,rax
     11d2:	call   115e <multiply>
     11d7:	mov    QWORD PTR [rbp-0x18],rax
+    printf("%u * %u = %u\n", a, b, product);
     11db:	mov    rcx,QWORD PTR [rbp-0x18]
     11df:	mov    rdx,QWORD PTR [rbp-0x10]
     11e3:	mov    rax,QWORD PTR [rbp-0x8]
@@ -155,7 +178,9 @@ Disassembly of section .text:
     11ea:	lea    rdi,[rip+0xe13]        # 2004 <_IO_stdin_used+0x4>
     11f1:	mov    eax,0x0
     11f6:	call   1030 <printf@plt>
+    return 0;
     11fb:	mov    eax,0x0
+}
     1200:	leave  
     1201:	ret    
     1202:	nop    WORD PTR cs:[rax+rax*1+0x0]

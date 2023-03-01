@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-size_t ((noinline)) add(size_t a, size_t b) {
+size_t add(size_t a, size_t b) {
     size_t sum = 0;
     sum = a + b;
     return sum;

@@ -34,16 +34,30 @@ Disassembly of section .plt.got:
 Disassembly of section .text:
 
 0000000000001050 <main>:
+        product = add(product, multiplicand);
+    }
+    return product;
+}
+
+int main() {
     1050:	sub    rsp,0x8
+    size_t a = 12, b = 34;
+    size_t product;
+    product = multiply(a, b);
     1054:	mov    esi,0x22
     1059:	mov    edi,0xc
     105e:	call   1190 <multiply>
+    printf("%u * %u = %u\n", a, b, product);
     1063:	mov    edx,0x22
     1068:	mov    esi,0xc
     106d:	lea    rdi,[rip+0xf90]        # 2004 <_IO_stdin_used+0x4>
+    product = multiply(a, b);
     1074:	mov    rcx,rax
+    printf("%u * %u = %u\n", a, b, product);
     1077:	xor    eax,eax
     1079:	call   1030 <printf@plt>
+    return 0;
+}
     107e:	xor    eax,eax
     1080:	add    rsp,0x8
     1084:	ret    
@@ -119,28 +133,40 @@ Disassembly of section .text:
     117f:	nop
 
 0000000000001180 <add>:
+    sum = a + b;
     1180:	lea    rax,[rdi+rsi*1]
+}
     1184:	ret    
     1185:	data16 nop WORD PTR cs:[rax+rax*1+0x0]
 
 0000000000001190 <multiply>:
+size_t multiply(size_t multiplicand, size_t multiplier) {
     1190:	mov    r8,rdi
     1193:	mov    rcx,rsi
+    for (size_t i = 0; i < multiplier; ++i  ) {
     1196:	test   rsi,rsi
     1199:	je     11c0 <multiply+0x30>
     119b:	xor    edx,edx
+    size_t product = 0;
     119d:	xor    edi,edi
     119f:	nop
+        product = add(product, multiplicand);
     11a0:	mov    rsi,r8
+    for (size_t i = 0; i < multiplier; ++i  ) {
     11a3:	add    rdx,0x1
+        product = add(product, multiplicand);
     11a7:	call   1180 <add>
     11ac:	mov    rdi,rax
+    for (size_t i = 0; i < multiplier; ++i  ) {
     11af:	cmp    rcx,rdx
     11b2:	jne    11a0 <multiply+0x10>
+}
     11b4:	mov    rax,rdi
     11b7:	ret    
     11b8:	nop    DWORD PTR [rax+rax*1+0x0]
+    size_t product = 0;
     11c0:	xor    edi,edi
+}
     11c2:	mov    rax,rdi
     11c5:	ret    
     11c6:	nop    WORD PTR cs:[rax+rax*1+0x0]

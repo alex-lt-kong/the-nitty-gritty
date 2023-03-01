@@ -19,19 +19,20 @@ human-friendly names.
 
 ### Purposes
 * `rdi`, `rsi`, `rdx`, `rcx`, `r8` and `r9`: pass first 6 integer/pointer
-arguments of a function call. Additional arguments are stored on the stack.
+arguments of a function call. Additional arguments are stored on the call stack.
     * `xmm0` - `xmm7`: among other general purpose usage, can be used to pass
     first 8 float pointing arguments. Additional arguments are stored on the
     stack.
 * `rax`: store return value of a function call.
 * `rbp`/`ebp`: register base pointer, which points to the base of the current
 stack frame.
-* `rsp`/`esp`: register stack pointer, store the stack pointer.
-* `xmm0`-`xmm15`: use by an SIMD instruction set to vectorize array operation, etc.
+* `rsp`/`esp`: register stack pointer, store the call stack pointer.
+* `xmm0`-`xmm15`: use by an SIMD instruction set to vectorize array
+operation, etc.
 * `rip`, `eip` is a 64bit/32bit register. It holds the "Extended Instruction
-Pointer" for the stack. In other words, it tells the CPU where to go next to
-execute the next command. Behind the scene, `call` and `jmp` both change the
-value of this register.
+Pointer" for the call stack. In other words, it tells the CPU where to go
+next to execute the next command. Behind the scene, `call` and `jmp`
+both change the value of this register.
 
 ### Backward compatibility and their naming convention
 
@@ -80,7 +81,7 @@ which is destination? Let's use `mov` as an example.
     registers and then restore them at the end of the call because they have
     the guarantee to the caller of containing the same values after the
     function returns. The usual way to save the callee-saved registers is
-    to push them onto the stack.
+    to push them onto the call stack.
 
 ## Making sense of some common operations
 
@@ -157,12 +158,12 @@ where `call` is executed at `0x1166` and `ret` is executed at `0x1145`:
     * `call` instruction does the following things:
         1. it `push`es the return address (i.e., the address of
         the instruction immediately after the `call` instruction. In the
-        example, the address being `push`ed is `1193`) to the stack.
+        example, the address being `push`ed is `1193`) to the call stack.
         1. it `jmp`s to the address of being called. In
         the above example, `1135`. Internally, it sets the `eip` register to
         `1135`.
         * Note that `call` instruction only saves return address (e.g., `1193`
-        ) to the stack but it does not create a new stack frame. The new stack
+        ) to the call stack but it does not create a new stack frame. The new stack
         frame is created by the callee itself at `1135` and `1136`. More one
         stack frame set up will be explained in the next section (about
         `enter` and `leave)
@@ -170,20 +171,21 @@ where `call` is executed at `0x1166` and `ret` is executed at `0x1145`:
         * Note that during the "function call" we `push`ed twice. The 1st `push`
         is implicitly invoked by `call`, which stores the return address to the
         stack. The 2nd `push` is explicitly executed in the callee function (at
-        `0x1125`), storing the base of the previous stack frame to the stack.
+        `0x1125`), storing the base of the previous stack frame to the call stack.
         * Similarly, `ret` involves two `pop`s.
             1. The 1st `pop` is explicitly executed at `115c`.
             1. The 2nd one is done implicitly by `ret`, which `pop`s the return
             address (in this case, `1193`) from stack and `jmp`s to it.
     * In this example, we dont have `enter` and `leave`, probably due to the
     fact that add() is at the bottom of the call stack, so that we don't need
-    to further delimit the stack frame for subsequent calls.
+    to further delimit the call stack frame for subsequent calls.
 
 * `enter`/`leave`: they are closely related to `call`/`ret`.
     * The `enter` instruction sets up a stack frame by first pushing
-    `rbp` onto the stack and then copies `rsp` into `rbp` (`115e` and `115f`).
+    `rbp` onto the call stack and then copies `rsp` into `rbp` (`115e`
+    and `115f`).
     * `leave` does the opposite, i.e. copy `rbp` to `rsp` and then restore
-    the old `rbp` from the stack.
+    the old `rbp` from the call stack.
     * Note that `enter` instruction is very slow and compilers don't use it,
     but `leave` is fine.
     * The following toy example from [here](./5_function-call/) demonstrates
@@ -192,8 +194,6 @@ where `call` is executed at `0x1166` and `ret` is executed at `0x1145`:
     115e:	push   rbp                        # previous base pointer's address is pushed to the call stack...
     115f:	mov    rbp,rsp                    # so that we can assign new stack pointer and the new base pointer
     1162:	sub    rsp,0x20                   # allocate 0x20 bytes for local vars
-    # The above three instructions can be replaced with enter 0x20, 0. But enter is slow
-    # so compilers generally don't use it. But compilers still use leave.
     1166:	mov    QWORD PTR [rbp-0x18],rdi   # rdi stores a/multiplicand
     116a:	mov    QWORD PTR [rbp-0x20],rsi   # rsi stores b/multiplier
     116e:	mov    QWORD PTR [rbp-0x8],0x0    # initialize local variable product
@@ -203,7 +203,7 @@ where `call` is executed at `0x1166` and `ret` is executed at `0x1145`:
     1184:	mov    rax,QWORD PTR [rbp-0x8]       
     1188:	mov    rsi,rdx                    # rsi (2nd param in func call) stores a/multiplicand
     118b:	mov    rdi,rax                    # rdi (1st param) stores product
-    118e:	call   1135 <add>                 # return address, i.e., 118e, is implicitly pushed to the call stack before jmp'ing to 1135
+    118e:	call   1135 <add>                 # return address, i.e., 1193, is implicitly pushed to the call stack before jmp'ing to 1135
     1193:	mov    QWORD PTR [rbp-0x8],rax    # jmp'ed from 115d
     1197:	add    QWORD PTR [rbp-0x10],0x1
     119c:	mov    rax,QWORD PTR [rbp-0x10]       
@@ -214,9 +214,9 @@ where `call` is executed at `0x1166` and `ret` is executed at `0x1145`:
     11ab:	ret    
     ```
     * Comparing with the example in `call`/`ret`, one may notice that in this
-    example, `rsp` is changed to allocate 0x20 btesm so we need to `leave`
+    example, `rsp` is changed to allocate 0x20 bytes so we need to `leave`
     to restore it from the call stack. In the previous example, `rsp` is not
-    changed, so `leave` is not executed.
+    changed, so `leave` is not executed anb we just `pop` instead.
 
 ### References
 
