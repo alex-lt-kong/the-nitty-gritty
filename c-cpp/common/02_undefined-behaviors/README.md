@@ -251,12 +251,12 @@ following causes UB:
   even if we guarantee that `unsigned int` does not have any trap
   representation.
   * Well this guarantee is not true either. C standard only guarantees
-  that `uint8_t` does not have any trap representation (in para. 1 of
+  that `unsigned char` does not have any trap representation (in para. 1 of
   section 6.2.6.2 of [C11][1]).
 
 * Source: para. 1 of section 6.3.1.4 of [C11][1]:
   > An object shall have its stored value accessed only by an lvalue
-  > expression that has one of the following types: 88)
+  > expression that has one of the following types: [88]
   >
   > — a type compatible with the effective type of the object,
   >
@@ -275,14 +275,15 @@ following causes UB:
   > — a character type.
   >
   > -----
-  > 88) The intent of this list is to specify those circumstances in which 
+  >
+  > [88] The intent of this list is to specify those circumstances in which 
   > an object may or may not be aliased
   
 1  Section 6.2.7 of [C11][1] defines what does "compatible" mean for types.
   Two types are "compatible" only if they are "the same". For example,
   `int32_t` and `int` are compatible and `int` and `float` are not compatible.
-  `int` and `short` are not compatible either.
-    * A more detailed explanation can be found
+  `int` and `short` are not compatible either.  
+  * A more detailed explanation can be found
   [here](https://www.cs.auckland.ac.nz/references/unix/digital/AQTLTBTE/DOCU_020.HTM)
   .
   * The standard lists a few cases where aliasing are allowed. Going through
@@ -314,17 +315,17 @@ following causes UB:
     1. 
         ```C
         int x = 1;
-        short *p = &x;
+        short *p = (short*)&x;
         ```
     1. 
         ```C
         int x = 1;
-        float *p = &x;
+        float *p = (float*)&x;
         ```
     1. 
         ```C
         int x = 1;
-        double *p = (unsigned int*)&x;
+        double *p = (double*)&x;
         ```
     
 * The rationale behind the strict aliasing rule is performance. By assuming
@@ -367,9 +368,8 @@ optimization techniques called "Type-Based Alias Analysis" (TBAA).
     21:	ret    
     22:	data16 nop WORD PTR cs:[rax+rax*1+0x0]
     2d:	nop    DWORD PTR [rax]
-
-  0000000000000030 <manipulate_inplace_short>:
-
+  ```
+  ```asm
   void manipulate_inplace_short(int* arr, int16_t* y, size_t arr_size) {
       for (int i = 0; i < arr_size; ++i)
     30:	test   rdx,rdx
