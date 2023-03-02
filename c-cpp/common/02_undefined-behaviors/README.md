@@ -86,9 +86,10 @@ vulnerabilities in software.
   behaviors:
     > by the omission of any explicit definition of behavior.
 
-* gcc's behavior: given the nature of this UB, no concrete test is performed.
-Theoretically, results could vary depending on where the pointer currently
-points to and whether a '\0' is near the bound of the c-string.
+* One of gcc's possible behaviors: given the nature of this UB, no
+concrete test is performed. Theoretically, results could vary depending
+on where the pointer currently points to and whether a '\0' is near the bound
+of the c-string.
 
 
 ### [5. Use of uninitialized unsigned integer](./05_use-of-uninitialized-variable)
@@ -137,8 +138,8 @@ be stored in a register instead of RAM. This implies two important things:
 "could have been declared with the register storage class" and "never had its
 address taken" should mean the same.
 
-* gcc's behavior: variables that are not explicitly initialized are implictly
-initialized as `0`.
+* One of gcc's possible behaviors: variables that are not explicitly
+initialized are implictly initialized as `0`.
 
 
 ### [6. Float to unsigned integer conversion](./06_float-to-uint-conversion/)
@@ -238,6 +239,164 @@ unsigned integer type is always defined.
   Converting -3.140000 to uint32_t gives 0
   Converting 2147483648.000000 to uint8_t gives 255
   ```
+
+### [7. Dereferencing a float pointer as an unsigned int pointer (a.k.a. strict aliasing rule violation)](./07_dereference-float-pointer-as-uint-pointer)
+
+* This is yet another nuanced case. The general idea is that doing the
+following causes UB:
+  ```C
+  float pi = 3.14;
+  unsigned int* pi_int = (unsigned int*)&pi;
+  ```
+  even if we guarantee that `unsigned int` does not have any trap
+  representation.
+  * Well this guarantee is not true either. C standard only guarantees
+  that `uint8_t` does not have any trap representation (in para. 1 of
+  section 6.2.6.2 of [C11][1]).
+
+* Source: para. 1 of section 6.3.1.4 of [C11][1]:
+  > An object shall have its stored value accessed only by an lvalue
+  > expression that has one of the following types: 88)
+  >
+  > — a type compatible with the effective type of the object,
+  >
+  > — a qualified version of a type compatible with the effective type of
+  > the object,
+  >
+  > — a type that is the signed or unsigned type corresponding to the
+  > effective type of the object,
+  >
+  > — a type that is the signed or unsigned type corresponding to a
+  > qualified version of the effective type of the object,
+  >
+  > — an aggregate or union type that includes one of the aforementioned
+  > types among its members (including, recursively, a member of a
+  > subaggregate or contained union), or
+  > — a character type.
+  >
+  > -----
+  > 88) The intent of this list is to specify those circumstances in which 
+  > an object may or may not be aliased
+  
+1  Section 6.2.7 of [C11][1] defines what does "compatible" mean for types.
+  Two types are "compatible" only if they are "the same". For example,
+  `int32_t` and `int` are compatible and `int` and `float` are not compatible.
+  `int` and `short` are not compatible either.
+    * A more detailed explanation can be found
+  [here](https://www.cs.auckland.ac.nz/references/unix/digital/AQTLTBTE/DOCU_020.HTM)
+  .
+  * The standard lists a few cases where aliasing are allowed. Going through
+  them one by one could be a bit tedious. To summerize, only the following
+  and their obvious variants are legal aliasing:
+
+    1. 
+        ```C
+        int x = 1;
+        int *p = &x;
+        ```
+    1. 
+        ```C
+        int x = 1;
+        const int *p = &x;
+        ```
+    1. 
+        ```C
+        int x = 1;
+        unsigned int *p = (unsigned int*)&x;
+        ```
+    1. 
+        ```C
+        int x = 1;
+        const unsigned int *p = (const unsigned int*)&x;
+        ```
+    while the following and most other unmentioned ones are illegal:
+    
+    1. 
+        ```C
+        int x = 1;
+        short *p = &x;
+        ```
+    1. 
+        ```C
+        int x = 1;
+        float *p = &x;
+        ```
+    1. 
+        ```C
+        int x = 1;
+        double *p = (unsigned int*)&x;
+        ```
+    
+* The rationale behind the strict aliasing rule is performance. By assuming
+that different type can't be aliased, compilers can apply a wide range of
+optimization techniques called "Type-Based Alias Analysis" (TBAA).
+
+* Two examples are prepared to demonstrate the effect of TBAA [here](./lib.c):
+  ```C
+  void manipulate_inplace_int(int* arr, int* y, size_t arr_size) {
+      for (int i = 0; i < arr_size; ++i)
+          arr[i] = *y + 42;
+  }
+
+  void manipulate_inplace_float(int* arr, int16_t* y, size_t arr_size) {
+      for (int i = 0; i < arr_size; ++i)
+          arr[i] = *y + 42;
+  }
+  ```
+
+* These two functions differ by the type of `y` only. This trival difference
+  results in different [machine code](./lib.asm):
+  ```asm  
+  void manipulate_inplace_int(int* arr, int* y, size_t arr_size) {
+      for (int i = 0; i < arr_size; ++i)
+    0:	test   rdx,rdx
+    3:	je     21 <manipulate_inplace_int+0x21>
+    5:	lea    rdx,[rdi+rdx*4]
+    9:	nop    DWORD PTR [rax+0x0]
+          arr[i] = *y + 42;
+    10:	mov    eax,DWORD PTR [rsi]
+      for (int i = 0; i < arr_size; ++i)
+    12:	add    rdi,0x4
+          arr[i] = *y + 42;
+    16:	add    eax,0x2a
+    19:	mov    DWORD PTR [rdi-0x4],eax
+      for (int i = 0; i < arr_size; ++i)
+    1c:	cmp    rdi,rdx
+    1f:	jne    10 <manipulate_inplace_int+0x10>
+  }
+    21:	ret    
+    22:	data16 nop WORD PTR cs:[rax+rax*1+0x0]
+    2d:	nop    DWORD PTR [rax]
+
+  0000000000000030 <manipulate_inplace_short>:
+
+  void manipulate_inplace_short(int* arr, int16_t* y, size_t arr_size) {
+      for (int i = 0; i < arr_size; ++i)
+    30:	test   rdx,rdx
+    33:	je     4b <manipulate_inplace_short+0x1b>
+          arr[i] = *y + 42;
+    35:	movsx  eax,WORD PTR [rsi]
+    38:	lea    rdx,[rdi+rdx*4]
+    3c:	add    eax,0x2a
+    3f:	nop
+    40:	mov    DWORD PTR [rdi],eax
+      for (int i = 0; i < arr_size; ++i)
+    42:	add    rdi,0x4
+    46:	cmp    rdi,rdx
+    49:	jne    40 <manipulate_inplace_short+0x10>
+  }
+    4b:	ret  
+  ```
+  * The difference is about where `42` (`0x2a`) is added to `eax`.
+  1. In the `int`'s version, it is added at `16`, inside the loop, meaning
+  that the calculation is performed in each iteration. This is because
+  `arr` and `y` is of the same type, compilers can't rule out the possibility
+  that `arr` and `y` refer to a common memory location.
+  1. In the `short`'s version, it is added at `3c`, meaning that the calculation
+  is performed only once, before the loop. This is because per C standard
+  `arr` and `y` are not of compatible types, so that they can't be referring
+  to the same memory location.
+
 
 ## Seemingly undefined by actually well-defined behaviors
 
