@@ -6,7 +6,8 @@ To dissamble a binary file to assembly code:
     * `objdump --disassembler-options "intel" -S ./main.out`
 * Dissamble only a function from a binary file:
     * `gdb`: `gdb --quiet --eval-command="set disassembly-flavor intel" --eval-command="disassemble /m <func_name>" --batch <binary_file>`.
-    * `objdump`: `objdump --disassembler-options "intel" --disassemble=<func_name> --source <binary_file>`.
+    * `objdump`: `objdump --disassembler-options "intel" [--demangle] --disassemble=<func_name> --source <binary_file>`.
+
 * For C++, add `--demangle` to `objdump` to decode (a.k.a. demangle) low-level
 symbol names into user-level
 human-friendly names.
