@@ -126,12 +126,12 @@ section 6.2.6.2 of [C11][1]:
         > all other combinations of padding bits are alternative object
         > representations of the value specified by the value bits..
 
-* One more interesting question about this padding bit/trap representation is:
+* One more interesting question about padding bits/trap representation is:
 for our wasteful but perfectly standard-conforming `my unsigned short`, what
 would be the expected result of `sizeof`?:
     ```C
     my unsigned short a = 1234;
-    printf("%u", sizeof a); // should it print 2 or 3?
+    printf("%u", sizeof a); // should it print 2 or 3 or something else?
     ```
     * Level I answer: it has to be 3. If the wording of C11 is not clear enough,
     we may think of it this way: for all sorts of offset-based operations,
@@ -154,6 +154,8 @@ would be the expected result of `sizeof`?:
         many bits should be in a byte.
         * The "correct" answer is three only under the assumption that
         `CHAT_BIT == 8`.
+        * If we ignore the multiple implications in the wording and define
+        that `CHAR_BIT` is equal to 12, then `sizeof (my unsigned short) == 2`.
 
 * TODO: compare trap representation with `NumPy`'s `NaN.
     
