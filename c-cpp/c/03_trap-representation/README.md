@@ -35,14 +35,14 @@ demonstrate what's trap representation and how it helps:
 * Since the C standard says unsigned integer types never overflow, for a
 `my unsigned short` variable `a`, we should observe the following:
 
-        ```C
-        my unsigned short a = 65534;
-        printf("%u\n", a);
-        ++a;
-        printf("%u\n", a);
-        // 65534
-        // 0
-        ```
+    ```C
+    my unsigned short a = 65534;
+    printf("%u\n", a);
+    ++a;
+    printf("%u\n", a);
+    // 65534
+    // 0
+    ```
     * However, if we define a signed integer, `my short` in a
     similar manner (i.e., set its range to `[-32,768, 32,766]`), as signed
     integers can overflow, it may inadvertently get the variable `a` into
@@ -53,7 +53,7 @@ demonstrate what's trap representation and how it helps:
         ```
 
     * This is also one of the reasons (the other reason being the strict
-    type aliasing rule) why we can't always cast a whatever type to integer
+    type aliasing rule) why we can't always cast a whatever type to an integer
     (or whatever types) like this:
         ```C
         float* pi = 3.14;
@@ -64,11 +64,8 @@ demonstrate what's trap representation and how it helps:
 
         * Well for unsigned integer types, not having any trap representation
         is mostly the case, but C standard doesn't guarantee this. It only
-        guarantees that `unsigned char` must not have any trap representation.
-    * Note that here we can only have `my unsigned short`, not `my_uint16_t` as
-    section 7.20.1.1 of [C11][1] explicitly specifies that for `uint16_t`
-    (or more generally, `uint*N*_t`) it has to be 16 bits (or more
-    generally, `N` bits) long with no padding bits.
+        guarantees that `unsigned char` must not have any trap representation
+        (in section 6.2.6.2 of [C11][1]).
 
 * The above example shows how we can use a valid bit pattern as trap
 representation. This isn't always the case though.
@@ -89,6 +86,13 @@ we define that a `my unsigned short` is only valid if the first bit is 0:
     * `1000 0000 1111 1111 1111 1111` represents `NaN`
     * etc.
 
+* Note that here we can only define `my unsigned short`, instead of
+`my_uint16_t` as section 7.20.1.1 of [C11][1] explicitly specifies
+that for `uint16_t` (or more generally, `uint`*`N`*`_t`) it has to be 16
+bits (or more generally, `N` bits) long with no padding bits.
+    * Strictly speaking, using `my_uint16_t` doesn't really violate C
+    standard as `my_uint16_t` does not follow the pattern of `uint`*`N`*`_t`
+
 * This sort of trap representation is one potential use of "padding bits" in
 section 6.2.6.2 of [C11][1]:
     > For unsigned integer types other than **unsigned char**, the bits
@@ -99,11 +103,11 @@ section 6.2.6.2 of [C11][1]:
     > type shall be capable of  representing values from 0 to
     > 2<sup>N</sup> − 1 using a pure binary representation; this shall be
     > known as the value representation. The values of any padding bits
-    > are unspecified. <sup>53)</sup>
+    > are unspecified. <sup>[53]</sup>
     
     ---
 
-    > 53. Some combinations of padding bits might generate trap
+    > [53] Some combinations of padding bits might generate trap
     > representations, for example, if one padding bit is a parity bit.
     > Regardless, no arithmetic operation on valid values can generate
     > a trap representation other than as part of an exceptional
@@ -118,8 +122,9 @@ section 6.2.6.2 of [C11][1]:
         * `0001 1000 1011 1111 0111 1111` represents 49023
         * `0000 0010 1111 1111 1111 1111` represents 65535 
         
-        as "all other combinations of padding bits are alternative object
-        representations of the value specified by the value bits.".
+        in
+        > all other combinations of padding bits are alternative object
+        > representations of the value specified by the value bits..
 
 * One more interesting question about this padding bit/trap representation is:
 for our wasteful but perfectly standard-conforming `my unsigned short`, what
