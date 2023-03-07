@@ -148,14 +148,35 @@ would be the expected result of `sizeof`?:
         memcpy(arr2, arr1, 5);
         ```
         to work, the `sizeof` `my unsigned short` has to be 3.
-    * Level II answer: the exact result depends on two parameters, how many
+    * Level II answer: the exact result depends on two parameters: how many
     bits are in `my unsigned short` and how many bits one byte has.
         * Section 5.2.4.2.1 of [C11][1] defines that `CHAR_BIT` stores how
         many bits should be in a byte.
         * The "correct" answer is three only under the assumption that
-        `CHAT_BIT == 8`.
-        * If we ignore the multiple implications in the wording and define
-        that `CHAR_BIT` is equal to 12, then `sizeof (my unsigned short) == 2`.
+        `CHAR_BIT == 8`.
+        * If we ignore the multiple implications in the above wording and
+        define that `CHAR_BIT` is equal to 12, then
+        `sizeof (my unsigned short)` is equal to number of bits (24) divided
+        by `CHAR_BIT` or 2.
+        * Note that if `CHAR_BIT == 12`, the padding bits do not occupy a
+        whole byte anymore--instead, they only occupy the first 8 bits of
+        the first byte. The last 4 bits of the first bytes need to be used for
+        value representaion:
+            ```
+            [  1st byte ] [  2nd byte ]
+            [padding][   value bits   ]
+            000011 110011 000001 110000
+            ```
+        * The case is the same if `CHAR_BIT == 24`, where there will only be
+        a total of one byte:
+        ```
+            [         1st byte          ]
+            [padding] [    value bits   ]
+            0000 1111 0011 0000 0111 0000
+            ```
+        * `sizeof (unsigned shor)` would be equal to 1.
+
+
 
 * TODO: compare trap representation with `NumPy`'s `NaN.
     
