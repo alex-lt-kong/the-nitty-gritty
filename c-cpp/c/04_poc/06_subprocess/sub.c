@@ -11,7 +11,7 @@ int main(int argc, char** argv) {
     }
     fprintf(stderr, "The 2nd line from fprintf(stderr, ...)\n");
     
-    if (argc == 2 && strcmp(argv[1], 'segfault') == 0)
+    if (argc == 2 && strcmp(argv[1], "segfault") == 0)
     {
         int arr[5] = {3,1,4,1,5};
         printf("%d\n", arr[65536]);

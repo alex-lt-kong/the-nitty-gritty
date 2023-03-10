@@ -5,33 +5,32 @@
 #include <sys/wait.h>
 #include <signal.h>
 
+#define BUFSIZE 256
+
 int exec(char** argv) {
-int pipefd_out[2], pipefd_err[2];
+    int pipefd_out[2], pipefd_err[2];
     // pipefd[0] is the read end of the pipe
     // pipefd[1] is the write end of the pipe
     FILE* fp_out;
     FILE* fp_err;
-    char buff[256];
+    char buff[BUFSIZE];
     int status;
 
     if (pipe(pipefd_out) == -1) {
         // man 2 pipe
         perror("pipe()");
-        return EXIT_FAILURE;
+        goto err_initial;
     }
     if (pipe(pipefd_err) == -1) {
-        // man 2 pipe
-        close(pipefd_out[0]);        
-        close(pipefd_out[0]);
         perror("pipe()");
-        return EXIT_FAILURE;
+        goto err_out_fds;
     }
     
     pid_t child_pid = fork(); //span a child process
 
     if (child_pid == -1) { // fork() failed, no child process created
-        perror("fork(): ");
-        return EXIT_FAILURE;
+        perror("fork()");
+        goto err_err_fds;
     }
 
     if (child_pid == 0) { // fork() succeeded, we are in the child process
@@ -43,15 +42,15 @@ int pipefd_out[2], pipefd_err[2];
 
         // Prepared three possible cases, to demo different behaviors
         if (atoi(argv[1]) == 0) {
-            execl("./sub.out", "./sub.out", (char*) NULL); 
+            execl("./sub.out", "./sub.out", (char*) NULL);
         } else if (atoi(argv[1]) == 1) {
-            char *const args[] = {"./sub.out", "segfault", NULL};
+            char* args[] = {"./sub.out", "segfault", NULL};
             execv(args[0], args);
         } else if (atoi(argv[1]) == 2) {
-            char *const args[] = {"/bin/ls", "-l", "/tmp/", NULL};
+            char* args[] = {"/bin/ls", "-l", "/tmp/", NULL};
             execv(args[0], args);
         } else {
-            char *const args[] = {"/bin/ls", "-l",
+            char* args[] = {"/bin/ls", "-l",
                 "/path/that/definitely/does/not/exist/", NULL};
             execv(args[0], args);
         }
@@ -69,22 +68,21 @@ int pipefd_out[2], pipefd_err[2];
 
     if ((fp_out = fdopen(pipefd_out[0], "r")) == NULL) {
         perror("fdopen()");
-        return EXIT_FAILURE;
+        goto err_err_fds;
     }
     if ((fp_err = fdopen(pipefd_err[0], "r")) == NULL) {
         perror("fdopen()");
-        fclose(fp_out);
-        return EXIT_FAILURE;
+        goto err_out_file;
     }
 
     printf("===== stdout =====\n");
-    while(fgets(buff, sizeof(buff) - 1, fp_out)) {            
+    while(fgets(buff, sizeof(buff) - 1, fp_out)) {
         printf("%s", buff);
     }
     printf("===== stdout =====\n");
 
     printf("===== stderr =====\n");
-    while(fgets(buff, sizeof(buff) - 1, fp_err)) {            
+    while(fgets(buff, sizeof(buff) - 1, fp_err)) {
         printf("%s", buff);
     }    
     printf("===== stderr =====\n");
@@ -111,6 +109,20 @@ int pipefd_out[2], pipefd_err[2];
             printf("(unknown status: %d)\n", status);
         }
     }
+    return EXIT_SUCCESS;
+
+err_err_file:
+        fclose(fp_err);
+err_out_file:
+        fclose(fp_out);
+err_err_fds:
+        close(pipefd_err[0]);
+        close(pipefd_err[1]);
+err_out_fds:
+        close(pipefd_out[0]);
+        close(pipefd_out[1]);
+err_initial:
+        return EXIT_FAILURE;
 }
 
 int main(int argc, char** argv) {
@@ -118,5 +130,5 @@ int main(int argc, char** argv) {
         printf("Usage: %s <0|1|2|3>\n", argv[0]);
         return EXIT_FAILURE;
     }
-    exec(argv);    
+    return exec(argv);    
 }
