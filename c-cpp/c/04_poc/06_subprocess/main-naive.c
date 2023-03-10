@@ -40,13 +40,16 @@ int exec(char** argv) {
         dup2(pipefd_out[1], STDOUT_FILENO);
         dup2(pipefd_err[1], STDERR_FILENO);
 
-        // Prepared three possible cases, to demo different behaviors
+        // Prepared a few possible cases, to demo different behaviors
         if (atoi(argv[1]) == 0) {
             execl("./sub.out", "./sub.out", (char*) NULL);
         } else if (atoi(argv[1]) == 1) {
             const char * args[] = {"./sub.out", "segfault", NULL};
             execv(args[0], args);
         } else if (atoi(argv[1]) == 2) {
+            const char * args[] = {"./sub.out", "flooding", NULL};
+            execv(args[0], args);
+        } else if (atoi(argv[1]) == 3) {
             const char * args[] = {"/bin/ls", "-l", "/tmp/", NULL};
             execv(args[0], args);
         } else {
@@ -138,7 +141,7 @@ err_initial:
 
 int main(int argc, char** argv) {
     if (argc != 2) {
-        printf("Usage: %s <0|1|2|3>\n", argv[0]);
+        printf("Usage: %s <0|1|2|3|4>\n", argv[0]);
         return EXIT_FAILURE;
     }
     return exec(argv);    
