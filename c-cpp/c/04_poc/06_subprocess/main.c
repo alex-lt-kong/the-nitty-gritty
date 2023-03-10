@@ -5,14 +5,8 @@
 #include <sys/wait.h>
 #include <signal.h>
 
-int main(int argc, char** argv) {
-
-    if (argc != 2) {
-        printf("Usage: %s <0|1|2>\n", argv[0]);
-        return EXIT_FAILURE;
-    }
-
-    int pipefd_out[2], pipefd_err[2];
+int exec(char** argv) {
+int pipefd_out[2], pipefd_err[2];
     // pipefd[0] is the read end of the pipe
     // pipefd[1] is the write end of the pipe
     FILE* fp_out;
@@ -51,6 +45,9 @@ int main(int argc, char** argv) {
         if (atoi(argv[1]) == 0) {
             execl("./sub.out", "./sub.out", (char*) NULL); 
         } else if (atoi(argv[1]) == 1) {
+            char *const args[] = {"./sub.out", "segfault", NULL};
+            execv(args[0], args);
+        } else if (atoi(argv[1]) == 2) {
             char *const args[] = {"/bin/ls", "-l", "/tmp/", NULL};
             execv(args[0], args);
         } else {
@@ -111,5 +108,12 @@ int main(int argc, char** argv) {
             printf("(unknown status: %d)\n", status);
         }
     }
-    
+}
+
+int main(int argc, char** argv) {
+    if (argc != 2) {
+        printf("Usage: %s <0|1|2|3>\n", argv[0]);
+        return EXIT_FAILURE;
+    }
+    exec(argv);    
 }
