@@ -44,13 +44,14 @@ int exec(char** argv) {
         if (atoi(argv[1]) == 0) {
             execl("./sub.out", "./sub.out", (char*) NULL);
         } else if (atoi(argv[1]) == 1) {
-            char* args[] = {"./sub.out", "segfault", NULL};
+            const char * args[] = {"./sub.out", "segfault", NULL};
             execv(args[0], args);
         } else if (atoi(argv[1]) == 2) {
-            char* args[] = {"/bin/ls", "-l", "/tmp/", NULL};
+            const char * args[] = {"/bin/ls", "-l", "/tmp/", NULL};
             execv(args[0], args);
         } else {
-            char* args[] = {"/bin/ls", "-l",
+            
+            const char * args[] = {"/bin/ls", "-l",
                 "/path/that/definitely/does/not/exist/", NULL};
             execv(args[0], args);
         }
@@ -58,8 +59,19 @@ int exec(char** argv) {
         perror("execl()/execv()");
         // The exec() functions return only if an error has occurred.
         // The return value is -1, and errno is set to indicate the error.
-        exit(EXIT_FAILURE);
-        // Have to exit() explicitly in case of execl() failure.
+        _exit(EXIT_FAILURE);
+        /* Have to _exit() explicitly in case of execl() failure.
+           Difference between _exit() and exit()?
+           
+           The basic difference between exit() and _exit() is that the former
+           performs clean-up related to user-mode constructs in the library,
+           and calls user-supplied cleanup functions, whereas the latter
+           performs only the kernel cleanup for the process.
+           
+           In the child branch of a fork(), it is normally incorrect to use
+           exit(), because that can lead to stdio buffers being flushed
+           twice, and temporary files being unexpectedly removed.
+        */
     }
     
     //Only parent gets here
@@ -87,10 +99,10 @@ int exec(char** argv) {
     }    
     printf("===== stderr =====\n");
 
-    fclose(fp_out);
-    fclose(fp_err);
-    close(pipefd_out[0]);
-    close(pipefd_err[0]);
+    if (fclose(fp_out) != 0) { perror("fclose(fp_out)"); }
+    if (fclose(fp_err) != 0) { perror("fclose(fp_err)"); }
+    if (close(pipefd_out[0]) != 0) { perror("close(pipefd_out)"); }
+    if (close(pipefd_err[0]) != 0) { perror("close(pipefd_err)"); }
 
     // wait for the child process to terminate
     if (waitpid(child_pid, &status, 0) == -1) {
@@ -111,8 +123,7 @@ int exec(char** argv) {
     }
     return EXIT_SUCCESS;
 
-err_err_file:
-        fclose(fp_err);
+
 err_out_file:
         fclose(fp_out);
 err_err_fds:
