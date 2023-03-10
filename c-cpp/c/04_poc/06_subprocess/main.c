@@ -88,8 +88,11 @@ int pipefd_out[2], pipefd_err[2];
         printf("%s", buff);
     }    
     printf("===== stderr =====\n");
+
     fclose(fp_out);
     fclose(fp_err);
+    close(pipefd_out[0]);
+    close(pipefd_err[0]);
 
     // wait for the child process to terminate
     if (waitpid(child_pid, &status, 0) == -1) {
