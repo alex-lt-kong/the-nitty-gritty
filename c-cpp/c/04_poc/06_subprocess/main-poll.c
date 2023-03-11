@@ -29,7 +29,7 @@ int exec(char* argv1) {
         goto err_out_fds;
     }
     
-    pid_t child_pid = fork(); //span a child process
+    pid_t child_pid = fork(); //spawn a child process
 
     if (child_pid == -1) { // fork() failed, no child process created
         perror("fork()");
@@ -115,6 +115,7 @@ int exec(char* argv1) {
                     else { printf("<stderr>%s</stderr>\n", buf); }
                     fflush(stdout);
                 } else {                /* POLLERR | POLLHUP */
+
                     if (close(pfds[j].fd) == -1)
                         perror("close");
                     num_open_fds--;
