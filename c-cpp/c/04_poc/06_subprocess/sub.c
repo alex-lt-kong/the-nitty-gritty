@@ -20,8 +20,9 @@ int main(int argc, char** argv) {
     {
         const size_t flooding_iter_count = 65536;
         for (size_t i = 0; i < flooding_iter_count; ++i) {
-            printf("A lot of data are being sent to stdout: [%u/%u]\n", i, flooding_iter_count);
-            fprintf(stderr, "A lot of data are being sent to stderr: [%u/%u]\n",
+            printf("A lot of data are being sent to stdout: [%lu/%lu]\n",
+                i, flooding_iter_count);
+            fprintf(stderr, "A lot of data are being sent to stderr: [%lu/%lu]\n",
                 i, flooding_iter_count);
         }
     }
