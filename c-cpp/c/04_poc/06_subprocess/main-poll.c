@@ -40,10 +40,10 @@ int exec(char* argv1) {
         if (close(pipefd_out[0]) == -1) { perror("close(pipefd_out[0])"); }
         if (close(pipefd_err[0]) == -1) { perror("close(pipefd_err[0])"); }
         if (dup2(pipefd_out[1], STDOUT_FILENO) == -1) {
-            perror("close(pipefd_out[1]) in child");
+            perror("close(pipefd_out[1])");
         }
         if (dup2(pipefd_err[1], STDERR_FILENO) == -1) {
-            perror("close(pipefd_err[1]) in child");
+            perror("close(pipefd_err[1])");
         }
 
         // Prepared a few possible cases, to demo different behaviors
@@ -102,10 +102,11 @@ int exec(char* argv1) {
 
         /* Deal with array returned by poll(). */
         for (int j = 0; j < nfds; j++) {
-            /* If this buffer is too slow and the child process prints
-               too fast, we can still saturate the buffer...*/
             
             if (pfds[j].revents != 0) {
+                /* If this buffer is too small and the child process prints
+                   too fast, we can still saturate the buffer even if we
+                   use poll()...*/
                 char buf[4096] = {0};
                 if (pfds[j].revents & POLLIN) {
                     ssize_t s = read(pfds[j].fd, buf, sizeof(buf)-1);
@@ -115,9 +116,6 @@ int exec(char* argv1) {
                     else { printf("<stderr>%s</stderr>\n", buf); }
                     fflush(stdout);
                 } else {                /* POLLERR | POLLHUP */
-
-                    if (close(pfds[j].fd) == -1)
-                        perror("close");
                     num_open_fds--;
                 }
             }
