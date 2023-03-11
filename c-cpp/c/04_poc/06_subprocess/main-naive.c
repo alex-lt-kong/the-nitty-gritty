@@ -44,17 +44,17 @@ int exec(char** argv) {
         if (atoi(argv[1]) == 0) {
             execl("./sub.out", "./sub.out", (char*) NULL);
         } else if (atoi(argv[1]) == 1) {
-            const char * args[] = {"./sub.out", "segfault", NULL};
+            const char * const* args[] = {"./sub.out", "segfault", NULL};
             execv(args[0], args);
         } else if (atoi(argv[1]) == 2) {
-            const char * args[] = {"./sub.out", "flooding", NULL};
+            const char * const* args[] = {"./sub.out", "flooding", NULL};
             execv(args[0], args);
         } else if (atoi(argv[1]) == 3) {
-            const char * args[] = {"/bin/ls", "-l", "/tmp/", NULL};
+            const char * const* args[] = {"/bin/ls", "-l", "/tmp/", NULL};
             execv(args[0], args);
         } else {
             
-            const char * args[] = {"/bin/ls", "-l",
+            const char * const* args[] = {"/bin/ls", "-l",
                 "/path/that/definitely/does/not/exist/", NULL};
             execv(args[0], args);
         }
