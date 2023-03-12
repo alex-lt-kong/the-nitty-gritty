@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sbe:messageSchema xmlns:sbe="http://fixprotocol.io/2016/sbe"
+  package="com.baeldung.sbe.stub" id="1" version="0" semanticVersion="5.2"
+  description="A schema represents stock market data.">
+    <types>
+        <composite name="messageHeader" 
+          description="Message identifiers and length of message root.">
+            <type name="blockLength" primitiveType="uint16"/>
+            <type name="templateId" primitiveType="uint16"/>
+            <type name="schemaId" primitiveType="uint16"/>
+            <type name="version" primitiveType="uint16"/>
+        </composite>
+        <type name="myfloat" primitiveType="float" />
+        <type name="Symbol" primitiveType="char" length="6" characterEncoding="ASCII" 
+          description="Stock symbol"/>
+        <type name="Exchange" primitiveType="char" length="7" characterEncoding="ASCII" 
+          description="Stock exchange"/>
+        <enum name="Currency" encodingType="uint8">
+            <validValue name="USD" description="US Dollar">0</validValue>
+            <validValue name="EUR" description="Euro">1</validValue>
+            <validValue name="HKD" description="HK Dollar">2</validValue>
+        </enum>
+    </types>
+    <sbe:message name="TradeData" id="1" description="Represents a quote and amount of trade">
+        <field name="exchange" id="1" type="Exchange"/>
+        <field name="symbol" id="2" type="Symbol"/>
+        <field name="price" id="3" type="myfloat"/>
+        <field name="currency" id="4" type="Currency"/>
+        <field name="quantity" id="5" type="int32"/>
+    </sbe:message>
+</sbe:messageSchema>
