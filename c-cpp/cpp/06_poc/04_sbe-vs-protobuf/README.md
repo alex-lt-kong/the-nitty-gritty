@@ -1,4 +1,4 @@
-# Simple Binary Encoding vs Proto Buffer
+# Simple Binary Encoding vs Protocol Buffers
 
 ## SBE
 
@@ -25,7 +25,6 @@ Elapsed 335.04ms (29.8472 mil records per sec or 33 ns per record)
 ```
 Iterated 10 mil times
 Elapsed 7982.7ms (1.25271 mil records per sec or 798 ns per record)
-
 ```
 
 ## Reference
