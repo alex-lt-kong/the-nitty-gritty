@@ -71,6 +71,7 @@
         "typeinfo": "cpp",
         "variant": "cpp",
         "stdint.h": "c",
-        "*.ipp": "c"
+        "*.ipp": "c",
+        "poll.h": "c"
     }
 }

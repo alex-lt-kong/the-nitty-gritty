@@ -83,8 +83,8 @@ int exec(char* argv1) {
     }
     
     //Only parent gets here
-    close(pipefd_out[1]);
-    close(pipefd_err[1]);
+    if (close(pipefd_out[1]) == -1) { perror("close(ipefd_out[1])"); }
+    if (close(pipefd_err[1]) == -1) { perror("close(pipefd_err[1])"); }
 
     struct pollfd pfds[] = {
         { pipefd_out[0], POLLIN, 0 },

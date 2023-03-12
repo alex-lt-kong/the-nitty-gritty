@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package pb;
+
+message TradeData {
+  enum Currency {
+    USD = 0;
+    EUR = 1;
+    HKD = 2;
+  }
+
+  string exchange = 1;
+  string symbol = 2;
+  float price = 3;
+  Currency currency = 4;
+  int32 quantity = 5;
+  
+}
