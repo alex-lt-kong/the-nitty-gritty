@@ -49,6 +49,9 @@ int exec(char** argv) {
         } else if (atoi(argv[1]) == 2) {
             const char * const* args[] = {"./sub.out", "flooding", NULL};
             execv(args[0], args);
+        }else if (atoi(argv[1]) == 4) {
+            const char * const* args[] = {"./sub.out", "sleep", NULL};
+            execv(args[0], args);
         } else if (atoi(argv[1]) == 3) {
             const char * const* args[] = {"/bin/ls", "-l", "/tmp/", NULL};
             execv(args[0], args);
@@ -141,7 +144,7 @@ err_initial:
 
 int main(int argc, char** argv) {
     if (argc != 2) {
-        printf("Usage: %s <0|1|2|3|4>\n", argv[0]);
+        printf("Usage: %s <0|1|2|3|4|5>\n", argv[0]);
         return EXIT_FAILURE;
     }
     return exec(argv);    
