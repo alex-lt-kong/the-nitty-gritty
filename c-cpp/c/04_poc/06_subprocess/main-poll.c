@@ -56,6 +56,9 @@ int exec(char* argv1) {
             const char *const  args[] = {"./sub.out", "flooding", NULL};
             execv(args[0], args);
         } else if (atoi(argv1) == 3) {
+            const char *const  args[] = {"./sub.out", "sleep", NULL};
+            execv(args[0], args);
+        } else if (atoi(argv1) == 4) {
             const char *const  args[] = {"/bin/ls", "-l", "/tmp/", NULL};
             execv(args[0], args);
         } else {            
@@ -116,6 +119,8 @@ int exec(char* argv1) {
                     else { printf("<stderr>%s</stderr>\n", buf); }
                     fflush(stdout);
                 } else {                /* POLLERR | POLLHUP */
+                    if (close(pfds[j].fd) == -1)
+                        perror("close()");
                     num_open_fds--;
                 }
             }
@@ -154,7 +159,7 @@ err_initial:
 
 int main(int argc, char** argv) {
     if (argc != 2) {
-        printf("Usage: %s <0|1|2|3|4>\n", argv[0]);
+        printf("Usage: %s <0|1|2|3|4|5>\n", argv[0]);
         return EXIT_FAILURE;
     }
     return exec(argv[1]);    

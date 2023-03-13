@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 
 int main(int argc, char** argv) {
 
@@ -11,19 +12,27 @@ int main(int argc, char** argv) {
     }
     fprintf(stderr, "The 2nd line from fprintf(stderr, ...)\n");
     
-    if (argc == 2 && strcmp(argv[1], "segfault") == 0)
-    {
+    if (argc == 2 && strcmp(argv[1], "segfault") == 0) {
         int arr[5] = {3,1,4,1,5};
         printf("%d\n", arr[65536]);
     }
-    if (argc == 2 && strcmp(argv[1], "flooding") == 0)
-    {
-        const size_t flooding_iter_count = 65536;
-        for (size_t i = 0; i < flooding_iter_count; ++i) {
+    if (argc == 2 && strcmp(argv[1], "flooding") == 0) {
+        const size_t iter_count = 65536;
+        for (size_t i = 0; i < iter_count; ++i) {
             printf("A lot of data are being sent to stdout: [%lu/%lu]\n",
-                i, flooding_iter_count);
+                i, iter_count);
             fprintf(stderr, "A lot of data are being sent to stderr: [%lu/%lu]\n",
-                i, flooding_iter_count);
+                i, iter_count);
+        }
+    }
+    if (argc == 2 && strcmp(argv[1], "sleep") == 0) {
+        const size_t iter_count = 256;
+        for (size_t i = 0; i < iter_count; ++i) {
+            printf("A lot of data are being sent to stdout: [%lu/%lu]\n",
+                i, iter_count);
+            fprintf(stderr, "A lot of data are being sent to stderr: [%lu/%lu]\n",
+                i, iter_count);
+            sleep(1);
         }
     }
 
