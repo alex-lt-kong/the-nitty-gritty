@@ -40,8 +40,8 @@ to demonstrate the interaction between child and parent programs.
   if (close(pfds[j].fd) == -1)
       perror("close()");
   ```
-  almost always triggers `EBADF: Bad file descriptor`.
-
+  almost always triggers `EBADF: Bad file descriptor`. However, commenting this
+  out causes some file descriptors to be unclosed, leaking resources.
 
 ## Useful notes
 

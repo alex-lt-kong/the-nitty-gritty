@@ -25,8 +25,8 @@ int main(int argc, char** argv) {
                 i, iter_count);
         }
     }
-    if (argc == 2 && strcmp(argv[1], "sleep") == 0) {
-        const size_t iter_count = 256;
+    if (argc == 3 && strcmp(argv[1], "sleep") == 0) {
+        const size_t iter_count = atoi(argv[2]);
         for (size_t i = 0; i < iter_count; ++i) {
             printf("A lot of data are being sent to stdout: [%lu/%lu]\n",
                 i, iter_count);
