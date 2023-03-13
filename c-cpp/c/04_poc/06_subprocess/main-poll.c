@@ -45,7 +45,6 @@ int exec(char* argv1) {
         if (dup2(pipefd_err[1], STDERR_FILENO) == -1) {
             perror("close(pipefd_err[1])");
         }
-
         // Prepared a few possible cases, to demo different behaviors
         if (atoi(argv1) == 0) {
             execl("./sub.out", "./sub.out", NULL);
@@ -56,9 +55,12 @@ int exec(char* argv1) {
             const char *const  args[] = {"./sub.out", "flooding", NULL};
             execv(args[0], args);
         } else if (atoi(argv1) == 3) {
-            const char *const  args[] = {"./sub.out", "sleep", NULL};
+            const char *const  args[] = {"./sub.out", "sleep", "16", NULL};
             execv(args[0], args);
         } else if (atoi(argv1) == 4) {
+            const char *const  args[] = {"./sub.out", "sleep", "4", NULL};
+            execv(args[0], args);    
+        } else if (atoi(argv1) == 5) {
             const char *const  args[] = {"/bin/ls", "-l", "/tmp/", NULL};
             execv(args[0], args);
         } else {            
@@ -159,8 +161,12 @@ err_initial:
 
 int main(int argc, char** argv) {
     if (argc != 2) {
-        printf("Usage: %s <0|1|2|3|4|5>\n", argv[0]);
+        printf("Usage: %s <0|1|2|3|4|5|6>\n", argv[0]);
         return EXIT_FAILURE;
     }
-    return exec(argv[1]);    
+    const size_t iter_count = atoi(argv[1]) == 4 ? 16 : 1;
+    for (size_t i = 0; i < iter_count; ++i) {
+        exec(argv[1]);
+    }
+    return 0;
 }
