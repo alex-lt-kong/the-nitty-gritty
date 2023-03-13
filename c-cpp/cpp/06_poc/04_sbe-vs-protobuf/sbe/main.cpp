@@ -38,15 +38,6 @@ size_t encodeTradeData(TradeDataStruct& tds, TradeData &td, char *buffer,
 size_t decodeHdr(MessageHeader &hdr, char *buffer, uint64_t offset,
     uint64_t bufferLength) {
     hdr.wrap(buffer, offset, messageHeaderVersion, bufferLength);
-
-    // decode the header
-    /*
-    cout << "messageHeader.blockLength=" << hdr.blockLength() << endl;
-    cout << "messageHeader.templateId=" << hdr.templateId() << endl;
-    cout << "messageHeader.schemaId=" << hdr.schemaId() << endl;
-    cout << "messageHeader.schemaVersion=" << hdr.version() << endl;
-    cout << "messageHeader.encodedLength=" << hdr.encodedLength() << endl;*/
-
     return hdr.encodedLength();
 }
 
@@ -63,12 +54,8 @@ size_t decodeTradeData(
 }
 
 
-std::size_t encodeHdr(
-    MessageHeader &hdr,
-    TradeData &md,
-    char *buffer,
-    std::uint64_t offset,
-    std::uint64_t bufferLength)
+std::size_t encodeHdr(MessageHeader &hdr, TradeData &md, char *buffer,
+    std::uint64_t offset, std::uint64_t bufferLength)
 {
     // encode the header
     hdr.wrap(buffer, offset, messageHeaderVersion, bufferLength)
@@ -99,7 +86,8 @@ int main() {
         TradeData tdNew;
         size_t decodeHdrLength = decodeHdr(hdrNew, buffer, 0, sizeof(buffer));
         size_t decodeMsgLength = decodeTradeData(tdNew, buffer,
-            hdr.encodedLength(), hdr.blockLength(), hdr.version(), sizeof(buffer));
+            hdrNew.encodedLength(), hdrNew.blockLength(), hdrNew.version(),
+            sizeof(buffer));
         if (sampleIdx == i) {
             memcpy(sampleTds.symbol, tdNew.symbol(), strlen(tdNew.symbol()));
             sampleTds.quantity = tdNew.quantity();
