@@ -20,18 +20,18 @@ int main(int argc, char** argv) {
         const size_t iter_count = 65536;
         for (size_t i = 0; i < iter_count; ++i) {
             printf("A lot of data are being sent to stdout: [%lu/%lu]\n",
-                i, iter_count);
+                i, iter_count - 1);
             fprintf(stderr, "A lot of data are being sent to stderr: [%lu/%lu]\n",
-                i, iter_count);
+                i, iter_count - 1);
         }
     }
     if (argc == 3 && strcmp(argv[1], "sleep") == 0) {
-        const size_t iter_count = atoi(argv[2]);
+        const size_t iter_count = (size_t)abs(atoi(argv[2]));
         for (size_t i = 0; i < iter_count; ++i) {
             printf("A lot of data are being sent to stdout: [%lu/%lu]\n",
-                i, iter_count);
+                i, iter_count - 1);
             fprintf(stderr, "A lot of data are being sent to stderr: [%lu/%lu]\n",
-                i, iter_count);
+                i, iter_count - 1);
             sleep(1);
         }
     }

@@ -12,7 +12,7 @@ including:
     1. Stack data are physically close to each other, making the caching
     mechanism, notably the cache line mechanism, much more efficient.
     1. The address/offset of variables on stack is more likely to be calculated
-    at compile time. Comparatively, the address/offset of varaible on heap
+    at compile time. Comparatively, the address/offset of variables on heap
     is more likely to be only calculated at runtime.
 
 * On x64 systems, a `std::string` variable is roughly a `struct` of three
