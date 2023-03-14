@@ -20,15 +20,15 @@ particular case online...So let's create one ourselves!
 
 
 * The first version is `main-naive.c`, it works, mostly. However, its
-sequential `while()` loop structures means that if the child process
-sent data to both stderr and stderr fast, the buffer for stderr will be filled
-very soon, causing unexpected result.
+sequential `while()` loop structure means that if the child process
+sends data to both stderr and stderr fast, the buffer for stderr will be filled
+very soon, causing unexpected results.
 
 * A more proper version is `main-poll.c`, it sets a reasonably large buffer
 for potential child process's stdout and stderr and uses `poll()` to
 alternatively read data from them.
 
-* To throughly examine the behavior of the parent program, a sample child
+* To thoroughly examine the behavior of the parent program, a sample child
 program, `sub.out` is also prepared. It supports a few different modes
 to demonstrate the interaction between child and parent programs.
 

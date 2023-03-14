@@ -25,8 +25,13 @@ Elapsed 7982.7ms (1.25271 mil records per sec or 798 ns per record)
 
 * With the above in mind, even if we would like to generate code in C++, we
 still need to build and run SBE's Java build: `./gradlew`
+  * `./gradlew` needs not only JRE but also JDK. Without JDK, it throws
+  error but does not make it clear that error is due to the missing of
+  JDK. One needs to install JDK manually before trying to build.
 
 * Command to generate C++ code: `java -jar -Dsbe.generate.ir=true -Dsbe.target.language=Cpp -Dsbe.target.namespace=sbe -Dsbe.output.dir=/tmp/ ./simple-binary-encoding/sbe-all/build/libs/sbe-all-1.27.0.jar ~/repos/the-nitty-gritty/c-cpp/cpp/06_poc/04_sbe-vs-protobuf/sbe/tradeData.xml`
+  * It is funny that while C++'s parameter is `-Dsbe.target.language=Cpp`,
+  its C# equivalent is `-Dsbe.target.language=uk.co.real_logic.sbe.generation.csharp.CSharp`
 
 * This working PoC is roughly a combination of [this link][3] and
 [this link][2].
