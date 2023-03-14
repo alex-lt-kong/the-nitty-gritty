@@ -6,4 +6,5 @@ main:
 	gcc sub.c -o sub.out $(OPTS)
 
 .PHONY: clean
+clean:
 	rm *.out

@@ -8,10 +8,19 @@
 #include <signal.h>
 #include <sys/select.h>
 #include <poll.h>
+#include <stdint.h>
 #include <fcntl.h>
+#include <time.h>
 
+//#define ENABLE_TIMEOUT
 
 #define BUFSIZE 1024
+
+#ifdef ENABLE_TIMEOUT
+struct timespec start, now;
+long elapsed_usecs = 0;
+long timeout_usecs = 10 * 1000000;// 10 sec
+#endif
 
 int exec(char* argv1) {
     int pipefd_out[2], pipefd_err[2];
@@ -36,6 +45,19 @@ int exec(char* argv1) {
         goto err_err_fds;
     }
 
+#ifdef ENABLE_TIMEOUT
+    clock_gettime(CLOCK_MONOTONIC, &start);
+    /*
+    CLOCK_MONOTONIC: represents the absolute elapsed wall-clock time since
+    some arbitrary, fixed point in the past. It isn't affected by changes in
+    the system time-of-day clock.
+    CLOCK_REALTIME: represents the machine's best-guess as to the current
+    wall-clock, time-of-day time. As Ignacio and MarkR say, this means that
+    CLOCK_REALTIME can jump forwards and backwards as the system time-of-day
+    clock is changed, including by NTP.
+    */
+#endif
+
     if (child_pid == 0) { // fork() succeeded, we are in the child process
         if (close(pipefd_out[0]) == -1) { perror("close(pipefd_out[0])"); }
         if (close(pipefd_err[0]) == -1) { perror("close(pipefd_err[0])"); }
@@ -49,22 +71,22 @@ int exec(char* argv1) {
         if (atoi(argv1) == 0) {
             execl("./sub.out", "./sub.out", NULL);
         } else if (atoi(argv1) == 1) {
-            const char *const  args[] = {"./sub.out", "segfault", NULL};
+            const char* args[] = {"./sub.out", "segfault", NULL};
             execv(args[0], args);
         } else if (atoi(argv1) == 2) {
-            const char *const  args[] = {"./sub.out", "flooding", NULL};
+            const char* args[] = {"./sub.out", "flooding", NULL};
             execv(args[0], args);
         } else if (atoi(argv1) == 3) {
-            const char *const  args[] = {"./sub.out", "sleep", "16", NULL};
+            const char* args[] = {"./sub.out", "sleep", "16", NULL};
             execv(args[0], args);
         } else if (atoi(argv1) == 4) {
-            const char *const  args[] = {"./sub.out", "sleep", "4", NULL};
+            const char* args[] = {"./sub.out", "sleep", "4", NULL};
             execv(args[0], args);    
         } else if (atoi(argv1) == 5) {
-            const char *const  args[] = {"/bin/ls", "-l", "/tmp/", NULL};
+            const char* args[] = {"/bin/ls", "-l", "/tmp/", NULL};
             execv(args[0], args);
         } else {            
-            const char *const  args[] = {"/bin/ls", "-l",
+            const char* args[] = {"/bin/ls", "-l",
                 "/path/that/definitely/does/not/exist/", NULL};
             execv(args[0], args);
         }
@@ -95,18 +117,29 @@ int exec(char* argv1) {
         { pipefd_out[0], POLLIN, 0 },
         { pipefd_err[0], POLLIN, 0 },
     };
-    int nfds = sizeof(pfds) / sizeof(struct pollfd);    
-    int num_open_fds = nfds;
+    nfds_t nfds = sizeof(pfds) / sizeof(struct pollfd);    
+    int num_open_fds = (int)nfds;
+    // num_open_fds must be int, not unsigned int; otherwise we risk
+    // "underflow" it
     
     /* Keep calling poll() as long as at least one file descriptor is
        open. */
     while (num_open_fds > 0) {
+
+#ifdef ENABLE_TIMEOUT
+        if (elapsed_usecs >= timeout_usecs) {
+            break;
+        }
+        clock_gettime(CLOCK_MONOTONIC, &now);
+        elapsed_usecs = (now.tv_sec - start.tv_sec) * 1000000 +
+                        (now.tv_nsec - start.tv_nsec) / 1000;
+#endif
         int ready = poll(pfds, nfds, -1);
         if (ready == -1)
             perror("poll()");
 
         /* Deal with array returned by poll(). */
-        for (int j = 0; j < nfds; j++) {
+        for (size_t j = 0; j < nfds; j++) {
             
             if (pfds[j].revents != 0) {
                 /* If this buffer is too small and the child process prints
@@ -121,20 +154,50 @@ int exec(char* argv1) {
                     else { printf("<stderr>%s</stderr>\n", buf); }
                     fflush(stdout);
                 } else {                /* POLLERR | POLLHUP */
-                    if (close(pfds[j].fd) == -1)
-                        perror("close()");
                     num_open_fds--;
                 }
             }
         }
     }
 
+    if (close(pipefd_out[0]) == -1) { perror("close(ipefd_out[0])"); }
+    if (close(pipefd_err[0]) == -1) { perror("close(pipefd_err[0])"); }
+
+#ifdef ENABLE_TIMEOUT
+    // wait for the child process to terminate
+    int status;
+    __useconds_t sleep_us = 1;
+    while(waitpid(child_pid, &status, WNOHANG) == 0) {
+        
+        usleep(sleep_us);
+        sleep_us = sleep_us >= 1000000 ? sleep_us : sleep_us * 2;
+        elapsed_usecs = (now.tv_sec - start.tv_sec) * 1000000 +
+                        (now.tv_nsec - start.tv_nsec) / 1000;
+        if (elapsed_usecs > timeout_usecs) {
+            printf("Timeout %lu ms reached, kill()ing process %d...\n",
+                timeout_usecs / 1000, child_pid);
+            if (kill(child_pid, SIGTERM) == -1) {
+                perror("kill(child_pid, SIGTERM)");
+                if (kill(child_pid, SIGKILL) == -1) {
+                    perror("kill(child_pid, SIGKILL)");
+                } else {
+                    printf("kill()ed successfully with SIGKILL\n");
+                    break;
+                }
+            } else {
+                printf("kill()ed successfully\n");
+                break; // Without break the while() loop could be entered again.
+            }
+        }
+    }
+#else
     // wait for the child process to terminate
     int status;
     if (waitpid(child_pid, &status, 0) == -1) {
         perror("waitpid()");
         return EXIT_FAILURE;
     }
+#endif
     if (WIFEXITED(status)) {
         printf("Child process exited normally, rc: %d\n", WEXITSTATUS(status));
     } else {
@@ -150,11 +213,11 @@ int exec(char* argv1) {
     return EXIT_SUCCESS;
 
 err_err_fds:
-        close(pipefd_err[0]);
-        close(pipefd_err[1]);
+        if (close(pipefd_err[0]) == -1) { perror("close(pipefd_err[0])"); }
+        if (close(pipefd_err[1]) == -1) { perror("close(pipefd_err[1])"); }
 err_out_fds:
-        close(pipefd_out[0]);
-        close(pipefd_out[1]);
+        if (close(pipefd_out[0]) == -1) { perror("close(ipefd_out[0])"); }
+        if (close(pipefd_out[1]) == -1) { perror("close(ipefd_out[1])"); }
 err_initial:
         return EXIT_FAILURE;
 }
