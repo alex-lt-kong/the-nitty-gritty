@@ -1,0 +1,17 @@
+OPTS = -O2 -Wall -pedantic -Wextra -g -Og
+CXX = g++
+
+main: main.o string-demo.o
+	$(CXX) $(OPTS) main.o string-demo.o -o main.out	
+
+main.o: main.cpp string-demo.o
+	$(CXX) $(OPTS) -fPIC -c main.cpp
+string-demo.o: string-demo.cpp string-demo.h
+	$(CXX) $(OPTS) -fPIC -c string-demo.cpp
+
+
+.PHONY: clean
+clean:
+	rm *.out *.o
+disassemble:
+	objdump --disassembler-options "intel" --demangle --source ./string-demo.o > ./string-demo.asm

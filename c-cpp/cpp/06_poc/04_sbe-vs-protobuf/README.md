@@ -56,15 +56,12 @@ time to detect the boundaries of data in a message.
 placed at the end of the message to keep the impact of variable length
 calculations at a minimum.
 
-## Reference
-
-* [Guide to Simple Binary Encoding](https://www.baeldung.com/java-sbe)
-* [Simple Binary Encoding, a new ultra-fast marshalling API in C++, Java and .NET](https://weareadaptive.com/2013/12/10/sbe-1/)
-
 ## References
 
 1. [Guide to Simple Binary Encoding][1]
 1. [Simple Binary Encoding, a new ultra-fast marshalling API in C++, Java and .NET][2]
+1. [SBE's official generated stub example][3]
+1. [Q&A: Fred Malabre of FPL on High Performance Trading with FIX][4]
 
 
 [1]: https://www.baeldung.com/java-sbe "Guide to Simple Binary Encoding"
