@@ -247,26 +247,33 @@ according to gcc's [official documentation](https://gcc.gnu.org/onlinedocs/gcc/C
     134c:	00 00 00 
     134f:	90                   	nop
   ```
-  * The function call is there as well. Note that the signature of the call is `<double my_max<double>(double, double)>`
-  , i.e., at assembly code level, the templates function are gone--instead, a proper `double` function is created.
+  * The function call is there as well. Note that the signature of the call is
+  `<double my_max<double>(double, double)>`, i.e., at assembly code level,
+  the templates function are gone--instead, a proper `double` function is created.
 
-* We finally come to the first important point about templates: it is [a parametrized description of a family of
-classes/functions](https://cppcon.digital-medium.co.uk/wp-content/uploads/2021/11/back_to_basics_templates_part_1__bob_steagall__cppcon_2021.pdf),
-not a class/function per see. To be specific, it means:
-  * templates classes/functions are not directly compiled to machine code as one single "versitle" or "generic"
-  function/class that can magically take a few different parameters. Instead, the compiler generates a series
-  of concrete functions/classes, plugging in concrete data types, such as `int`, `double` as needed.
-    * Note that "as needed" means if a version is never used, it will not be generated. In our example,
-    only `int` and `double` versions are generated, all other versions, such as `string`, are not generated.
-  * This paradigm is called [generic programming](https://en.wikipedia.org/wiki/Generic_programming).
-  * It works a bit similar to Marco in C in the sense that both can "generate" code to be compiled. But templates
-  are more than just being prettier, it offers concrete benefits such as double-increment protection and type check.
-  Take this simple marco as an example:
+* We finally come to the first important point about templates: it is
+[a parametrized description of a family of classes/functions](https://cppcon.digital-medium.co.uk/wp-content/uploads/2021/11/back_to_basics_templates_part_1__bob_steagall__cppcon_2021.pdf),
+not a class/function per se. To be specific, it means:
+  * templates classes/functions are not directly compiled to machine code as
+  one single "versitle" or "generic" function/class that can magically take
+  a few different parameters. Instead, the compiler generates a series of
+  concrete functions/classes, plugging in concrete data types, such as
+  `int`, `double` as needed.
+    * Note that "as needed" means if a version is never used, it will
+    not be generated. In our example, only `int` and `double` versions
+    are generated, all other versions, such as `string`, are not generated.
+  * This paradigm is called
+  [generic programming](https://en.wikipedia.org/wiki/Generic_programming).
+  * It works a bit similar to Marco in C in the sense that both can
+  "generate" code to be compiled. But templates are more than just
+  being prettier, it offers concrete benefits such as double-increment
+  protection and type check. Take this simple marco as an example:
     ```C
       #define max(a,b) (a) > (b) ? (a) : (b)
     ```
-    At first glance, it is as capable as templates--all variables are properly parenthesized so we avoid
-    any unexpected "escape" or "truncation". However, it could still behave erroneously if some handpicked
+    At first glance, it is as capable as templates--all variables are
+    properly parenthesized so we avoid any unexpected "escape" or
+    "truncation". However, it could still behave erroneously if some handpicked
     arguments are "passed" to it:
     ```C
     int a = 1, b = 0;
@@ -289,10 +296,12 @@ not a class/function per see. To be specific, it means:
 
 ## [4_edge-cases.cpp](./4_edge-cases.cpp)
 
-* From users' (i.e., C++ programmers) point of view, the general use of templates should be straightforward.
-However, edge cases are everywhere and C++ has many detailed rules to make them well-defined.
-  * This kind of pursuit of completeness, as far as I am concerned, is also one of the main reasons why
-  C++ is usually considered more complicated than other high-level languages.
+* From users' (i.e., C++ programmers) point of view, the general use of
+templates should be straightforward. However, edge cases are everywhere
+and C++ has many detailed rules to make them well-defined.
+  * This kind of pursuit of completeness, as far as I am concerned,
+  is also one of the main reasons why C++ is usually considered more
+  complicated than other high-level languages.
 
 * Explicit specification of typename
   * Consider the following function template definition:
@@ -342,8 +351,8 @@ However, edge cases are everywhere and C++ has many detailed rules to make them 
   MyIntClass.getSum();
   MyIntClass.getProduct();
   ```
-  * But only `+` operation is defined between two string while `*` isn't, we can instantiate a `string`
-  version of the class template?
+  * But only `+` operation is defined between two string while `*` isn't,
+  can we instantiate a `string` version of the class template?
   ```C++
   SimpleClass<string> MyStrClass(str1, str2);
   MyStrClass.getSum();
@@ -354,37 +363,116 @@ However, edge cases are everywhere and C++ has many detailed rules to make them 
   the versions actually being used are generated--so as long as we don't touch the unsupported methods, we 
   are still good.
 
+## [5_trait.cpp](./5_trait.cpp)
+
+* Sometimes using templates once is not enough to handle a few more flexible
+cases. Let's say, we want to write a function that takes a numeric parameter
+`val` and it wants to check if `val` is greater than the half of the maximum
+possible value of its type.
+  * For example, a function for `int` in C is like this:
+    ```C
+    bool is_greater_than_half_max_int(int val) {
+      return (val > INT_MAX / 2);
+    }
+    ```
+    and for `float`, a separate function should be like this:
+    ```C
+    bool is_greater_than_half_max_float(float val) {
+      return (val > FLOAT_MAX / 2);
+    }
+    ```
+
+
+* In C++, we would like to take advantage of templates so that we only need to
+write one function template to handle all possible numeric types, something
+like this:
+  ```C++
+  template <typename T>
+  bool greater_than_half_max_with_trait(T val) {
+      return (val > T_MAX / 2);
+  }
+  ```
+  * But wait, what will be T_MAX here? In C, `INT_MAX` and `FLOAT_MAX` are
+  just marcos that expand to 2147483647, 3.40282346638528859812e+38F, etc,
+  how can we have `T_MAX`?
+
+* Trait comes to our rescue!
+  ```C++
+  template <typename T>
+  bool greater_than_half_max_with_trait(T val) {
+      return (val > numeric_limits<T>::max() / 2);
+  }
+  ```
+  * In C++'s standard library a `numeric_limits` template is prepared, we just
+  pass `T` to it and it will "return" the `T_MAX` accordingly, at compile time.
+  * `numeric_limits` is a templates class, for sure. But for this particular
+  case, we also call it a "type trait".
+
+* Long story short, trait is a kind of application of templates that helps
+us handle diversity of different types that we don't care and provides the
+common features that we do care.
+
+* One thing that is worth pointing out is that traits is only capable of
+hiding the details we dont want to touch, but it can't get rid of the
+details altogether.
+  * Using `numeric_limits<T>` as an example, to implement our
+  `greater_than_half_max_with_trait()` with it, we can create one template
+  function instead of a bunch of concrete functions, great!
+  * However, in STL's `limits` file, the implementer has to prepare quite a 
+  few concrete implementations, such as `numeric_limits<int>`, 
+  `numeric_limits<double>`, `numeric_limits<uint32_t>`, etc.
+  * The benefit is only that as language users (i.e., developers), we can
+  get away from this trouble, it doesn't mean the trouble magically
+  disappears--just we shift the burden to the implementer of STL.
+
 ## Templates in shared object files
 
-* It is not uncommon for people to pre-compile source code into `.so` files and distribute them along with a `.h` file
-for downstream users. How can we do this for templates functions/classes?
+* It is not uncommon for people to pre-compile source code into `.so` files
+and distribute them along with a `.h` file for downstream users. How can we
+do this for templates functions/classes?
   * No, this is impossible🤦
 
 * The reason lies in how templates are designed.
-  * Note that template functions/classes are not functions/classes themselves, the concrete functions/classes get 
-  generated after the `typename T` is fixed.
-  * When a source code file is compiled into a `.so` file, no function calls are known to the compiler and thus
-  there is no way for compilers to generate concrete functions/classes out of nothing.
+  * Note that template functions/classes are not functions/classes
+  themselves, the concrete functions/classes get generated after the
+  `typename T` is fixed.
+  * When a source code file is compiled into a `.so` file, no function calls
+  are known to the compiler and thus there is no way for compilers to
+  generate concrete functions/classes out of nothing.
 
-* But if this is the case, then how is the STL and other templates-enabled libraries are distributed?
-  * The common way is plain and simple--all the templates are defined in header files only, so no `.c`, `.cpp`
-  or whatever source code files are needed.
-  * We an STL or other functions are called, only the called version will be instantiated.
+* But if this is the case, then how is the STL and other templates-enabled
+libraries are distributed?
+  * The common way is plain and simple--all the templates are defined in
+  header files only, so no `.c`, `.cpp` or whatever source code files are needed.
+  * We an STL or other functions are called, only the called version will
+  be instantiated.
 
 * There is one exception though.
-  * If we know that only a few variants of the templates functions/classes will be used, we can instantiate those
-  versions explicity [this way](https://stackoverflow.com/a/1022676/19634193).
-  * These concrete functions/classes can be compiled into `.so` files. But this way, they fall back to a
-  series of common functions/classes and the concept and implementation of the "template" concept will be
-  totally gone.
+  * If we know that only a few variants of the templates functions/classes
+  will be used, we can instantiate those versions explicity
+  [this way](https://stackoverflow.com/a/1022676/19634193).
+  * These concrete functions/classes can be compiled into `.so` files. But
+  this way, they fall back to a series of common functions/classes and the
+  concept and implementation of the "template" concept will be totally gone.
 
-## An important note
+## Important notes
 
-* As demonstrated above, a seemingly stragitforward feature can get really sophisticated in C++.
+* As demonstrated above, a seemingly stragitforward feature can get
+really sophisticated in C++.
 * But let's not forget Bjarne Stroustrup's famous quote that
 [within C++, there is a much smaller and cleaner language struggling to get out](https://www.stroustrup.com/quotes.html).
-* The quote can be interpreted in a few different ways, but my take is: if we stick to templates in its common
-form, and we just don't touch those archaic and cryptic (although still well-defined) cases, templates should
+* The quote can be interpreted in a few different ways, but my take is: if
+we stick to templates in its common form, and we just don't touch those
+archaic and cryptic (although still well-defined) cases, templates should
 "just work".
-* On the other hand, if we try to go down the rabbit hole, the journey will be much more diffcult and mostly
-it doesn't really help solving practical engineering problems.
+* On the other hand, if we try to go down the rabbit hole, the journey
+will be much more diffcult and mostly it doesn't really help solving
+practical engineering problems.
+
+## Reference
+
+1. [Lei Mao - C++ Traits][1]
+1. [A quick primer on type traits in modern C++][2]
+
+[1]: https://leimao.github.io/blog/CPP-Traits/ "Lei Mao - C++ Traits"
+[2]: https://www.internalpointers.com/post/quick-primer-type-traits-modern-cpp "A quick primer on type traits in modern C++"
