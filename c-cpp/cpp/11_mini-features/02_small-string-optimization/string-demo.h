@@ -1,3 +1,6 @@
+#include <string>
 
-void ssoNaiveDemo();
-void longStringNoSsoDemo();
+using namespace std;
+
+//void ssoNaiveDemo();
+void longStringNoSsoDemo(string prefix);
