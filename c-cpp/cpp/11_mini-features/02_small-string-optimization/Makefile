@@ -12,6 +12,6 @@ string-demo.o: string-demo.cpp string-demo.h
 
 .PHONY: clean
 clean:
-	rm *.out *.o
+	rm *.out *.o *.asm
 disassemble:
-	objdump --disassembler-options "intel" --demangle --source ./string-demo.o > ./string-demo.asm
+	objdump --disassembler-options "intel" --no-show-raw-insn --demangle --source ./string-demo.o > ./string-demo.asm
