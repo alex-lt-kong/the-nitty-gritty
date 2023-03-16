@@ -24,9 +24,19 @@ arguments of a function call. Additional arguments are stored on the call stack.
     first 8 float pointing arguments. Additional arguments are stored on the
     stack.
 * `rax`: store return value of a function call.
-* `rbp`/`ebp`: register base pointer, which points to the base of the current
+* `rbp`/`ebp`: register base pointer, which points to the base of the "current"
 stack frame.
-* `rsp`/`esp`: register stack pointer, store the call stack pointer.
+    * At a higher level, it means that all variables local to a function
+    is stored "after" the memory address stored by it.
+    * As the call stack grows down, it means `[rbp-0x18]` could store a
+    local variable, but `[rbp+0x18]` could never store a local variable as
+    it is "before" the current stack frame, most likely belong to the previous
+    stack frame, meaning that is could be a variable local to the caller
+    of current function.
+* `rsp`/`esp`: register stack pointer, store the call stack pointer, which
+points to the "top" of the stack. Note that call stack usually grows downward.
+Therefore, while conceptually being the "top" of the call stack, `rsp` has the
+smallest address value in the stack.
 * `xmm0`-`xmm15`: use by an SIMD instruction set to vectorize array
 operation, etc.
 * `rip`, `eip` is a 64bit/32bit register. It holds the "Extended Instruction
@@ -95,6 +105,9 @@ specific variables.
 
 * `mov [ebx],eax`: it roughly means `*ebx = eax`, i.e., moves the value in
 `eax` to the memory address contained in `ebx`.
+
+* `imul rax,rbx,0x16`: `imul` is signed multiplication. The less common part
+is that it has three operands. It means `rax = rbx * 0x16`.
 
 * `mov edx, [ebx + 8*eax + 4]` and `lea edx, [ebx + 8*eax + 4]`:
     * Say we have a struct:
@@ -217,6 +230,12 @@ where `call` is executed at `0x1166` and `ret` is executed at `0x1145`:
     example, `rsp` is changed to allocate 0x20 bytes so we need to `leave`
     to restore it from the call stack. In the previous example, `rsp` is not
     changed, so `leave` is not executed anb we just `pop` instead.
+    * Note that call stack "grows downward", meaning that the direction to
+    "enlarge" stack is negative.
+        * For example, `sub    rsp,0x20` "grows" the stack by moving stack top
+        pointer "down". By doing so we allocate extra `0x20` bytes of space
+        to the stack.
+        * However, heap does the opposite, it grows "upward".
 
 ### References
 
