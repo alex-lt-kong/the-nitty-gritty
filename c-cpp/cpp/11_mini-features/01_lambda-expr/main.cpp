@@ -1,4 +1,5 @@
 #include <iostream>
+#include <functional>
 
 using namespace std;
 
@@ -75,6 +76,21 @@ void testFourCaptureClause() {
     
 }
 
+void testFiveRecursiveLambda() {
+    function<size_t(size_t)> factorial; // No, we cant use auto here.
+
+    factorial = [&](size_t a) -> int {
+        if (a == 1) {
+            return 1;
+        }
+        else {
+            return a * factorial(a - 1);
+        }
+    };
+
+    cout << "factorial(8): " << factorial(8) << endl;
+}
+
 int main() {
     testOneNaiveLambda();
     cout << endl;
@@ -83,5 +99,7 @@ int main() {
     testThreeLambdaWithArgs();
     cout << endl;
     testFourCaptureClause();
+    cout << endl;
+    testFiveRecursiveLambda();
     return 0;
 }

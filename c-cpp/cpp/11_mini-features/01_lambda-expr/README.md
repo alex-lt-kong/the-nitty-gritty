@@ -25,8 +25,11 @@ it just like a normal function:
 in handy. In many cases, knowing the exact data type helps programmers to
 think, but for lambda expressions, usually people don't care, or people are
 well aware of that as the function's signature is just next to it.
+    * There is one exception though: if we want to call the Lambda function
+    recursively, we have to specify its type manually.
 
-* Lambda expression is also the only way in C++ to create nested functions.
+* Lambda expression is also the only way in C++ to create nested functions as
+of C++17.
 
 * Compared with JavaScript's anonymous function:
     ```JavaScript
