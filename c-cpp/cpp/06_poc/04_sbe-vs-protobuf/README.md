@@ -2,7 +2,7 @@
 
 ## Results
 
-* SBE does appear to be an order of magnitude faster。
+* SBE does appear to be an order of magnitude faster.
 
 * SBE result
 ```
