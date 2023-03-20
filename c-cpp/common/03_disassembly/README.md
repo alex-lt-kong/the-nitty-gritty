@@ -33,7 +33,7 @@ stack frame.
     it is "before" the current stack frame, most likely belong to the previous
     stack frame, meaning that is could be a variable local to the caller
     of current function.
-* `rsp`/`esp`: register stack pointer, store the call stack pointer, which
+* <a id="call-stack-pointer">`rsp`/`esp`</a>: stores the call stack pointer, which
 points to the "top" of the stack. Note that call stack usually grows downward.
 Therefore, while conceptually being the "top" of the call stack, `rsp` has the
 smallest address value in the stack.
@@ -126,18 +126,19 @@ is that it has three operands. It means `rax = rbx * 0x16`.
     * In C we do `int* ptr = &(points[i].ycoord);`, which could be translated to
     `lea edx, [ebx + 8*eax + 4]`.
 
-* `pop`/`push`: they change `esp`/`rsp` implicitly.
+* `pop`/`push`: they change [`esp`/`rsp`](#call-stack-pointer) (call stack
+pointer) implicitly.
     * `pop esi` is roughly the same as:
 
     ```asm
     mov esi, [esp]
-    add esp, 4  ; for x86; 8 for x64
+    add esp, 4  # for x86; 8 for x64
     ```
 
     * `push esi` roughly means:
 
     ```asm
-    sub esp, 4   ; for x86; 8 for x64
+    sub esp, 4   # for x86; 8 for x64
     mov [esp], esi 
     ```
 
@@ -148,7 +149,7 @@ is that it has three operands. It means `rax = rbx * 0x16`.
 convention". An informative video can be found
 [here](./0_assets/x86-calling-convention.mp4). We are going to describe
 how they work with a toy example extracted from [here](./5_function-call/),
-where `call` is executed at `0x1166` and `ret` is executed at `0x1145`:
+where `call` is executed at `118e` and `ret` is executed at `115d`:
 
     ```asm
     ...
@@ -174,19 +175,28 @@ where `call` is executed at `0x1166` and `ret` is executed at `0x1145`:
         example, the address being `push`ed is `1193`) to the call stack.
         1. it `jmp`s to the address of being called. In
         the above example, `1135`. Internally, it sets the `eip` register to
-        `1135`.
+        `1135`.        
+        1. It is equivalent to:
+        ```asm
+        push 1193
+        jmp 1135
+        ```
         * Note that `call` instruction only saves return address (e.g., `1193`
         ) to the call stack but it does not create a new stack frame. The new stack
         frame is created by the callee itself at `1135` and `1136`. More one
         stack frame set up will be explained in the next section (about
         `enter` and `leave)
-    * `ret` is the reverse of `call`.
+    * `ret` is the reverse of `call`:
+        ```asm
+        pop rcx # rcx is a general-purpose register we pick at random
+        jmp rcx
+        ```
         * Note that during the "function call" we `push`ed twice. The 1st `push`
         is implicitly invoked by `call`, which stores the return address to the
         stack. The 2nd `push` is explicitly executed in the callee function (at
-        `0x1125`), storing the base of the previous stack frame to the call stack.
+        `1135`), storing the base of the previous stack frame to the call stack.
         * Similarly, `ret` involves two `pop`s.
-            1. The 1st `pop` is explicitly executed at `115c`.
+            1. The 1st `pop` is explicitly executed at `115d`.
             1. The 2nd one is done implicitly by `ret`, which `pop`s the return
             address (in this case, `1193`) from stack and `jmp`s to it.
     * In this example, we dont have `enter` and `leave`, probably due to the
@@ -194,38 +204,42 @@ where `call` is executed at `0x1166` and `ret` is executed at `0x1145`:
     to further delimit the call stack frame for subsequent calls.
 
 * `enter`/`leave`: they are closely related to `call`/`ret`.
+    * We use the following toy example from [here](./5_function-call/) to
+    demonstrate what they do:
+        ```asm
+        115e:	push   rbp                        # previous base pointer's address is pushed to the call stack...
+        115f:	mov    rbp,rsp                    # so that we can assign new stack pointer and the new base pointer
+        1162:	sub    rsp,0x20                   # allocate 0x20 bytes for local vars
+        1166:	mov    QWORD PTR [rbp-0x18],rdi   # rdi stores a/multiplicand
+        116a:	mov    QWORD PTR [rbp-0x20],rsi   # rsi stores b/multiplier
+        116e:	mov    QWORD PTR [rbp-0x8],0x0    # initialize local variable product
+        1176:	mov    QWORD PTR [rbp-0x10],0x0   # it is unclear what *(rbp-0x10) stores until 1197. It turns out to be i
+        117e:	jmp    119c <multiply+0x3e>
+        1180:	mov    rdx,QWORD PTR [rbp-0x18]     
+        1184:	mov    rax,QWORD PTR [rbp-0x8]       
+        1188:	mov    rsi,rdx                    # rsi (2nd param in func call) stores a/multiplicand
+        118b:	mov    rdi,rax                    # rdi (1st param) stores product
+        118e:	call   1135 <add>                 # return address, i.e., 1193, is implicitly pushed to the call stack before jmp'ing to 1135
+        1193:	mov    QWORD PTR [rbp-0x8],rax    # jmp'ed from 115d
+        1197:	add    QWORD PTR [rbp-0x10],0x1
+        119c:	mov    rax,QWORD PTR [rbp-0x10]       
+        11a0:	cmp    rax,QWORD PTR [rbp-0x20]   # *(rbp-0x20) stores b/multiplier
+        11a4:	jb     1180 <multiply+0x22>
+        11a6:	mov    rax,QWORD PTR [rbp-0x8]    # prepare retval, product
+        11aa:	leave
+        11ab:	ret    
+        ```
     * The `enter` instruction sets up a stack frame by first pushing
     `rbp` onto the call stack and then copies `rsp` into `rbp` (`115e`
     and `115f`).
     * `leave` does the opposite, i.e. copy `rbp` to `rsp` and then restore
-    the old `rbp` from the call stack.
+    the old `rbp` from the call stack:
+        ```asm
+        mov  rsp, rbp 
+        pop  rbp
+        ```
     * Note that `enter` instruction is very slow and compilers don't use it,
     but `leave` is fine.
-    * The following toy example from [here](./5_function-call/) demonstrates
-    this:
-    ```asm
-    115e:	push   rbp                        # previous base pointer's address is pushed to the call stack...
-    115f:	mov    rbp,rsp                    # so that we can assign new stack pointer and the new base pointer
-    1162:	sub    rsp,0x20                   # allocate 0x20 bytes for local vars
-    1166:	mov    QWORD PTR [rbp-0x18],rdi   # rdi stores a/multiplicand
-    116a:	mov    QWORD PTR [rbp-0x20],rsi   # rsi stores b/multiplier
-    116e:	mov    QWORD PTR [rbp-0x8],0x0    # initialize local variable product
-    1176:	mov    QWORD PTR [rbp-0x10],0x0   # it is unclear what *(rbp-0x10) stores until 1197. It turns out to be i
-    117e:	jmp    119c <multiply+0x3e>
-    1180:	mov    rdx,QWORD PTR [rbp-0x18]     
-    1184:	mov    rax,QWORD PTR [rbp-0x8]       
-    1188:	mov    rsi,rdx                    # rsi (2nd param in func call) stores a/multiplicand
-    118b:	mov    rdi,rax                    # rdi (1st param) stores product
-    118e:	call   1135 <add>                 # return address, i.e., 1193, is implicitly pushed to the call stack before jmp'ing to 1135
-    1193:	mov    QWORD PTR [rbp-0x8],rax    # jmp'ed from 115d
-    1197:	add    QWORD PTR [rbp-0x10],0x1
-    119c:	mov    rax,QWORD PTR [rbp-0x10]       
-    11a0:	cmp    rax,QWORD PTR [rbp-0x20]   # *(rbp-0x20) stores b/multiplier
-    11a4:	jb     1180 <multiply+0x22>
-    11a6:	mov    rax,QWORD PTR [rbp-0x8]    # prepare retval, product
-    11aa:	leave
-    11ab:	ret    
-    ```
     * Comparing with the example in `call`/`ret`, one may notice that in this
     example, `rsp` is changed to allocate 0x20 bytes so we need to `leave`
     to restore it from the call stack. In the previous example, `rsp` is not
