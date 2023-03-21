@@ -13,8 +13,9 @@
 
 int main() {
     int rc = 0;
-    int fd = shm_open(SHM_NAME, O_RDWR, SHM_PERMS);
+    int fd = shm_open(SHM_NAME, O_RDONLY, SHM_PERMS);
     // O_RDWR: open an existing shm for rw
+    // O_RDONLY: readonly
         if (fd < 0) {
         perror("shm_open()");
         rc = -1;

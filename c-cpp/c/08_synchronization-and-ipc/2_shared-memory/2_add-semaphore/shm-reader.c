@@ -14,7 +14,7 @@
 int main() {
 
     int rc = 0;
-    int fd = shm_open(SHM_NAME, O_RDWR, PERMS);  /* empty to begin */
+    int fd = shm_open(SHM_NAME, O_RDONLY, PERMS);  /* empty to begin */
     if (fd < 0) {
         rc = -1;
         perror("shm_open()");
