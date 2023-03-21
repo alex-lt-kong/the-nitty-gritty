@@ -134,7 +134,7 @@ int exec(char* argv1) {
         elapsed_usecs = (now.tv_sec - start.tv_sec) * 1000000 +
                         (now.tv_nsec - start.tv_nsec) / 1000;
 #endif
-        int ready = poll(pfds, nfds, -1);
+        int ready = poll(pfds, nfds, timeout_usecs / 1000);
         if (ready == -1)
             perror("poll()");
 
@@ -162,20 +162,26 @@ int exec(char* argv1) {
 
     if (close(pipefd_out[0]) == -1) { perror("close(ipefd_out[0])"); }
     if (close(pipefd_err[0]) == -1) { perror("close(pipefd_err[0])"); }
-
-#ifdef ENABLE_TIMEOUT
+    
     // wait for the child process to terminate
     int status;
+#ifdef ENABLE_TIMEOUT
+    
     __useconds_t sleep_us = 1;
     while(waitpid(child_pid, &status, WNOHANG) == 0) {
         
         usleep(sleep_us);
         sleep_us = sleep_us >= 1000000 ? sleep_us : sleep_us * 2;
+        clock_gettime(CLOCK_MONOTONIC, &now);
         elapsed_usecs = (now.tv_sec - start.tv_sec) * 1000000 +
                         (now.tv_nsec - start.tv_nsec) / 1000;
         if (elapsed_usecs > timeout_usecs) {
             printf("Timeout %lu ms reached, kill()ing process %d...\n",
                 timeout_usecs / 1000, child_pid);
+            // This avoid leaving a zombie process in the process table:
+            // https://stackoverflow.com/questions/69509427/kill-child-process-spawned-with-execl-without-making-it-zombie
+            // Its implication needs further research though.
+            signal(SIGCHLD, SIG_IGN);
             if (kill(child_pid, SIGTERM) == -1) {
                 perror("kill(child_pid, SIGTERM)");
                 if (kill(child_pid, SIGKILL) == -1) {
@@ -191,8 +197,6 @@ int exec(char* argv1) {
         }
     }
 #else
-    // wait for the child process to terminate
-    int status;
     if (waitpid(child_pid, &status, 0) == -1) {
         perror("waitpid()");
         return EXIT_FAILURE;
