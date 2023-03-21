@@ -15,3 +15,4 @@ clean:
 	rm *.out *.o *.asm
 disassemble:
 	objdump --disassembler-options "intel" --no-show-raw-insn --source ./factorial.o > ./factorial.asm
+	objdump --disassembler-options "intel" --no-show-raw-insn --source ./main.o > ./main.asm

@@ -24,8 +24,8 @@ arguments of a function call. Additional arguments are stored on the call stack.
     first 8 float pointing arguments. Additional arguments are stored on the
     stack.
 * `rax`: store return value of a function call.
-* `rbp`/`ebp`: register base pointer, which points to the base of the "current"
-stack frame.
+* `rbp`/`ebp`: register base pointer, a.k.a., frame pointer, which points to
+the base of the "current" stack frame.
     * At a higher level, it means that all variables local to a function
     is stored "after" the memory address stored by it.
     * As the call stack grows down, it means `[rbp-0x18]` could store a
@@ -109,6 +109,8 @@ specific variables.
 * `imul rax,rbx,0x16`: `imul` is signed multiplication. The less common part
 is that it has three operands. It means `rax = rbx * 0x16`.
 
+* `jmp rax`: it actually means `jmp [rax]`.
+
 * `mov edx, [ebx + 8*eax + 4]` and `lea edx, [ebx + 8*eax + 4]`:
     * Say we have a struct:
 
@@ -189,7 +191,7 @@ where `call` is executed at `118e` and `ret` is executed at `115d`:
     * `ret` is the reverse of `call`:
         ```asm
         pop rcx # rcx is a general-purpose register we pick at random
-        jmp rcx
+        jmp [rcx]
         ```
         * Note that during the "function call" we `push`ed twice. The 1st `push`
         is implicitly invoked by `call`, which stores the return address to the
