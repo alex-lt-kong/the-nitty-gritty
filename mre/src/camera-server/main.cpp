@@ -50,13 +50,9 @@ int main() {
         myDevices.emplace_back(i);
         myDevices.back().StartInternalEventLoopThread();
     }
-
-    //start_http_server();
+    spdlog::info("{} threads started", deviceCount);
     for (size_t i = 0; i < myDevices.size(); ++i) {
         myDevices[i].WaitForInternalEventLoopThreadToExit();
-        spdlog::info("{}-th device thread exited gracefully", i);
     }
-    spdlog::info("All device threads exited gracefully"); 
-
     return 0;  
 }
