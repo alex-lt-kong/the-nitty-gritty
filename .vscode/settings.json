@@ -74,6 +74,7 @@
         "*.ipp": "c",
         "poll.h": "c",
         "fcntl.h": "c",
-        "time.h": "c"
+        "time.h": "c",
+        "regex": "cpp"
     }
 }
