@@ -1,9 +1,4 @@
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
-include_directories(/usr/local/include/opencv4)
-
-find_package(OpenCV REQUIRED)
-find_package(Crow REQUIRED)
-include_directories(${OpenCV_INCLUDE_DIRS})
 
 if(NOT TARGET spdlog)
     # Stand-alone build
@@ -15,7 +10,7 @@ add_executable(cs main.cpp)
 add_library(deviceManager deviceManager.cpp)
 
 
-target_link_libraries(cs deviceManager ${OpenCV_LIBS} pthread rt ssl crypto spdlog::spdlog)
+target_link_libraries(cs deviceManager pthread rt ssl crypto spdlog::spdlog)
 
 add_custom_command(
   TARGET cs POST_BUILD
