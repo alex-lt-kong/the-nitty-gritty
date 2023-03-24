@@ -75,6 +75,7 @@
         "poll.h": "c",
         "fcntl.h": "c",
         "time.h": "c",
-        "regex": "cpp"
+        "regex": "cpp",
+        "valarray": "cpp"
     }
 }
