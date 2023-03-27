@@ -76,6 +76,7 @@
         "fcntl.h": "c",
         "time.h": "c",
         "regex": "cpp",
-        "valarray": "cpp"
+        "valarray": "cpp",
+        "cerrno": "c"
     }
 }
