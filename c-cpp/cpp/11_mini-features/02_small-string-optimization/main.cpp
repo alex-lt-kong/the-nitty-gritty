@@ -6,6 +6,7 @@ using namespace std;
 int main() {
 
   //  ssoNaiveDemo();
-    longStringNoSsoDemo("!!!");
+    string prefix = "!!!";
+    longStringNoSsoDemo(prefix);
     return 0;
 }
