@@ -6,14 +6,14 @@
 
 volatile sig_atomic_t e_flag = 0;
 
-static void catch_function(int signo) {
+static void signal_handler(int signo) {
     char msg[] = "Interactive attention signal caught.\n";
     write(STDIN_FILENO, msg, strlen(msg));
     e_flag = 1;
 }
 
 int main() {
-    if (signal(SIGINT, catch_function) == SIG_ERR) {
+    if (signal(SIGINT, signal_handler) == SIG_ERR) {
         perror("signal()");
         return EXIT_FAILURE;
     }
