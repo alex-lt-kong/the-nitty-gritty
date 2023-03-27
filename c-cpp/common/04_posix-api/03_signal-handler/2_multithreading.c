@@ -25,8 +25,12 @@ void* event_loop(void* param) {
             sleep(1);
         }
     }
-    size_t* ret = (size_t*)malloc(sizeof(int));
-    *ret = iter_count;
+    size_t* ret = (size_t*)malloc(sizeof(size_t));
+    if (ret != NULL) {
+        *ret = iter_count;
+    } else {
+        perror("malloc()");
+    }
     return ret;
 }
 
@@ -40,6 +44,8 @@ int main() {
 
     pthread_t threads[8];
     size_t running_thread_count = 0;
+    /* It is not guaranteed that pthread_t is an int type, so we'd better
+    create our own thread_id*/
     int tids[sizeof(threads) / sizeof(threads[0])];
     for (size_t i = 0; i < sizeof(threads) / sizeof(threads[0]); ++i) {
         tids[i] = i;
@@ -71,8 +77,12 @@ int main() {
                 "but there is nothing much we can do",
                 err_no, strerror(err_no));
         } else {
-            printf("Th %lu returned, iterated: %lu times\n", i, *ret);
-            free(ret);
+            if (ret != NULL) {
+                printf("Th %lu exited, iterated: %lu times\n", i, *ret);
+                free(ret);
+            } else {
+                printf("Th %lu exited, but retval is not set as expected\n", i);
+            }
         }
     }
     return EXIT_SUCCESS;
