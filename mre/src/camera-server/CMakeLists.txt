@@ -1,16 +1,17 @@
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
-if(NOT TARGET spdlog)
+#if(NOT TARGET spdlog)
     # Stand-alone build
-    find_package(spdlog REQUIRED)
-endif()
+#    find_package(spdlog REQUIRED)
+#endif()
+
 
 add_definitions(-DCROW_ENABLE_SSL)
 add_executable(cs main.cpp)
 add_library(deviceManager deviceManager.cpp)
 
 
-target_link_libraries(cs deviceManager pthread rt ssl crypto spdlog::spdlog)
+target_link_libraries(cs deviceManager pthread rt ssl crypto spdlog fmt)
 
 add_custom_command(
   TARGET cs POST_BUILD
