@@ -3,7 +3,7 @@
 To dissamble a binary file to assembly code:
 
 * Dissamble the entire binary file:
-    * `objdump --disassembler-options "intel" -S ./main.out`
+    * `objdump --disassembler-options "intel" -S <binary-file>`
 * Dissamble only a function from a binary file:
     * `gdb`: `gdb --quiet --eval-command="set disassembly-flavor intel" --eval-command="disassemble /m <func_name>" --batch <binary_file>`.
     * `objdump`: `objdump --disassembler-options "intel" [--demangle] [--no-show-raw-insn] --disassemble=<func_name> --source <binary_file>`.
@@ -14,6 +14,109 @@ To dissamble a binary file to assembly code:
             the language. Name mangling is commonly used to facilitate
             the overloading feature and visibility within different scopes.
         * `--no-show-raw-insn`: Disable the output of instruction bytes.
+* Sometimes we may want to dump the data sections, which may contains
+static strings, etc. We need to do this in two steps:
+    1. Check how many sections are there: `readelf --sections <binary-file>`:
+        ```
+            ELF Header:
+            ...
+            Section Headers:
+            [Nr] Name              Type             Address           Offset
+                Size              EntSize          Flags  Link  Info  Align
+            ...
+            [ 4] .data             PROGBITS         0000000000000000  000000be
+                0000000000000000  0000000000000000  WA       0     0     1
+            [ 5] .bss              NOBITS           0000000000000000  000000be
+                0000000000000000  0000000000000000  WA       0     0     1
+            [ 6] .rodata.str1.8    PROGBITS         0000000000000000  000000c0
+                0000000000000055  0000000000000001 AMS       0     0     8
+            [ 7] .gcc_except_table PROGBITS         0000000000000000  00000115
+                0000000000000014  0000000000000000   A       0     0     1
+            [ 8] .debug_info       PROGBITS         0000000000000000  00000129
+                0000000000005926  0000000000000000           0     0     1
+            [ 9] .rela.debug_info  RELA             0000000000000000  0000d438
+                0000000000006e88  0000000000000018   I      23     8     8
+            ...
+        ```
+        In this example, `.rodata.str1.8` seems to have some static data.
+    1. Dump the content, without "disassemble" it: 
+        `readelf --hex-dump .rodata.str1.8 <binary-file>` or
+        `objdump --full-content --section .rodata.str1.8 <binary-file>`
+        ```
+            Contents of section .rodata:
+            2000 01000200 00000000 54686973 20697320  ........This is
+            2010 61207665 7279206c 6f6f6f6f 6f6f6f6f  a very loooooooo
+            2020 6f6f6f6f 6f6f6f6f 6f6f6f6f 6f6f6f6f  oooooooooooooooo
+            2030 6f6f6f6f 6e672070 72656669 78207468  oooong prefix th
+            2040 61742064 6f65736e 27742066 69742069  at doesn't fit i
+            2050 6e746f20 32332062 79746573 00000000  nto 23 bytes....
+            2060 62617369 635f7374 72696e67 3a3a5f4d  basic_string::_M
+            2070 5f636f6e 73747275 6374206e 756c6c20  _construct null
+            2080 6e6f7420 76616c69 64000000 00000000  not valid.......
+            2090 48656c6c 6f2c2077 6f726c64 21205468  Hello, world! Th
+            20a0 69732073 7472696e 67206973 206c6f6e  is string is lon
+            20b0 67657220 7468616e 2031312f 32332063  ger than 11/23 c
+            20c0 68617261 63746572 732e006c 6f6e6753  haracters..longS
+            20d0 7472696e 673a2000                    tring: .
+        ```
+    1. But what if we try to disassemble the `.rodata.str1.8` section? Say,
+    we run: 
+    `objdump --disassembler-options "intel" --disassemble --no-show-raw-insn --section .rodata.str1.8 <binary-file>`?
+        * `objdump` will disassemble it to legit-looking non-sense:
+        ```
+        0000000000000000 <.LC0>:
+            0:   push   rsp
+            1:   push   0x69207369
+            6:   jae    28 <.LC0+0x28>
+            8:   (bad)
+            9:   and    BYTE PTR [rsi+0x65],dh
+            c:   jb     87 <.LC0+0x87>
+            e:   and    BYTE PTR [rdi+rbp*2+0x6f],ch
+            12:   outs   dx,DWORD PTR ds:[rsi]
+            13:   outs   dx,DWORD PTR ds:[rsi]
+            14:   outs   dx,DWORD PTR ds:[rsi]
+            15:   outs   dx,DWORD PTR ds:[rsi]
+            16:   outs   dx,DWORD PTR ds:[rsi]
+            17:   outs   dx,DWORD PTR ds:[rsi]
+            18:   outs   dx,DWORD PTR ds:[rsi]
+            19:   outs   dx,DWORD PTR ds:[rsi]
+            1a:   outs   dx,DWORD PTR ds:[rsi]
+            1b:   outs   dx,DWORD PTR ds:[rsi]
+            1c:   outs   dx,DWORD PTR ds:[rsi]
+            1d:   outs   dx,DWORD PTR ds:[rsi]
+            1e:   outs   dx,DWORD PTR ds:[rsi]
+            1f:   outs   dx,DWORD PTR ds:[rsi]
+            20:   outs   dx,DWORD PTR ds:[rsi]
+            21:   outs   dx,DWORD PTR ds:[rsi]
+            22:   outs   dx,DWORD PTR ds:[rsi]
+            23:   outs   dx,DWORD PTR ds:[rsi]
+            24:   outs   dx,DWORD PTR ds:[rsi]
+            25:   outs   dx,DWORD PTR ds:[rsi]
+            26:   outs   dx,DWORD PTR ds:[rsi]
+            27:   outs   dx,DWORD PTR ds:[rsi]
+            28:   outs   dx,DWORD PTR ds:[rsi]
+            29:   outs   dx,DWORD PTR ds:[rsi]
+            2a:   outs   dx,DWORD PTR ds:[rsi]
+            2b:   outs   dx,DWORD PTR ds:[rsi]
+            2c:   outs   dx,BYTE PTR ds:[rsi]
+            2d:   and    BYTE PTR [eax+0x72],dh
+            31:   imul   di,WORD PTR gs:[rax+0x20],0x6874
+            38:   (bad)
+            39:   je     5b <.LC0+0x5b>
+            3b:   outs   dx,DWORD PTR fs:[rsi]
+            3d:   gs jae ae <.LC0+0xae>
+            40:   (bad)
+            41:   je     63 <.LC0+0x63>
+            43:   imul   si,WORD PTR [rax+riz*1+0x69],0x746e
+            4a:   outs   dx,DWORD PTR ds:[rsi]
+            4b:   and    BYTE PTR [rdx],dh
+            4d:   xor    esp,DWORD PTR [rax]
+            4f:   (bad)
+            50:   jns    c6 <.LC0+0xc6>
+            52:   gs jae 55 <.LC0+0x55>
+        ``` 
+
+
 
 ## x86-64 register fundamentals
 
