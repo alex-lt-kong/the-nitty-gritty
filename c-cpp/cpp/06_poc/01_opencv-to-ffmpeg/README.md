@@ -1,13 +1,12 @@
-# Dependencies
+# Piping OpenCV frames to FFmpeg
 
-* OpenCV
-* ffmpeg
+## Dependencies
 
-# Compilation
-```
-g++ main.cpp -o main -L/usr/local/lib -I/usr/local/include/opencv4 -lopencv_highgui -lopencv_imgcodecs -lopencv_video -lopencv_videoio -lopencv_imgproc -lopencv_core
-```
+* OpenCV: `apt install libopencv-dev`
+* FFmpeg: `apt install ffmpeg`
 
-# `main0` vs `main1`
-* `main1` is a better approach as it achieves full 30 fps while `main0` can only achieve around 15 fps.
-* Why? `main1` has far fewer `fwrite()` call which saves a lot of time.
+## Comparison
+
+* On the same machine without using GPU, `2_popen-batched.cpp` is roughly 2x
+to 5x as fast as `1_popen-naive.cpp`.
+    * `1_popen-naive.cpp` won't be able to saturate even one CPU core.
