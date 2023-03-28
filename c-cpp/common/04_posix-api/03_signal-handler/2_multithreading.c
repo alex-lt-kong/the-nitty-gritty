@@ -9,23 +9,24 @@
 volatile sig_atomic_t e_flag = 0;
 
 static void signal_handler(int signo) {
-    char msg[] = "Signal caught\n";
+    char msg[] = "Signal [ ] caught\n";
+    msg[8] = '0' + signo;
     write(STDIN_FILENO, msg, strlen(msg));
     e_flag = 1;
 }
 
 void* event_loop(void* param) {
-    int tid = *((int*)param);
+    size_t tid = *((size_t*)param);
     size_t iter_count = 0;
     while (e_flag == 0) {
         ++ iter_count;
-        printf("Th %d: Event loop is running now, iterated %lu times ...\n",
+        printf("Th %lu: Event loop is running now, iterated %lu times ...\n",
             tid, iter_count);
         for (size_t i = 0; i < tid + 1 && e_flag == 0; ++ i) {
             sleep(1);
         }
     }
-    size_t* ret = (size_t*)malloc(sizeof(size_t));
+    size_t* ret = (size_t*)malloc(sizeof(size_t*));
     if (ret != NULL) {
         *ret = iter_count;
     } else {
@@ -34,7 +35,7 @@ void* event_loop(void* param) {
     return ret;
 }
 
-int main() {
+int main(void) {
     if (signal(SIGINT, signal_handler) == SIG_ERR) {
         perror("signal()");
         return EXIT_FAILURE;
@@ -46,7 +47,7 @@ int main() {
     size_t running_thread_count = 0;
     /* It is not guaranteed that pthread_t is an int type, so we'd better
     create our own thread_id*/
-    int tids[sizeof(threads) / sizeof(threads[0])];
+    size_t tids[sizeof(threads) / sizeof(threads[0])];
     for (size_t i = 0; i < sizeof(threads) / sizeof(threads[0]); ++i) {
         tids[i] = i;
         int err_no;

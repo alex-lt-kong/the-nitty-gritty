@@ -7,7 +7,8 @@
 volatile sig_atomic_t e_flag = 0;
 
 static void signal_handler(int signo) {
-    char msg[] = "Interactive attention signal caught.\n";
+    char msg[] = "Signal [ ] caught\n";
+    msg[8] = '0' + signo;
     write(STDIN_FILENO, msg, strlen(msg));
     e_flag = 1;
 }
