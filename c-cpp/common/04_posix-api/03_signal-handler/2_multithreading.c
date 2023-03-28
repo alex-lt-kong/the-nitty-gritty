@@ -11,7 +11,19 @@ volatile sig_atomic_t e_flag = 0;
 static void signal_handler(int signo) {
     char msg[] = "Signal [ ] caught\n";
     msg[8] = '0' + signo;
-    write(STDIN_FILENO, msg, strlen(msg));
+    size_t len = sizeof(msg) - 1;
+    size_t written = 0;
+    while (written < len) {
+        ssize_t ret = write(STDOUT_FILENO, msg + written, len - written);
+        if (ret == -1 && errno == EINTR) {
+            continue;
+        }
+        if (ret == -1) {
+            perror("write()");
+            break;
+        }
+        written += ret;
+    }
     e_flag = 1;
 }
 
@@ -20,7 +32,7 @@ void* event_loop(void* param) {
     size_t iter_count = 0;
     while (e_flag == 0) {
         ++ iter_count;
-        printf("Th %lu: Event loop is running now, iterated %lu times ...\n",
+        printf("Th %zu: Event loop is running now, iterated %zu times ...\n",
             tid, iter_count);
         for (size_t i = 0; i < tid + 1 && e_flag == 0; ++ i) {
             sleep(1);
@@ -36,10 +48,20 @@ void* event_loop(void* param) {
 }
 
 int main(void) {
-    if (signal(SIGINT, signal_handler) == SIG_ERR) {
-        perror("signal()");
+    struct sigaction act;
+    act.sa_handler = signal_handler;
+    sigemptyset(&act.sa_mask);
+    act.sa_flags = SA_RESETHAND;
+    if (sigaction(SIGINT, &act, 0) + sigaction(SIGABRT, &act, 0) +
+        sigaction(SIGQUIT, &act, 0) + sigaction(SIGTERM, &act, 0) +
+        sigaction(SIGPIPE, &act, 0) < 0) {
+        /* Could miss some error if more than one sigaction() fails. However,
+        given that the program will quit if one sigaction() fails, this
+        is not considered an issue */
+        perror("sigaction()");
         return EXIT_FAILURE;
     }
+
     printf("A signal handler is installed, "
         "press Ctrl+C to exit event loop threads gracefully.\n");
 
@@ -61,7 +83,9 @@ int main(void) {
                 fprintf(stderr, "even raise() failed: %d(%s), "
                     "the program exits UNgracefully",
                     err_no, strerror(err_no));
-                exit(EXIT_FAILURE);
+                /* Refer to man abort on why abort() could be better than
+                exit(EXIT_FAILURE) */
+                abort();
             }
             break;
         }
@@ -79,10 +103,10 @@ int main(void) {
                 err_no, strerror(err_no));
         } else {
             if (ret != NULL) {
-                printf("Th %lu exited, iterated: %lu times\n", i, *ret);
+                printf("Th %zu exited, iterated: %zu times\n", i, *ret);
                 free(ret);
             } else {
-                printf("Th %lu exited, but retval is not set as expected\n", i);
+                printf("Th %zu exited, but retval is not set as expected\n", i);
             }
         }
     }
