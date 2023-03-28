@@ -15,6 +15,11 @@ static void signal_handler(int signum) {
 }
 
 int main(void) {
+    
+    if (_NSIG > 99) {
+        fprintf(stderr, "signal_handler() can't handle more than 99 signals\n");
+        abort();
+    }
     struct sigaction act;
     // Initialize the signal set to empty, similar to memset(0)
     if (sigemptyset(&act.sa_mask) == -1) {

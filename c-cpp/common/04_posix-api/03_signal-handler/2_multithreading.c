@@ -16,9 +16,6 @@ static void signal_handler(int signum) {
     size_t written = 0;
     while (written < len) {
         ssize_t ret = write(STDOUT_FILENO, msg + written, len - written);
-        if (ret == -1 && errno == EINTR) {
-            continue;
-        }
         if (ret == -1) {
             perror("write()");
             break;
@@ -50,7 +47,7 @@ void* event_loop(void* param) {
 
 void install_signal_handler() {
     if (_NSIG > 99) {
-        fprintf(stderr, "Current design can't handle more than 99 signals\n");
+        fprintf(stderr, "signal_handler() can't handle more than 99 signals\n");
         abort();
     }
     struct sigaction act;
@@ -63,10 +60,14 @@ void install_signal_handler() {
     /* SA_RESETHAND means we want our signal_handler() to intercept the signal
     once. If a signal is sent twice, the default signal handler will be used
     again. `man sigaction` describes more possible sa_flags. */
-    act.sa_flags = SA_RESETHAND;
+    /* In this particular case, we should not enable SA_RESETHAND, mainly
+    due to the issue that if a child process is kill, multiple SIGPIPE will
+    be invoked consecutively, breaking the program.  */
+    // act.sa_flags = SA_RESETHAND;
     if (sigaction(SIGINT, &act, 0) + sigaction(SIGABRT, &act, 0) +
         sigaction(SIGQUIT, &act, 0) + sigaction(SIGTERM, &act, 0) +
-        sigaction(SIGPIPE, &act, 0) < 0) {
+        sigaction(SIGPIPE, &act, 0) + sigaction(SIGCHLD, &act, 0) +
+        sigaction(SIGSEGV, &act, 0) + sigaction(SIGTRAP, &act, 0) < 0) {
         /* Could miss some error if more than one sigaction() fails. However,
         given that the program will quit if one sigaction() fails, this
         is not considered an issue */
