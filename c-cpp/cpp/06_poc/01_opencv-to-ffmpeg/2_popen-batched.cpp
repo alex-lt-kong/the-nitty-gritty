@@ -8,6 +8,10 @@ int main() {
 
     FILE *output;
     output = popen(ffmpegCommand.c_str(), "w");
+    if (output == NULL) {
+        perror("popen()");
+        return EXIT_FAILURE;
+    }
 
     size_t count = 0;
     Mat frame;

@@ -8,9 +8,10 @@
 
 volatile sig_atomic_t e_flag = 0;
 
-static void signal_handler(int signo) {
-    char msg[] = "Signal [ ] caught\n";
-    msg[8] = '0' + signo;
+static void signal_handler(int signum) {
+    char msg[] = "Signal [  ] caught\n";
+    msg[8] = '0' + signum / 10;
+    msg[9] = '0' + signum % 10;
     size_t len = sizeof(msg) - 1;
     size_t written = 0;
     while (written < len) {
@@ -48,6 +49,10 @@ void* event_loop(void* param) {
 }
 
 void install_signal_handler() {
+    if (_NSIG > 99) {
+        fprintf(stderr, "Current design can't handle more than 99 signals\n");
+        abort();
+    }
     struct sigaction act;
     // Initialize the signal set to empty, similar to memset(0)
     if (sigemptyset(&act.sa_mask) == -1) {

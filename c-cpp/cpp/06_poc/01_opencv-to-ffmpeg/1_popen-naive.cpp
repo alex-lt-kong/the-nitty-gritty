@@ -6,6 +6,10 @@ using namespace cv;
 int main() {
     FILE *output;
     output = popen(ffmpegCommand.c_str(), "w");
+    if (output == NULL) {
+        perror("popen()");
+        return EXIT_FAILURE;
+    }
     VideoCapture cap = openVideoSource();
     Mat frame;
     size_t count = 0;

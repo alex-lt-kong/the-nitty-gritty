@@ -6,9 +6,10 @@
 
 volatile sig_atomic_t e_flag = 0;
 
-static void signal_handler(int signo) {
-    char msg[] = "Signal [ ] caught\n";
-    msg[8] = '0' + signo;
+static void signal_handler(int signum) {
+    char msg[] = "Signal [  ] caught\n";
+    msg[8] = '0' + signum / 10;
+    msg[9] = '0' + signum % 10;    
     write(STDIN_FILENO, msg, strlen(msg));
     e_flag = 1;
 }
