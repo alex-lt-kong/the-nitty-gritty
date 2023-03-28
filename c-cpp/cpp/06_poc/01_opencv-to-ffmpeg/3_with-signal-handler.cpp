@@ -24,9 +24,6 @@ static void signal_handler(int signum) {
     size_t written = 0;
     while (written < len) {
         ssize_t ret = write(STDOUT_FILENO, msg + written, len - written);
-        if (ret == -1 && errno == EINTR) {
-            continue;
-        }
         if (ret == -1) {
             perror("write()");
             break;
@@ -50,7 +47,10 @@ void install_signal_handler() {
     /* SA_RESETHAND means we want our signal_handler() to intercept the signal
     once. If a signal is sent twice, the default signal handler will be used
     again. `man sigaction` describes more possible sa_flags. */
-    act.sa_flags = SA_RESETHAND;
+    /* In this particular case, we should not enable SA_RESETHAND, mainly
+    due to the issue that if a child process is kill, multiple SIGPIPE will
+    be invoked consecutively, breaking the program.  */
+    //act.sa_flags = SA_RESETHAND;
     
     if (sigaction(SIGINT, &act, 0)  + sigaction(SIGABRT, &act, 0) +
         sigaction(SIGQUIT, &act, 0) + sigaction(SIGTERM, &act, 0) +
@@ -85,6 +85,6 @@ int main() {
         
     }
     cout << "\nThe evloop quitted, gracefully\n" << endl;
-    pclose(child_proc);                                                                      
-    return 0;                                                                
+    pclose(child_proc);
+    return 0;
 } 
