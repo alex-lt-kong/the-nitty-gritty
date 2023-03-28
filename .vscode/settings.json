@@ -77,6 +77,15 @@
         "time.h": "c",
         "regex": "cpp",
         "valarray": "cpp",
-        "cerrno": "c"
+        "cerrno": "c",
+        "unistd.h": "c",
+        "csignal": "cpp",
+        "any": "cpp",
+        "codecvt": "cpp",
+        "coroutine": "cpp",
+        "forward_list": "cpp",
+        "unordered_set": "cpp",
+        "source_location": "cpp",
+        "future": "cpp"
     }
 }
