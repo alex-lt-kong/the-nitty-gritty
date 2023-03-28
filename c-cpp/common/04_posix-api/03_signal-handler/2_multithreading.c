@@ -47,10 +47,17 @@ void* event_loop(void* param) {
     return ret;
 }
 
-int main(void) {
+void install_signal_handler() {
     struct sigaction act;
+    // Initialize the signal set to empty, similar to memset(0)
+    if (sigemptyset(&act.sa_mask) == -1) {
+        perror("sigemptyset()");
+        abort();
+    }
     act.sa_handler = signal_handler;
-    sigemptyset(&act.sa_mask);
+    /* SA_RESETHAND means we want our signal_handler() to intercept the signal
+    once. If a signal is sent twice, the default signal handler will be used
+    again. `man sigaction` describes more possible sa_flags. */
     act.sa_flags = SA_RESETHAND;
     if (sigaction(SIGINT, &act, 0) + sigaction(SIGABRT, &act, 0) +
         sigaction(SIGQUIT, &act, 0) + sigaction(SIGTERM, &act, 0) +
@@ -59,9 +66,13 @@ int main(void) {
         given that the program will quit if one sigaction() fails, this
         is not considered an issue */
         perror("sigaction()");
-        return EXIT_FAILURE;
+        abort();
     }
+}
 
+int main(void) {
+
+    install_signal_handler();
     printf("A signal handler is installed, "
         "press Ctrl+C to exit event loop threads gracefully.\n");
 
