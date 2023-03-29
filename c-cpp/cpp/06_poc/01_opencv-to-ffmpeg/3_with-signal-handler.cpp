@@ -33,10 +33,7 @@ static void signal_handler(int signum) {
 }
 
 void install_signal_handler() {
-    if (_NSIG > 99) {
-        fprintf(stderr, "Current design can't handle more than 99 signals\n");
-        abort();
-    }
+    static_assert(_NSIG < 99, "signal_handler() can't handle 100+ signals");
     struct sigaction act;
     // Initialize the signal set to empty, similar to memset(0)
     if (sigemptyset(&act.sa_mask) == -1) {
