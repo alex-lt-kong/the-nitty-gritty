@@ -14,4 +14,5 @@ string-demo.o: string-demo.cpp string-demo.h
 clean:
 	rm *.out *.o *.asm
 disassemble:
-	objdump --disassembler-options "intel" --no-show-raw-insn --demangle --source ./main.out > ./main.asm
+	objdump --disassembler-options "intel" --no-show-raw-insn --demangle --source ./main.o > ./main.asm
+	objdump --disassembler-options "intel" --no-show-raw-insn --demangle --source ./string-demo.o > ./string-demo.asm

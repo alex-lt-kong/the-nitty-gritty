@@ -57,17 +57,23 @@ void install_signal_handler() {
         abort();
     }
     act.sa_handler = signal_handler;
-    /* SA_RESETHAND means we want our signal_handler() to intercept the signal
+    /*
+    * SA_RESETHAND means we want our signal_handler() to intercept the signal
     once. If a signal is sent twice, the default signal handler will be used
-    again. `man sigaction` describes more possible sa_flags. */
-    /* In this particular case, we should not enable SA_RESETHAND, mainly
+    again. `man sigaction` describes more possible sa_flags.
+    * In this particular case, we should not enable SA_RESETHAND, mainly
     due to the issue that if a child process is kill, multiple SIGPIPE will
-    be invoked consecutively, breaking the program.  */
+    be invoked consecutively, breaking the program.
+    * Without setting SA_RESETHAND, catching SIGSEGV is usually a bad idea.
+    The issue is, if an instruction results in segfault, SIGSEGV handler is
+    called, then the very same instruction will be repeated, triggering
+    segfault again. */
     // act.sa_flags = SA_RESETHAND;
-    if (sigaction(SIGINT, &act, 0) + sigaction(SIGABRT, &act, 0) +
+    if (sigaction(SIGINT,  &act, 0) + sigaction(SIGABRT, &act, 0) +
         sigaction(SIGQUIT, &act, 0) + sigaction(SIGTERM, &act, 0) +
         sigaction(SIGPIPE, &act, 0) + sigaction(SIGCHLD, &act, 0) +
-        sigaction(SIGSEGV, &act, 0) + sigaction(SIGTRAP, &act, 0) < 0) {
+        sigaction(SIGTRAP, &act, 0) < 0) {
+        
         /* Could miss some error if more than one sigaction() fails. However,
         given that the program will quit if one sigaction() fails, this
         is not considered an issue */

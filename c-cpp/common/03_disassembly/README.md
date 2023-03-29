@@ -5,8 +5,8 @@ To dissamble a binary file to assembly code:
 * Dissamble the entire binary file:
     * `objdump --disassembler-options "intel" -S <binary-file>`
 * Dissamble only a function from a binary file:
-    * `gdb`: `gdb --quiet --eval-command="set disassembly-flavor intel" --eval-command="disassemble /m <func_name>" --batch <binary_file>`.
-    * `objdump`: `objdump --disassembler-options "intel" [--demangle] [--no-show-raw-insn] --disassemble=<func_name> --source <binary_file>`.
+    * `gdb`: `gdb --quiet --eval-command="set disassembly-flavor intel" --eval-command="disassemble /m <func-name>" --batch <binary_file>`.
+    * `objdump`: `objdump --disassembler-options "intel" [--demangle] [--no-show-raw-insn] --disassemble=<func-name> --source <binary_file>`.
         * `--demangle`: for C++, it is used to decode (a.k.a. demangle)
         low-level symbol names into user-level human-friendly names.
             * Name mangling is the encoding of function and variable names
@@ -14,34 +14,28 @@ To dissamble a binary file to assembly code:
             the language. Name mangling is commonly used to facilitate
             the overloading feature and visibility within different scopes.
         * `--no-show-raw-insn`: Disable the output of instruction bytes.
-* Sometimes we may want to dump the data sections, which may contains
-static strings, etc. We need to do this in two steps:
-    1. Check how many sections are there: `readelf --sections <binary-file>`:
+* Dump content by address: `objdump --full-content --start-address=<start> --stop-address=<stop> <binary-file>`
+* Dump (not disassemble) the data sections:
+    1. Check how many sections are there:
+    `readelf --sections --wide <binary-file>`, we are most likely to be
+    interested in the `.text` and `.rodata` sections:
         ```
-            ELF Header:
-            ...
             Section Headers:
-            [Nr] Name              Type             Address           Offset
-                Size              EntSize          Flags  Link  Info  Align
-            ...
-            [ 4] .data             PROGBITS         0000000000000000  000000be
-                0000000000000000  0000000000000000  WA       0     0     1
-            [ 5] .bss              NOBITS           0000000000000000  000000be
-                0000000000000000  0000000000000000  WA       0     0     1
-            [ 6] .rodata.str1.8    PROGBITS         0000000000000000  000000c0
-                0000000000000055  0000000000000001 AMS       0     0     8
-            [ 7] .gcc_except_table PROGBITS         0000000000000000  00000115
-                0000000000000014  0000000000000000   A       0     0     1
-            [ 8] .debug_info       PROGBITS         0000000000000000  00000129
-                0000000000005926  0000000000000000           0     0     1
-            [ 9] .rela.debug_info  RELA             0000000000000000  0000d438
-                0000000000006e88  0000000000000018   I      23     8     8
+            [Nr] Name              Type            Address          Off    Size   ES Flg Lk Inf Al
+        ...
+            [10] .rela.plt         RELA            00000000000007d8 0007d8 000090 18  AI  5  24  8
+            [11] .init             PROGBITS        0000000000001000 001000 000017 00  AX  0   0  4
+            [12] .plt              PROGBITS        0000000000001020 001020 000070 10  AX  0   0 16
+            [13] .plt.got          PROGBITS        0000000000001090 001090 000008 08  AX  0   0  8
+            [14] .text             PROGBITS        00000000000010a0 0010a0 0001f1 00  AX  0   0 16
+            [15] .fini             PROGBITS        0000000000001294 001294 000009 00  AX  0   0  4
+            [16] .rodata           PROGBITS        0000000000002000 002000 000032 00   A  0   0  8
+            [17] .eh_frame_hdr     PROGBITS        0000000000002034 002034 00004c 00   A  0   0  4
             ...
         ```
-        In this example, `.rodata.str1.8` seems to have some static data.
     1. Dump the content, without "disassemble" it: 
-        `readelf --hex-dump .rodata.str1.8 <binary-file>` or
-        `objdump --full-content --section .rodata.str1.8 <binary-file>`
+        `readelf --hex-dump .rodata <binary-file>` or
+        `objdump --full-content --section .rodata <binary-file>`
         ```
             Contents of section .rodata:
             2000 01000200 00000000 54686973 20697320  ........This is
@@ -59,8 +53,7 @@ static strings, etc. We need to do this in two steps:
             20c0 68617261 63746572 732e006c 6f6e6753  haracters..longS
             20d0 7472696e 673a2000                    tring: .
         ```
-    1. But what if we try to disassemble the `.rodata.str1.8` section? Say,
-    we run: 
+    1. But what if we try to disassemble the `.rodata` section? Say, we run: 
     `objdump --disassembler-options "intel" --disassemble --no-show-raw-insn --section .rodata.str1.8 <binary-file>`?
         * `objdump` will disassemble it to legit-looking non-sense:
         ```
@@ -142,10 +135,19 @@ Therefore, while conceptually being the "top" of the call stack, `rsp` has the
 smallest address value in the stack.
 * `xmm0`-`xmm15`: use by an SIMD instruction set to vectorize array
 operation, etc.
-* `rip`, `eip` is a 64bit/32bit register. It holds the "Extended Instruction
+* `rip`/`eip` is a 64bit/32bit register. It holds the "Extended Instruction
 Pointer" for the call stack. In other words, it tells the CPU where to go
 next to execute the next command. Behind the scene, `call` and `jmp`
 both change the value of this register.
+    * To be more concrete, `rip`/`eip` stores the address of the instruction
+    immediately following the current instruction.
+    * In the below example, rip stores `11d6`:
+    ```asm
+    11cc:	mov    rdi,rsp
+    11cf:	lea    rsi,[rip+0xe32]
+    11d6:	call   1050
+    11db:	mov    rdi,QWORD PTR [rsp]
+    ```
 
 ### Backward compatibility and their naming convention
 
