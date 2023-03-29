@@ -31,6 +31,7 @@ int main(void) {
     once. If a signal is sent twice, the default signal handler will be used
     again. `man sigaction` describes more possible sa_flags. */
     act.sa_flags = SA_RESETHAND;
+    //act.sa_flags = 0;
     if (sigaction(SIGINT, &act, 0) == -1) {
         perror("sigaction()");
         return EXIT_FAILURE;

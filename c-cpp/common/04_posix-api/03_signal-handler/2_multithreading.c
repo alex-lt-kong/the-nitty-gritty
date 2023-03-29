@@ -68,7 +68,8 @@ void install_signal_handler() {
     The issue is, if an instruction results in segfault, SIGSEGV handler is
     called, then the very same instruction will be repeated, triggering
     segfault again. */
-    // act.sa_flags = SA_RESETHAND;
+    // act.sa_flags = SA_RESETHAND;    
+    act.sa_flags = 0;
     if (sigaction(SIGINT,  &act, 0) + sigaction(SIGABRT, &act, 0) +
         sigaction(SIGQUIT, &act, 0) + sigaction(SIGTERM, &act, 0) +
         sigaction(SIGPIPE, &act, 0) + sigaction(SIGCHLD, &act, 0) +
