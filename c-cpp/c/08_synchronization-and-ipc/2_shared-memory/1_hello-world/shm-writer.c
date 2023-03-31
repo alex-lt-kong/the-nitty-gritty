@@ -13,6 +13,8 @@
 
 int main() {
     int rc = 0;
+    /* On Linux, one can check the status of shared memory items by
+    ls -alh /dev/shm */
     int fd = shm_open(SHM_NAME, O_RDWR | O_CREAT, SHM_PERMS);
     /* O_RDWR: open an existing shm for rw
        O_CREAT: create a new shm if it doesn't exist
