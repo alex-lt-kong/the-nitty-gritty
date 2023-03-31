@@ -14,7 +14,11 @@
 int main() {
     int rc = 0;
     /* On Linux, one can check the status of shared memory items by
-    ls -alh /dev/shm */
+    ls -alh /dev/shm
+    One may also notice that PERMS are not fully effective, we need to call
+    umask() to make it work:
+    https://stackoverflow.com/questions/51068208/shm-open-not-setting-group-write-access
+    */
     int fd = shm_open(SHM_NAME, O_RDWR | O_CREAT, SHM_PERMS);
     /* O_RDWR: open an existing shm for rw
        O_CREAT: create a new shm if it doesn't exist
