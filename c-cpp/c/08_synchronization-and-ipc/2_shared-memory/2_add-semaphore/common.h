@@ -1,5 +1,9 @@
 #define SEM_INITIAL_VALUE 1
-#define SEM_NAME "MySemaphore5"
+/* man sem_overview: A named semaphore is identified by a name of the form
+/somename; that is, a null-terminated string of up to NAME_MAX-4 (i.e., 251)
+characters consisting of an initial slash, followed by one or more  
+characters, none of which are slashes.*/
+#define SEM_NAME "/my.sem"
 
 #define SHM_SIZE 4096
 // The name of a shm object should start with a slash (/).
