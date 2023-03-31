@@ -36,7 +36,7 @@ int main() {
     }
 
     printf("shared mem address: %s [0..%d]\n", memptr, SHM_SIZE - 1);
-
+    // On Linux, one can check the status of semaphore items by ls -alh /dev/shm
     sem_t* semptr = sem_open(SEM_NAME,
                              O_CREAT,            /* create the semaphore */
                              PERMS,              /* perms */
