@@ -1,0 +1,37 @@
+start_time        : 1681295251
+last_update       : 1681295294
+run_time          : 42
+fuzzer_pid        : 399119
+cycles_done       : 105
+cycles_wo_finds   : 75
+execs_done        : 169302
+execs_per_sec     : 3988.64
+execs_ps_last_min : 0.00
+paths_total       : 2
+paths_favored     : 1
+paths_found       : 0
+paths_imported    : 0
+max_depth         : 1
+cur_path          : 0
+pending_favs      : 0
+pending_total     : 0
+variable_paths    : 0
+stability         : 100.00%
+bitmap_cvg        : 12.50%
+unique_crashes    : 1
+unique_hangs      : 0
+last_path         : 0
+last_crash        : 1681295251
+last_hang         : 0
+execs_since_crash : 169284
+exec_timeout      : 20
+slowest_exec_ms   : 0
+peak_rss_mb       : 0
+cpu_affinity      : 0
+edges_found       : 1
+var_byte_count    : 0
+havoc_expansion   : 3
+afl_banner        : main-c.out
+afl_version       : ++2.68c
+target_mode       : shmem_testcase default
+command_line      : afl-fuzz -i input/ -o output/ ./main-c.out
