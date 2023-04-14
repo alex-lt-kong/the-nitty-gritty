@@ -5,10 +5,12 @@
 #include <signal.h>
 #include <unistd.h>
 #include <atomic>
+#include <mutex>
 
 using namespace std;
 
 static size_t num_objects = 10;
+mutex stdout_mutex;
 
 class MyClass {
 
@@ -28,7 +30,10 @@ public:
     void event_loop() {        
         while (running) {
             this_thread::sleep_for(chrono::milliseconds(1000));
-            cout << "[" << thread_id << "] iterating..." << endl; 
+            unique_lock<mutex> lk(stdout_mutex);
+            cout << "[" << thread_id << "] iterating..." << endl;
+            // As lk's scope is this iteration, it will automatically unlock()
+            // when it goes out of scope.
         }
         cout << "[" << thread_id << "] event_loop() exited gracefully" << endl;
     }
