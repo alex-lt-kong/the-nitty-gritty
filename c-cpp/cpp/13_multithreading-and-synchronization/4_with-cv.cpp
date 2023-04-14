@@ -1,3 +1,4 @@
+#include <string>
 #include <vector>
 #include <iostream>
 #include <thread>
@@ -5,10 +6,28 @@
 #include <signal.h>
 #include <unistd.h>
 #include <atomic>
+#include <mutex>
+#include <queue>
+#include <condition_variable>
 
 using namespace std;
 
 static size_t num_objects = 10;
+
+condition_variable cv;
+queue<string> msg_queue;
+mutex stdout_mutex;
+
+void stdout_writer() {
+    while (true) {
+        unique_lock<mutex> lk(stdout_mutex);
+        cv.wait(lk, []{return !msg_queue.empty();});
+        string msg = msg_queue.front();
+        msg_queue.pop();
+        lk.unlock();
+        cout << msg << endl;
+    }
+}
 
 class MyClass {
 
@@ -28,7 +47,12 @@ public:
     void event_loop() {        
         while (running) {
             this_thread::sleep_for(chrono::milliseconds(1000));
-            cout << "[" << thread_id << "] iterating..." << endl; 
+            unique_lock<mutex> lk(stdout_mutex);
+            string msg = "[" + to_string(thread_id) + "] iterating...";
+            cv.wait(lk);
+            msg_queue.push(msg);
+            // As lk's scope is this iteration, it will automatically unlock()
+            // when it goes out of scope.
         }
         cout << "[" << thread_id << "] event_loop() exited gracefully" << endl;
     }
@@ -92,6 +116,8 @@ int main() {
     }
 
     cout << "Launched from the main\n";
+
+    thread th = thread(&stdout_writer);
 
     for (int i = 0; i < num_objects; ++i) {
         objs[i].start();
