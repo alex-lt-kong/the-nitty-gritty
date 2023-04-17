@@ -119,11 +119,74 @@ threads try to write data to stdout.
     thread periodically.
     1. But if enqueue operations are sparse (or worse, unpredictable), it
     will be a waste of CPU resources if we poll the state of the queue
-    frequently and will cause great delay if we pool the state of the queue
-    infrequently.
+    too frequently and will cause great delay if we pool the state of the queue
+    not frequently enough.
 
-* What can be done to solve this elegantly? A conditional variable comes to
+* Let's say there is one writing thread and one reading thread, the
+implementation of the above awkward design will be like:
+
+    * The writing thread:
+
+    ```C++
+    std::condition_variable cv;
+    std::mutex stdout_mutex;
+    std::queue<std::string> my_queue;
+
+    while (true) {
+        std::unique_lock<std::mutex> lk(my_mutex);
+        // ... critical section ...    
+        my_queue.push(msg);
+    }
+    ```
+
+    * The reading thread:
+
+    ```C++
+    while (true) {
+        std::unique_lock<std::mutex> lk(my_mutex);
+        if (my_queue.empty()) {
+            // Awkward, we keep polling the queue...
+            this_thread::sleep_for(chrono::milliseconds(1000));
+            continue;
+        }        
+        // ... critical section ...
+        my_queue.pop();
+    }
+    ```
+
+
+* What can be done to solve this elegantly? A condition variable comes to
 rescue!
+
+* Let's say we have two threads, a writing thread and a reading thread.
+
+    * In the writing thread, we `notify_one()`/`notify_all()` reading threads:
+
+    ```C++
+    std::condition_variable cv;
+    std::mutex stdout_mutex;
+    std::queue<std::string> my_queue;
+
+    while (true) {
+        std::unique_lock<std::mutex> lk(my_mutex);
+        // ... critical section ...    
+        my_queue.push(msg);
+        lk.unlock();
+        cv.notify_one();
+    }
+    ```
+
+    * In the reading thread, we `wait()` until we get notified.
+
+    ```C++
+    while (true) {
+        std::unique_lock<std::mutex> lk(my_mutex);
+        // Much better, we will wait() until we are notified.
+        cv.wait(lk);
+        // ... critical section ...
+        my_queue.pop();
+    }
+    ```
 
 ## References
 
