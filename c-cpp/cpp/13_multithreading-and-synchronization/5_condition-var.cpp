@@ -101,7 +101,7 @@ int main() {
     or detach()ed, even if the exeuction already quits at the time of
     join()ing or detach()ing; otherwise it causes "terminate called
     without an active exception" then SIGABRT: 
-    https://stackoverflow.com/questions/7381757/c-terminate-called-without-an-active-exception
+    https://en.cppreference.com/w/cpp/thread/thread/~thread
     In C program, while I haven't seen this problem, some similar issues
     seem to show the same behavior.
     */
