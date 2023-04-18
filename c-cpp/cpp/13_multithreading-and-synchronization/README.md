@@ -14,7 +14,40 @@ of C++11.
 
 * This is the most naive version, not differs from pthreads too much.
 
-# [2_with-this.cpp](./2_with-this.cpp)
+# [2_join-and-detach.cpp](./2_join-and-detach.cpp)
+
+* `join()`/`detach()` can be easily forgotten and it could cause confusing
+errors.
+    * One common error is "terminate called without an active exception" with
+    a `SIGABRT` caught.
+
+* The overall principle is very simple--a thread must be either `join()ed` or
+`detach()ed` exactly once.
+    * Why this is the case? Well the short answer is that C++ standard says
+    so...[3]
+
+* The existence of exceptions makes this a bit more complicated. Usually, we
+do something like:
+
+    ```C++
+    th = thread(call_from_thread, 0);
+    th.join();
+    ```
+
+    * However, we may, from time to time, add more statements between them:
+
+    ```C++
+    th = thread(call_from_thread, 0);
+    spdlog::info("Thread started!");
+    // more fancy operations.
+    th.join();
+    ```
+
+    * If an exception is thrown between `thread()` and `join()`, we may
+    have `try/catch` block that handles the exception，but `th` may be left
+    un`join()ed`.
+
+# [3_with-this.cpp](./3_with-this.cpp)
 
 * The existence of the `this` pointer make multithreading more challenging--
 this implementation showcases how we can access `this` in a thread.
@@ -23,9 +56,9 @@ this implementation showcases how we can access `this` in a thread.
 `static void signal_handler(int signum)` and `void install_signal_handler()`
 are added to the PoC.
 
-# [3_with-mutex.cpp](./3_with-mutex.cpp)
+# [4_with-mutex.cpp](./4_with-mutex.cpp)
 
-* The output of [2_with-this.cpp](./2_with-this.cpp) might be something like
+* The output of [3_with-this.cpp](./3_with-this.cpp) might be something like
 this:
     ```
     [0] iterating...[1] iterating...
@@ -108,7 +141,7 @@ threads try to write data to stdout.
     only use `std::scoped_lock`.[[2]]
 
 
-# [4_with-cv.cpp](./4_with-cv.cpp)
+# [5_condition-var.cpp](./5_condition-var.cpp)
 
 * We may have the below design from time to time:
     1. A few writing threads write to a shared object, say enqueuing new
@@ -192,3 +225,4 @@ rescue!
 
 [1]: https://stackoverflow.com/questions/20516773/stdunique-lockstdmutex-or-stdlock-guardstdmutex "std::unique_lock<std::mutex> or std::lock_guard<std::mutex>?"
 [2]: https://stackoverflow.com/questions/43019598/stdlock-guard-or-stdscoped-lock "std::lock_guard or std::scoped_lock?"
+[3]: https://en.cppreference.com/w/cpp/thread/thread/~thread "std::thread::~thread"
