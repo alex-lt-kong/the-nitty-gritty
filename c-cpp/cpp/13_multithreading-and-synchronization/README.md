@@ -10,6 +10,8 @@ of C++11.
     But it makes portability more difficult and imposes greater challenges on
     the weak-minded.
 
+* This project has a sister project on POSIX threads [here](../../common/04_posix-api/04_multithreading-and-synchronization/).
+
 # [1_hello-world.cpp](./1_hello-world.cpp)
 
 * This is the most naive version, not differs from pthreads too much.
