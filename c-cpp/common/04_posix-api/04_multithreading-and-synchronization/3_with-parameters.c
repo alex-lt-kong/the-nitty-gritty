@@ -4,10 +4,7 @@
 #include <unistd.h>
 #include <string.h>
 
-struct ThreadPayload {
-    size_t thread_id;
-    char* message;
-};
+#include "common.h"
 
 void* func_that_takes_params(void* tpl) {
     sleep(1);
