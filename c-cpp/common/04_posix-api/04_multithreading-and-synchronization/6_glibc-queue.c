@@ -18,7 +18,7 @@ void* writing_func(void* tpl) {
     
     while (!should_stop) {
         // Let's add a bit of perturbation, but not too much
-        usleep(1000 * 1000 - args->thread_id);
+        usleep(1000 - args->thread_id);
         if (pthread_mutex_lock(&my_mutex) != 0) {
             perror("pthread_mutex_lock()");
             continue;
@@ -42,7 +42,7 @@ void* writing_func(void* tpl) {
 void* reading_func() {
 
     while (!should_stop) {
-        sleep(1);
+        usleep(10);
         if (pthread_mutex_lock(&my_mutex) != 0) {
             perror("pthread_mutex_lock()");
             continue;
@@ -50,12 +50,11 @@ void* reading_func() {
         while (!g_queue_is_empty(q)) {
             usleep(1);
             char* buf = g_queue_pop_head(q);
-            g_queue_remove(q, NULL);
             if (buf != NULL) {
                 printf("=== START ===\n%s\n=== END ===\n", buf);
                 free(buf);
             } else {
-                printf("1st element of the internal queue is NULL!\n");
+                printf("Head of the internal queue is NULL!\n");
             }
         }
 
