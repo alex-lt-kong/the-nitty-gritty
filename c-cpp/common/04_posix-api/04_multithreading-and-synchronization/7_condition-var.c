@@ -27,19 +27,28 @@ void* writing_func(void* tpl) {
             }
             sprintf(buf, "[%d] Message from caller: %s\n",
                 args->thread_id, args->message);
-            /* pthread_cond_signal() restarts  one  of  the threads that are
+            g_queue_push_tail(q, buf);
+            /* 
+            * pthread_cond_signal() restarts  one  of  the threads that are
             waiting on the condition variable cond. If no threads are waiting
             on cond, nothing happens. If several threads are waiting on cond,
-            exactly one is restarted, but it is not specified which.*/
-            g_queue_push_tail(q, buf);
+            exactly one is restarted, but it is not specified which.
+            
+            * Note that pthread_cond_signal() sends a signal only,
+            we still need to pthread_mutex_unlock() so that pthread_cond_wait()
+            can return by locking the mutex as suggests in this SO post:
+            https://stackoverflow.com/questions/4544234/calling-pthread-cond-signal-without-locking-mutex
+            */
+            
             pthread_cond_signal(&my_cv);
             if (pthread_mutex_unlock(&my_mutex) != 0) {
-                perror("pthread_mutex_unlock()");
+                perror("pthread_mutex_unlock() error, "
+                    "writing_func() exited prematurely");
                 return NULL;
             }
             
         } else {
-            perror("malloc()");
+            perror("malloc() error, writing_func() exited prematurely");
             return NULL;
         }
     }
@@ -48,7 +57,6 @@ void* writing_func(void* tpl) {
 }
 
 void* reading_func() {
-
 
     while (!should_stop) {
         usleep(1);
@@ -60,7 +68,10 @@ void* reading_func() {
         /* pthread_cond_wait() unlocks my_mutex before it blocks this
         thread. */
         int rc = pthread_cond_wait(&my_cv, &my_mutex);
-        /* pthread_cond_wait() locks my_mutex after it proceeds */  
+        /* Before returning to the calling thread, pthread_cond_wait()
+        re-acquires mutex (as per pthread_lock_mutex). This also implies that
+        we still need to pthread_mutex_unlock() so that pthread_cond_wait()
+        can return by successfully locking the mutex. */  
         
         if (!g_queue_is_empty(q)) {
             printf("=== reading START ===\n");
