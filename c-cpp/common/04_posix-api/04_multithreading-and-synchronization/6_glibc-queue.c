@@ -23,9 +23,9 @@ void* writing_func(void* tpl) {
             perror("pthread_mutex_lock()");
             continue;
         }
-        char* buf = malloc(sizeof(char) * 512);
+        char* buf = (char*)malloc(sizeof(char) * 512);
         if (buf != NULL) {
-            sprintf(buf, "[%d] Message from caller: %s\n",
+            sprintf(buf, "[%lu] Message from caller: %s\n",
                 args->thread_id, args->message);
             g_queue_push_tail(q, buf);
         } else {
@@ -49,7 +49,7 @@ void* reading_func() {
         }
         while (!g_queue_is_empty(q)) {
             usleep(1);
-            char* buf = g_queue_pop_head(q);
+            char* buf = (char*)g_queue_pop_head(q);
             if (buf != NULL) {
                 printf("=== START ===\n%s\n=== END ===\n", buf);
                 free(buf);
@@ -96,12 +96,12 @@ int main(void) {
                 break;
             }
         }
-        printf("%d writing threads started\n", started_threads);
+        printf("%lu writing threads started\n", started_threads);
         if (pthread_create(&read_th, NULL, reading_func, NULL) != 0) {
             perror("pthread_create()");
         }
         pthread_join(read_th, NULL);
-        for (int i = 0; i < started_threads; ++i) {
+        for (size_t i = 0; i < started_threads; ++i) {
             /* The  pthread_join() function waits for the thread specified by thread
             to terminate.  If that thread has already terminated, then pthread_join()
             returns immediately.  The thread specified by thread must be joinable.*/
@@ -116,7 +116,7 @@ int main(void) {
         perror("pthread_mutex_destroy()");
     }
     while (!g_queue_is_empty(q)) {
-        char* buf = g_queue_pop_head(q);
+        char* buf = (char*)g_queue_pop_head(q);
         g_queue_remove(q, NULL);
         if (buf != NULL) {
             free(buf);

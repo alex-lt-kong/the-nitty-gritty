@@ -10,14 +10,14 @@ volatile sig_atomic_t e_flag = 0;
 
 static void signal_handler(int signum) {
     char msg[] = "Signal [  ] caught\n";
-    msg[8] = '0' + signum / 10;
-    msg[9] = '0' + signum % 10;
-    size_t len = sizeof(msg) - 1;
-    size_t written = 0;
+    msg[8] = '0' + (char)(signum / 10);
+    msg[9] = '0' + (char)(signum % 10);
+    ssize_t len = sizeof(msg) - 1;
+    ssize_t written = 0;
     while (written < len) {
         ssize_t ret = write(STDOUT_FILENO, msg + written, len - written);
         if (ret == -1) {
-            perror("write()");
+            // perror() is not reentrant thus can't be used here
             break;
         }
         written += ret;
@@ -46,6 +46,7 @@ void* event_loop(void* param) {
 }
 
 void install_signal_handler() {
+    // This design canNOT handle more than 99 signal types
     if (_NSIG > 99) {
         fprintf(stderr, "signal_handler() can't handle more than 99 signals\n");
         abort();

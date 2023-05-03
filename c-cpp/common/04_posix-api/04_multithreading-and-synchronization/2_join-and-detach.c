@@ -6,7 +6,7 @@
 
 void* naive_func() {
     sleep(1);
-    int* ret = malloc(sizeof(int));
+    int* ret = (int*)malloc(sizeof(int));
     if (ret != NULL) {
         *ret = 1;
     } else {

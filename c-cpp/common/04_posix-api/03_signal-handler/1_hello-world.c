@@ -8,14 +8,14 @@ volatile sig_atomic_t e_flag = 0;
 
 static void signal_handler(int signum) {
     char msg[] = "Signal [  ] caught\n";
-    msg[8] = '0' + signum / 10;
-    msg[9] = '0' + signum % 10;    
+    msg[8] = '0' + (char)(signum / 10);
+    msg[9] = '0' + (char)(signum % 10);
     write(STDIN_FILENO, msg, strlen(msg));
     e_flag = 1;
 }
 
-int main(void) {
-    
+void install_signal_handler() {
+    // This design canNOT handle more than 99 signal types
     if (_NSIG > 99) {
         fprintf(stderr, "signal_handler() can't handle more than 99 signals\n");
         abort();
@@ -24,7 +24,7 @@ int main(void) {
     // Initialize the signal set to empty, similar to memset(0)
     if (sigemptyset(&act.sa_mask) == -1) {
         perror("sigemptyset()");
-        return EXIT_FAILURE;
+        abort();
     }
     act.sa_handler = signal_handler;
     /* SA_RESETHAND means we want our signal_handler() to intercept the signal
@@ -34,9 +34,14 @@ int main(void) {
     //act.sa_flags = 0;
     if (sigaction(SIGINT, &act, 0) == -1) {
         perror("sigaction()");
-        return EXIT_FAILURE;
+        abort();
     }
+}
 
+int main(void) {
+    
+
+    install_signal_handler();
     printf("A signal handler is installed, "
         "press Ctrl+C to exit the event loop gracefully.\n");
     while (e_flag == 0) {
