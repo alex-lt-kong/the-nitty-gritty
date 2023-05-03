@@ -19,13 +19,13 @@ void* writing_func(void* tpl) {
     
     while (!should_stop) {
         // usleep(1000 * 1000 - args->thread_id);
-        char* buf = malloc(sizeof(char) * 512);
+        char* buf = (char*)malloc(sizeof(char) * 512);
         if (buf != NULL) {
             if (pthread_mutex_lock(&my_mutex) != 0) {
                 perror("pthread_mutex_lock()");
                 continue;
             }
-            sprintf(buf, "[%d] Message from caller: %s\n",
+            sprintf(buf, "[%lu] Message from caller: %s\n",
                 args->thread_id, args->message);
             g_queue_push_tail(q, buf);
             /* 
@@ -52,7 +52,7 @@ void* writing_func(void* tpl) {
             return NULL;
         }
     }
-    printf("[%d] writing_func() exited gracefully\n", args->thread_id);
+    printf("[%lu] writing_func() exited gracefully\n", args->thread_id);
     return NULL;
 }
 
@@ -71,14 +71,18 @@ void* reading_func() {
         /* Before returning to the calling thread, pthread_cond_wait()
         re-acquires mutex (as per pthread_lock_mutex). This also implies that
         we still need to pthread_mutex_unlock() so that pthread_cond_wait()
-        can return by successfully locking the mutex. */  
+        can return by successfully locking the mutex. */
+        if (rc != 0) {
+            perror("pthread_cond_wait()");
+            continue;
+        }
         
         if (!g_queue_is_empty(q)) {
             printf("=== reading START ===\n");
             while (!g_queue_is_empty(q)) {
                 /* We can further optimize by removing printf() and free()
                 from the critical section. */
-                char* buf = g_queue_pop_head(q);
+                char* buf = (char*)g_queue_pop_head(q);
                 if (buf != NULL) {
                     printf("%s", buf);
                     free(buf);
@@ -140,12 +144,12 @@ int main(void) {
                 break;
             }
         }
-        printf("%d writing threads started\n", good_threads);
+        printf("%lu writing threads started\n", good_threads);
         if (pthread_create(&read_th, NULL, reading_func, NULL) != 0) {
             perror("pthread_create()");
         }
         pthread_join(read_th, NULL);
-        for (int i = 0; i < good_threads; ++i) {
+        for (size_t i = 0; i < good_threads; ++i) {
             /* The  pthread_join() function waits for the thread specified
             by thread to terminate.  If that thread has already terminated,
             then pthread_join() returns immediately.  The thread specified
@@ -158,7 +162,7 @@ int main(void) {
     }
 
     while (!g_queue_is_empty(q)) {
-        char* buf = g_queue_pop_head(q);
+        char* buf = (char*)g_queue_pop_head(q);
         g_queue_remove(q, NULL);
         if (buf != NULL) {
             free(buf);

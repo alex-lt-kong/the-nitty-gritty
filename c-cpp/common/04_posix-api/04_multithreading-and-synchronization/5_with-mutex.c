@@ -21,7 +21,7 @@ void* func_that_takes_params(void* tpl) {
             perror("pthread_mutex_lock()");
             continue;
         }
-        sprintf(shared_string, "[%d] Message from caller: %s\n",
+        sprintf(shared_string, "[%lu] Message from caller: %s\n",
             args->thread_id, args->message);
         write(STDOUT_FILENO, shared_string, strlen(shared_string));
         if (pthread_mutex_unlock(&my_mutex) != 0) {
@@ -37,7 +37,7 @@ void* func_that_takes_params(void* tpl) {
             return NULL;
         }
     }
-    size_t* ret = malloc(sizeof(size_t));
+    size_t* ret = (size_t*)malloc(sizeof(size_t));
     if (ret != NULL) {
         *ret = strlen(args->message);
     } else {
@@ -67,8 +67,8 @@ int main(void) {
             break;
         }
     }
-    printf("%d threads started\n", started_threads);
-    for (int i = 0; i < started_threads; ++i) {
+    printf("%lu threads started\n", started_threads);
+    for (size_t i = 0; i < started_threads; ++i) {
         size_t* ret = NULL;
         /* The  pthread_join() function waits for the thread specified by thread
         to terminate.  If that thread has already terminated, then pthread_join()
@@ -80,7 +80,7 @@ int main(void) {
         if (ret != NULL) {
             // No, we don't need to cast ret to (size_t*)--it is defined as
             // size_t* in the first place!
-            printf("ret: %u\n", *ret);
+            printf("ret: %lu\n", *ret);
         } else {
             printf("ret is NULL\n");
         }

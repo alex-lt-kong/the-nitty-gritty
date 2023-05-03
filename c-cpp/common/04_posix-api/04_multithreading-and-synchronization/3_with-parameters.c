@@ -8,7 +8,7 @@
 
 void* func_that_takes_params(void* tpl) {
     sleep(1);
-    size_t* ret = malloc(sizeof(size_t));
+    size_t* ret = (size_t*)malloc(sizeof(size_t));
     if (ret != NULL) {
         *ret = strlen(((struct ThreadPayload*)tpl)->message);
     } else {
@@ -38,7 +38,7 @@ int main(void) {
         return 1;
     }
     if (ret != NULL ) {
-        printf("ret: %u\n", *ret);
+        printf("ret: %lu\n", *ret);
     } else {
         printf("ret is NULL\n");
     }

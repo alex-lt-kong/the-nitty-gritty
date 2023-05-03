@@ -25,7 +25,7 @@ static void signal_handler(int signum) {
     while (written < len) {
         ssize_t ret = write(STDOUT_FILENO, msg + written, len - written);
         if (ret == -1) {
-            perror("write()");
+            // perror() is not reentrant thus can't be used here
             break;
         }
         written += ret;

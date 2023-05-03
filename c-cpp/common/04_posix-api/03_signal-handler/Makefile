@@ -1,5 +1,6 @@
-OPTS = -O2 -Wall -pedantic -Wc++-compat -Wextra
 CC = gcc
+OPTS = -O2 -Wall -pedantic -Wextra -Wc++-compat -Wconversion
+
 
 main:
 	$(CC) 1_hello-world.c -o 1_hello-world.out $(OPTS)

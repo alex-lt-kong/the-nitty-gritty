@@ -16,11 +16,11 @@ void* func_that_takes_params(void* tpl) {
     while (!should_stop) {
         // Let's add a bit of perturbation, but not too much
         usleep(1000 * 1000 - args->thread_id);
-        sprintf(shared_string, "[%d] Message from caller: %s\n",
+        sprintf(shared_string, "[%lu] Message from caller: %s\n",
             args->thread_id, args->message);
         write(STDOUT_FILENO, shared_string, strlen(shared_string));
     }
-    size_t* ret = malloc(sizeof(size_t));
+    size_t* ret = (size_t*)malloc(sizeof(size_t));
     if (ret != NULL) {
         *ret = strlen(args->message);
     } else {
@@ -45,7 +45,7 @@ int main(void) {
         }
     }
     
-    for (int i = 0; i < started_threads; ++i) {
+    for (size_t i = 0; i < started_threads; ++i) {
         size_t* ret = NULL;
         /* The  pthread_join() function waits for the thread specified by thread
         to terminate.  If that thread has already terminated, then pthread_join()
@@ -55,7 +55,7 @@ int main(void) {
             continue;
         }
         if (ret != NULL) {
-            printf("ret: %u\n", *ret);
+            printf("ret: %lu\n", *ret);
         } else {
             printf("ret is NULL\n");
         }
