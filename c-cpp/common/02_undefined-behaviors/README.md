@@ -429,8 +429,8 @@ optimization techniques called "Type-Based Alias Analysis" (TBAA).
   > expression Q+1 compares greater than P. In all other cases, the
   > behavior is undefined.
 
-* This paragraph lays out a few scenarios where pointer-to-pointer comparison
-is defined, and left all other cases undefined.
+* This paragraph lays out a few scenarios where pointer-to-pointer comparisons
+are defined, and left all other cases undefined.
   * Unfortunately, the use of 
   `(p >= regionStart && p < regionStart + regionSize)` falls outside of the
   defined scenarios in the standard.
