@@ -332,7 +332,7 @@ following causes UB:
 that different type can't be aliased, compilers can apply a wide range of
 optimization techniques called "Type-Based Alias Analysis" (TBAA).
 
-* Two examples are prepared to demonstrate the effect of TBAA [here](./lib.c):
+* Two examples are prepared to demonstrate the effect of TBAA [here](./07_dereference-float-pointer-as-uint-pointer/lib.c):
   ```C
   void manipulate_inplace_int(int* arr, int* y, size_t arr_size) {
       for (int i = 0; i < arr_size; ++i)
@@ -346,7 +346,7 @@ optimization techniques called "Type-Based Alias Analysis" (TBAA).
   ```
 
 * These two functions differ by the type of `y` only. This trival difference
-  results in different [machine code](./lib.asm):
+  results in different [machine code](./07_dereference-float-pointer-as-uint-pointer/lib.asm):
   ```asm  
   void manipulate_inplace_int(int* arr, int* y, size_t arr_size) {
       for (int i = 0; i < arr_size; ++i)
@@ -398,6 +398,51 @@ optimization techniques called "Type-Based Alias Analysis" (TBAA).
   to the same memory location.
 
 
+### 8. Arbitrary pointers comparison
+
+* Suppose you have a range of memory described by two variables, say,
+  ```C
+  byte* regionStart;
+  size_t regionSize;
+  ```
+  and suppose you want to check whether a pointers lies within that region.
+  You might be tempted to write:
+  ```C
+  if (p >= regionStart && p < regionStart + regionSize)
+  ```
+
+* This comparison is undefined.
+
+* Paragraph 5 of section 6.5.8 of [C11][1] stipulates that:
+  > When two pointers are compared, the result depends on the relative
+  > locations in the address space of the objects pointed to. If two 
+  > ointers to object types both point to the same object, or both point
+  > one past the last element of the same array object, they compare equal.
+  > If the objects pointed to are members of the same aggregate object,
+  > pointers to structure members declared later compare greater than
+  > pointers to members declared earlier in the structure, and pointers to
+  > array elements with larger subscript values compare greater than
+  > pointers to elements of the same array with lower subscript values.
+  > All pointers to members of the same union object compare equal. If the
+  > expression P points to an element of an array object and the expression
+  > Q points to the last element of the same array object, the pointer
+  > expression Q+1 compares greater than P. In all other cases, the
+  > behavior is undefined.
+
+* This paragraph lays out a few scenarios where pointer-to-pointer comparison
+is defined, and left all other cases undefined.
+  * Unfortunately, the use of 
+  `(p >= regionStart && p < regionStart + regionSize)` falls outside of the
+  defined scenarios in the standard.
+
+* Why this is the case? Raymond Chen gives a very good explaination [here][7].
+  * Long story short, it is because the memory layout is not always flat,
+  so for a given architecture, `*(p++)` does not necessarily correspond to
+  moving to next memory address. As a result, C standard intentionally leaves
+  this as undefined.
+
+
+
 ## Seemingly undefined by actually well-defined behaviors
 
 * `unsigned int` never overflow, for `unsigned int a = UINT_MAX;`, `a + 1`
@@ -416,6 +461,8 @@ will be "wrapped around", i.e., to `(a + 1) % UINT_MAX == 0`.
 1. [Why are the terms "automatic" and "dynamic" preferred over the terms "stack" and "heap" in C++ memory management?][4]
 1. ["A Guide to Undefined Behavior in C and C++, Part 1][5]
 1. [How to intrepret paragraph 1 of section 6.3.1.4 of C11 standard (about converting float to unsigned int)][6]
+1. [How to check if a pointer is in a range of memory][7]
+
 
 [1]: https://www.open-std.org/jtc1/sc22/wg14/www/docs/n1570.pdf "Draft of ISO C11 Standard"
 [2]: https://blog.llvm.org/2011/05/what-every-c-programmer-should-know.html "What Every C Programmer Should Know About Undefined Behavior #1/3"
@@ -423,3 +470,4 @@ will be "wrapped around", i.e., to `(a + 1) % UINT_MAX == 0`.
 [4]: https://stackoverflow.com/questions/9181782/why-are-the-terms-automatic-and-dynamic-preferred-over-the-terms-stack-and "Why are the terms \"automatic\" and \"dynamic\" preferred over the terms \"stack\" and \"heap\" in C++ memory management?"
 [5]: https://blog.regehr.org/archives/213 "A Guide to Undefined Behavior in C and C++, Part 1"
 [6]: https://stackoverflow.com/questions/75578931/how-to-intrepret-paragraph-1-of-section-6-3-1-4-of-c11-standard-about-convertin/ "How to intrepret paragraph 1 of section 6.3.1.4 of C11 standard (about converting float to unsigned int)"
+[7]: https://devblogs.microsoft.com/oldnewthing/20170927-00/?p=97095 "How to check if a pointer is in a range of memory"
