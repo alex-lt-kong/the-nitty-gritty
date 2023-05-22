@@ -63,9 +63,9 @@ on Wikipedia as an example:
 
     ```JavaScript
     function makeAdder(x) {
-    return (y)=>{
-        return x + y;
-    };
+        return (y)=>{
+            return x + y;
+        };
     }
 
     const add5 = makeAdder(5);
