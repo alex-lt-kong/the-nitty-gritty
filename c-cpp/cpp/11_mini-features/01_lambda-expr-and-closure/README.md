@@ -1,7 +1,14 @@
-# Lambda expression
+# Lambda expression and closure
 
 * Introduced in C++11, Lambda expression (often called lambda) is just
-anonymous function that is popular in JavaScript and Python.
+anonymous functions that are popular in JavaScript and Python:
+
+    ```JavaScript
+    var func = () => {
+        console.log("Hello, World!");
+    };
+    func();
+    ```
 
 * Sometimes, we still want to give a lambda expression a name, then we can call
 it just like a normal function:
@@ -31,14 +38,8 @@ well aware of that as the function's signature is just next to it.
 * Lambda expression is also the only way in C++ to create nested functions as
 of C++17.
 
-* Compared with JavaScript's anonymous function:
-    ```JavaScript
-    var func = () => {
-        console.log("Hello, World!");
-    };
-    func();
-    ```
-    The C++'s version looks almost identical except the `[]` part.
+* Compared with JavaScript's anonymous function, the C++'s version looks
+almost identical except the `[]` part.
 
 * The `[]` part is called the "capture clause", the elements in the list within
 `[]` are called captures. It is a way for the lamdba expression to access, or
