@@ -87,8 +87,36 @@ void testFiveRecursiveLambda() {
             return a * factorial(a - 1);
         }
     };
-
+    cout << "testFiveRecursiveLambda():" << endl;
     cout << "factorial(8): " << factorial(8) << endl;
+}
+
+auto closureWrapper1()
+{
+    int x = 10;
+    return [x](){ std::cout << "Value in the closure: " << x << std::endl;};
+}
+
+function<void(void)> closureWrapper2()
+{
+    int x = 10;
+    return [&x](){x += 1; std::cout << "Value in the closure: " << x << std::endl;};
+}
+
+auto testSixClosure() {
+    int x = 10;
+    auto func0 =  [&x](){x += 1; std::cout << "Value in the closure: " << x << std::endl;};
+    cout << "testSixClosure():" << endl;
+    auto func1 = closureWrapper1();
+    auto func2 = closureWrapper2();
+    func0();
+    func0();
+    func1();
+    func1();
+    // UB!!! Capture x by reference and it goes out of scope when
+    // func2() is called!
+    func2();
+    func2();
 }
 
 int main() {
@@ -101,5 +129,6 @@ int main() {
     testFourCaptureClause();
     cout << endl;
     testFiveRecursiveLambda();
+    testSixClosure();
     return 0;
 }
