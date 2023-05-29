@@ -3,6 +3,7 @@
     "python.linting.flake8Enabled": true,
     "python.linting.enabled": true,
     "makefile.extensionOutputFolder": "./.vscode",
+    "editor.formatOnSave": true,
     "files.associations": {
         "bitset": "cpp",
         "chrono": "cpp",
