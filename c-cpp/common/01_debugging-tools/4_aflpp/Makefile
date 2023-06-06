@@ -2,6 +2,9 @@
 #export AFL_USE_MSAN=1
 export AFL_USE_UBSAN=1
 export AFL_LLVM_LAF_ALL=make1
+# instrumentation ratio (100%)
+export AFL_INST_RATIO=100
+export AFL_HARDEN=1
 
 CC=afl-clang-fast
 OPTS=-O2
