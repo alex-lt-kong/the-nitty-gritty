@@ -350,7 +350,7 @@ public:
         free(curr_ptr0);
         free(curr_ptr1);
     }
-```
+    ```
 
     * If `wallet_size` is dynamic, we need to `free()` previously `malloc()`ed
     memory and then `malloc()` again.
@@ -358,12 +358,11 @@ public:
     * But is the above example good enough? Unfortunately, the answer is no.
     What could go wrong if we do the following?:
 
-
     ```C++
-        DynamicWallet first_dwallet = DynamicWallet(2048);
-        first_dwallet.curr_ptr0[0] = 3;
-        first_dwallet.curr_ptr1[2047] = 666;
-        first_dwallet = first_dwallet
+    DynamicWallet first_dwallet = DynamicWallet(2048);
+    first_dwallet.curr_ptr0[0] = 3;
+    first_dwallet.curr_ptr1[2047] = 666;
+    first_dwallet = first_dwallet
     ```
 
 * A version that corrects this bug can be found [here](./pointer.cpp)
