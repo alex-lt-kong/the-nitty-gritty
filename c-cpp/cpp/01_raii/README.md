@@ -160,8 +160,8 @@ fails. This should prevent NULL pointers dereference:
     * Well yes, it doesn't suffer from NULL pointer dereference. Awesome!
     What if the first `malloc()` succeeds and the second `malloc()`
     fails? A `bad_alloc` exception will be thrown, RAII's principle is followed.
-    But wait, what happend to the large amount of memory `malloc()`ed for abd
-    pointed by `curr_ptr0`? No one takes care of it. It will be left on heap
+    But wait, what happens to the large amount of memory `malloc()`ed for and
+    pointed by `curr_ptr0`? No one takes care of it. It will be left on the heap
     lonely, forever! No, we need to handle this as well.
 
 * Another version is prepared to handle this. Now we will manually `free()`
@@ -241,7 +241,7 @@ fails:
     [copy constructor](./constructor) for it.
     * Apart from the above, we also need to prepare a copy assignment operator.
 
-* A much robust version is like below. This is something known as
+* A much more robust version is like below. This is something known as
 [the rule of three](https://en.cppreference.com/w/cpp/language/rule_of_three):
 
     ```C++
@@ -297,7 +297,7 @@ fails:
 
 * The above sample works fine, but it still hides some important complexity
 because `ARR_SIZE` is something predefined and fixed, so that we can always
-re-use existing `malloc()`ed memory . What if `ARR_SIZE` is dynamic? It makes
+re-use existing `malloc()`ed memory. What if `ARR_SIZE` is dynamic? It makes
 copy constructor and copy assignment operator much more complicated.
 
 ```C++
@@ -366,6 +366,16 @@ public:
     ```
 
 * A version that corrects this bug can be found [here](./pointer.cpp)
+
+### A better solution
+
+* The above practice is mainly used to demonstrate the peculiarity of the
+interplay between C and C++.
+    * If pointers are really needed in an RAII-enabled class, it is better
+    to go the "C++" way--instead of using raw pointers, we should use smart
+    pointer instead.
+    * Smart pointer has its own RAII wrapper, which could, hopefully, handle
+    the edge cases for us "automatically".
 
 ## References
 
