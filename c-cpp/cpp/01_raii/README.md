@@ -300,57 +300,57 @@ because `ARR_SIZE` is something predefined and fixed, so that we can always
 re-use existing `malloc()`ed memory. What if `ARR_SIZE` is dynamic? It makes
 copy constructor and copy assignment operator much more complicated.
 
-```C++
+    ```C++
 
-class DynamicWallet {
-private:
-    void mallocPtrs() {
-        curr_ptr0 = (int*)malloc(sizeof(int) * wallet_size);
-        if (curr_ptr0 == NULL) {
-            std::bad_alloc exception;
-            throw exception;
+    class DynamicWallet {
+    private:
+        void mallocPtrs() {
+            curr_ptr0 = (int*)malloc(sizeof(int) * wallet_size);
+            if (curr_ptr0 == NULL) {
+                std::bad_alloc exception;
+                throw exception;
+            }
+            curr_ptr1 = (int*)malloc(sizeof(int) * wallet_size);
+            if (curr_ptr1== NULL) {
+                free(curr_ptr0);
+                // Need to handle the already malloc()'ed pointer manually.
+                std::bad_alloc exception;
+                throw exception;
+            }
         }
-        curr_ptr1 = (int*)malloc(sizeof(int) * wallet_size);
-        if (curr_ptr1== NULL) {
+    public:
+        int* curr_ptr0;
+        int* curr_ptr1;
+        size_t  wallet_size;
+        DynamicWallet (size_t wallet_size) {
+            cout << "DynamicWallet () called" << endl;
+            this->wallet_size = wallet_size;
+            mallocPtrs();
+        }
+        // Copy constructor
+        DynamicWallet(const DynamicWallet& rhs) {
+            wallet_size = rhs.wallet_size;
+            mallocPtrs();
+            memcpy(curr_ptr0, rhs.curr_ptr0, sizeof(int) * wallet_size);
+            memcpy(curr_ptr1, rhs.curr_ptr1, sizeof(int) * wallet_size);
+            cout << "copy DynamicWallet() called" << endl;
+        }
+        // Copy assignment operator
+        DynamicWallet& operator=(const DynamicWallet& rhs) {
+            this->wallet_size = rhs.wallet_size;
             free(curr_ptr0);
-            // Need to handle the already malloc()'ed pointer manually.
-            std::bad_alloc exception;
-            throw exception;
+            free(curr_ptr1);
+            mallocPtrs();
+            memcpy(curr_ptr0, rhs.curr_ptr0, sizeof(int) * wallet_size);
+            memcpy(curr_ptr1, rhs.curr_ptr1, sizeof(int) * wallet_size);
+            cout << "operator=(const DynamicWallet& rhs) called" << endl;
+            return *this;
         }
-    }
-public:
-    int* curr_ptr0;
-    int* curr_ptr1;
-    size_t  wallet_size;
-    DynamicWallet (size_t wallet_size) {
-        cout << "DynamicWallet () called" << endl;
-        this->wallet_size = wallet_size;
-        mallocPtrs();
-    }
-    // Copy constructor
-    DynamicWallet(const DynamicWallet& rhs) {
-        wallet_size = rhs.wallet_size;
-        mallocPtrs();
-        memcpy(curr_ptr0, rhs.curr_ptr0, sizeof(int) * wallet_size);
-        memcpy(curr_ptr1, rhs.curr_ptr1, sizeof(int) * wallet_size);
-        cout << "copy DynamicWallet() called" << endl;
-    }
-    // Copy assignment operator
-    DynamicWallet& operator=(const DynamicWallet& rhs) {
-        this->wallet_size = rhs.wallet_size;
-        free(curr_ptr0);
-        free(curr_ptr1);
-        mallocPtrs();
-        memcpy(curr_ptr0, rhs.curr_ptr0, sizeof(int) * wallet_size);
-        memcpy(curr_ptr1, rhs.curr_ptr1, sizeof(int) * wallet_size);
-        cout << "operator=(const DynamicWallet& rhs) called" << endl;
-        return *this;
-    }
-    ~DynamicWallet () {
-        free(curr_ptr0);
-        free(curr_ptr1);
-    }
-```
+        ~DynamicWallet () {
+            free(curr_ptr0);
+            free(curr_ptr1);
+        }
+    ```
 
   * If `wallet_size` is dynamic, we need to `free()` previously `malloc()`ed
   memory and then `malloc()` again.
@@ -358,12 +358,12 @@ public:
   * But is the above example good enough? Unfortunately, the answer is no.
   What could go wrong if we do the following?:
 
-```C++
-    DynamicWallet first_dwallet = DynamicWallet(2048);
-    first_dwallet.curr_ptr0[0] = 3;
-    first_dwallet.curr_ptr1[2047] = 666;
-    first_dwallet = first_dwallet
-```
+    ```C++
+        DynamicWallet first_dwallet = DynamicWallet(2048);
+        first_dwallet.curr_ptr0[0] = 3;
+        first_dwallet.curr_ptr1[2047] = 666;
+        first_dwallet = first_dwallet
+    ```
 
 * A version that corrects this bug can be found [here](./pointer.cpp)
 
