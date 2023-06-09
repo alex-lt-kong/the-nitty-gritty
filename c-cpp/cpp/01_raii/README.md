@@ -350,6 +350,7 @@ copy constructor and copy assignment operator much more complicated.
             free(curr_ptr0);
             free(curr_ptr1);
         }
+    }
     ```
 
   * If `wallet_size` is dynamic, we need to `free()` previously `malloc()`ed
