@@ -350,20 +350,20 @@ public:
         free(curr_ptr0);
         free(curr_ptr1);
     }
-    ```
+```
 
-    * If `wallet_size` is dynamic, we need to `free()` previously `malloc()`ed
-    memory and then `malloc()` again.
+  * If `wallet_size` is dynamic, we need to `free()` previously `malloc()`ed
+  memory and then `malloc()` again.
 
-    * But is the above example good enough? Unfortunately, the answer is no.
-    What could go wrong if we do the following?:
+  * But is the above example good enough? Unfortunately, the answer is no.
+  What could go wrong if we do the following?:
 
-    ```C++
+```C++
     DynamicWallet first_dwallet = DynamicWallet(2048);
     first_dwallet.curr_ptr0[0] = 3;
     first_dwallet.curr_ptr1[2047] = 666;
     first_dwallet = first_dwallet
-    ```
+```
 
 * A version that corrects this bug can be found [here](./pointer.cpp)
 
@@ -371,11 +371,11 @@ public:
 
 * The above practice is mainly used to demonstrate the peculiarity of the
 interplay between C and C++.
-    * If pointers are really needed in an RAII-enabled class, it is better
-    to go the "C++" way--instead of using raw pointers, we should use smart
-    pointer instead.
-    * Smart pointer has its own RAII wrapper, which could, hopefully, handle
-    the edge cases for us "automatically".
+  * If pointers are really needed in an RAII-enabled class, it is better
+  to go the "C++" way--instead of using raw pointers, we should use smart
+  pointers instead.
+  * Smart pointer has its own RAII wrapper, which could, hopefully, handle
+  the edge cases for us "automatically".
 
 ## References
 
