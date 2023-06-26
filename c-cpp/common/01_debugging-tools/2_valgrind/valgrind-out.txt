@@ -1,0 +1,214 @@
+==12897== Memcheck, a memory error detector
+==12897== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==12897== Using Valgrind-3.16.1-36d6727e1d-20200622X and LibVEX; rerun with -h for copyright info
+==12897== Command: ./main.out
+==12897== Parent PID: 12891
+==12897== 
+--12897-- 
+--12897-- Valgrind options:
+--12897--    --leak-check=full
+--12897--    --show-leak-kinds=all
+--12897--    --track-origins=yes
+--12897--    --verbose
+--12897--    --log-file=valgrind-out.txt
+--12897-- Contents of /proc/version:
+--12897--   Linux version 5.10.0-23-amd64 (debian-kernel@lists.debian.org) (gcc-10 (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2) #1 SMP Debian 5.10.179-1 (2023-05-12)
+--12897-- 
+--12897-- Arch and hwcaps: AMD64, LittleEndian, amd64-cx16-lzcnt-rdtscp-sse3-ssse3-avx-avx2-bmi-f16c-rdrand
+--12897-- Page sizes: currently 4096, max supported 4096
+--12897-- Valgrind library directory: /usr/lib/x86_64-linux-gnu/valgrind
+--12897-- Reading syms from /root/repos/the-nitty-gritty/c-cpp/common/01_debugging-tools/2_valgrind/main.out
+--12897-- Reading syms from /usr/lib/x86_64-linux-gnu/ld-2.31.so
+--12897--   Considering /usr/lib/debug/.build-id/e2/5570740d590e5cb7b1a20d86332a8d1bb3b65f.debug ..
+--12897--   .. build-id is valid
+--12897-- Reading syms from /usr/lib/x86_64-linux-gnu/valgrind/memcheck-amd64-linux
+--12897--   Considering /usr/lib/debug/.build-id/54/299c4aec0e5e5f3d7b8135341351d0e1dbfc64.debug ..
+--12897--   .. build-id is valid
+--12897--    object doesn't have a dynamic symbol table
+--12897-- Scheduler: using generic scheduler lock implementation.
+--12897-- Reading suppressions file: /usr/lib/x86_64-linux-gnu/valgrind/default.supp
+==12897== embedded gdbserver: reading from /tmp/vgdb-pipe-from-vgdb-to-12897-by-root-on-???
+==12897== embedded gdbserver: writing to   /tmp/vgdb-pipe-to-vgdb-from-12897-by-root-on-???
+==12897== embedded gdbserver: shared mem   /tmp/vgdb-pipe-shared-mem-vgdb-12897-by-root-on-???
+==12897== 
+==12897== TO CONTROL THIS PROCESS USING vgdb (which you probably
+==12897== don't want to do, unless you know exactly what you're doing,
+==12897== or are doing some strange experiment):
+==12897==   /usr/bin/vgdb --pid=12897 ...command...
+==12897== 
+==12897== TO DEBUG THIS PROCESS USING GDB: start GDB like this
+==12897==   /path/to/gdb ./main.out
+==12897== and then give GDB the following command
+==12897==   target remote | /usr/bin/vgdb --pid=12897
+==12897== --pid is optional if only one valgrind process is running
+==12897== 
+--12897-- REDIR: 0x401fa70 (ld-linux-x86-64.so.2:strlen) redirected to 0x580ca5f2 (vgPlain_amd64_linux_REDIR_FOR_strlen)
+--12897-- REDIR: 0x401f850 (ld-linux-x86-64.so.2:index) redirected to 0x580ca60c (vgPlain_amd64_linux_REDIR_FOR_index)
+--12897-- Reading syms from /usr/lib/x86_64-linux-gnu/valgrind/vgpreload_core-amd64-linux.so
+--12897--   Considering /usr/lib/debug/.build-id/f2/7641e081d3c37b410d7f31da4e2bf21040f356.debug ..
+--12897--   .. build-id is valid
+--12897-- Reading syms from /usr/lib/x86_64-linux-gnu/valgrind/vgpreload_memcheck-amd64-linux.so
+--12897--   Considering /usr/lib/debug/.build-id/25/7cdcdf80e04f91ca9e3b185ee3b52995e89946.debug ..
+--12897--   .. build-id is valid
+==12897== WARNING: new redirection conflicts with existing -- ignoring it
+--12897--     old: 0x0401fa70 (strlen              ) R-> (0000.0) 0x580ca5f2 vgPlain_amd64_linux_REDIR_FOR_strlen
+--12897--     new: 0x0401fa70 (strlen              ) R-> (2007.0) 0x0483bda0 strlen
+--12897-- REDIR: 0x401c290 (ld-linux-x86-64.so.2:strcmp) redirected to 0x483cc90 (strcmp)
+--12897-- REDIR: 0x401ffb0 (ld-linux-x86-64.so.2:mempcpy) redirected to 0x4840740 (mempcpy)
+--12897-- Reading syms from /opt/intel/oneapi/mkl/2022.2.0/lib/intel64/libmkl_core.so.2
+--12897-- Reading syms from /opt/intel/oneapi/mkl/2022.2.0/lib/intel64/libmkl_sequential.so.2
+--12897-- Reading syms from /usr/lib/x86_64-linux-gnu/libc-2.31.so
+--12897--   Considering /usr/lib/debug/.build-id/e1/5ec78d51a522023f9cfc58dc284f379d81860b.debug ..
+--12897--   .. build-id is valid
+--12897-- Reading syms from /usr/lib/x86_64-linux-gnu/libdl-2.31.so
+--12897--   Considering /usr/lib/debug/.build-id/46/b3bf3f9b9eb092a5c0cf5575e89092f768054c.debug ..
+--12897--   .. build-id is valid
+--12897-- Reading syms from /usr/lib/x86_64-linux-gnu/libpthread-2.31.so
+--12897--   Considering /usr/lib/debug/.build-id/25/5e355c207aba91a59ae1f808e3b4da443abf0c.debug ..
+--12897--   .. build-id is valid
+--12897-- REDIR: 0xa6dbd60 (libc.so.6:memmove) redirected to 0x48301b0 (_vgnU_ifunc_wrapper)
+--12897-- REDIR: 0xa6db060 (libc.so.6:strncpy) redirected to 0x48301b0 (_vgnU_ifunc_wrapper)
+--12897-- REDIR: 0xa6dc230 (libc.so.6:strcasecmp) redirected to 0x48301b0 (_vgnU_ifunc_wrapper)
+--12897-- REDIR: 0xa6da7b0 (libc.so.6:strcat) redirected to 0x48301b0 (_vgnU_ifunc_wrapper)
+--12897-- REDIR: 0xa6db0f0 (libc.so.6:rindex) redirected to 0x48301b0 (_vgnU_ifunc_wrapper)
+--12897-- REDIR: 0xa6dd630 (libc.so.6:rawmemchr) redirected to 0x48301b0 (_vgnU_ifunc_wrapper)
+--12897-- REDIR: 0xa6f5980 (libc.so.6:wmemchr) redirected to 0x48301b0 (_vgnU_ifunc_wrapper)
+--12897-- REDIR: 0xa6f5450 (libc.so.6:wcscmp) redirected to 0x48301b0 (_vgnU_ifunc_wrapper)
+--12897-- REDIR: 0xa6dbfa0 (libc.so.6:mempcpy) redirected to 0x48301b0 (_vgnU_ifunc_wrapper)
+--12897-- REDIR: 0xa6dbcd0 (libc.so.6:bcmp) redirected to 0x48301b0 (_vgnU_ifunc_wrapper)
+--12897-- REDIR: 0xa6dafb0 (libc.so.6:strncmp) redirected to 0x48301b0 (_vgnU_ifunc_wrapper)
+--12897-- REDIR: 0xa6da8d0 (libc.so.6:strcmp) redirected to 0x48301b0 (_vgnU_ifunc_wrapper)
+--12897-- REDIR: 0xa6dbe90 (libc.so.6:memset) redirected to 0x48301b0 (_vgnU_ifunc_wrapper)
+--12897-- REDIR: 0xa6f53e0 (libc.so.6:wcschr) redirected to 0x48301b0 (_vgnU_ifunc_wrapper)
+--12897-- REDIR: 0xa6daeb0 (libc.so.6:strnlen) redirected to 0x48301b0 (_vgnU_ifunc_wrapper)
+--12897-- REDIR: 0xa6daa20 (libc.so.6:strcspn) redirected to 0x48301b0 (_vgnU_ifunc_wrapper)
+--12897-- REDIR: 0xa6dc280 (libc.so.6:strncasecmp) redirected to 0x48301b0 (_vgnU_ifunc_wrapper)
+--12897-- REDIR: 0xa6da990 (libc.so.6:strcpy) redirected to 0x48301b0 (_vgnU_ifunc_wrapper)
+--12897-- REDIR: 0xa6dc3d0 (libc.so.6:memcpy@@GLIBC_2.14) redirected to 0x48301b0 (_vgnU_ifunc_wrapper)
+--12897-- REDIR: 0xa6f6bf0 (libc.so.6:wcsnlen) redirected to 0x48301b0 (_vgnU_ifunc_wrapper)
+--12897-- REDIR: 0xa6f54c0 (libc.so.6:wcscpy) redirected to 0x48301b0 (_vgnU_ifunc_wrapper)
+--12897-- REDIR: 0xa6db160 (libc.so.6:strpbrk) redirected to 0x48301b0 (_vgnU_ifunc_wrapper)
+--12897-- REDIR: 0xa6da840 (libc.so.6:index) redirected to 0x48301b0 (_vgnU_ifunc_wrapper)
+--12897-- REDIR: 0xa6dae40 (libc.so.6:strlen) redirected to 0x48301b0 (_vgnU_ifunc_wrapper)
+--12897-- REDIR: 0xa6e19f0 (libc.so.6:memrchr) redirected to 0x48301b0 (_vgnU_ifunc_wrapper)
+--12897-- REDIR: 0xa6dc2d0 (libc.so.6:strcasecmp_l) redirected to 0x48301b0 (_vgnU_ifunc_wrapper)
+--12897-- REDIR: 0xa6dbc60 (libc.so.6:memchr) redirected to 0x48301b0 (_vgnU_ifunc_wrapper)
+--12897-- REDIR: 0xa6f5560 (libc.so.6:wcslen) redirected to 0x48301b0 (_vgnU_ifunc_wrapper)
+--12897-- REDIR: 0xa6db400 (libc.so.6:strspn) redirected to 0x48301b0 (_vgnU_ifunc_wrapper)
+--12897-- REDIR: 0xa6dc1a0 (libc.so.6:stpncpy) redirected to 0x48301b0 (_vgnU_ifunc_wrapper)
+--12897-- REDIR: 0xa6dc110 (libc.so.6:stpcpy) redirected to 0x48301b0 (_vgnU_ifunc_wrapper)
+--12897-- REDIR: 0xa6dd6a0 (libc.so.6:strchrnul) redirected to 0x48301b0 (_vgnU_ifunc_wrapper)
+--12897-- REDIR: 0xa6dc320 (libc.so.6:strncasecmp_l) redirected to 0x48301b0 (_vgnU_ifunc_wrapper)
+--12897-- REDIR: 0xa7ae130 (libc.so.6:__strrchr_avx2) redirected to 0x483b7b0 (rindex)
+--12897-- REDIR: 0xa7b1720 (libc.so.6:__memset_avx2_unaligned_erms) redirected to 0x483f650 (memset)
+--12897-- REDIR: 0xa6d6d30 (libc.so.6:malloc) redirected to 0x4838710 (malloc)
+--12897-- REDIR: 0xa7adf40 (libc.so.6:__strchrnul_avx2) redirected to 0x48402b0 (strchrnul)
+==12897== Use of uninitialised value of size 8
+==12897==    at 0xA69EEFB: _itoa_word (_itoa.c:179)
+==12897==    by 0xA6B876C: __vfprintf_internal (vfprintf-internal.c:1646)
+==12897==    by 0xA6A4D9A: printf (printf.c:33)
+==12897==    by 0x1091C2: main (main.c:23)
+==12897==  Uninitialised value was created by a heap allocation
+==12897==    at 0x483877F: malloc (vg_replace_malloc.c:307)
+==12897==    by 0x109151: my_func (main.c:9)
+==12897==    by 0x1091A5: main (main.c:21)
+==12897== 
+==12897== Conditional jump or move depends on uninitialised value(s)
+==12897==    at 0xA69EF0C: _itoa_word (_itoa.c:179)
+==12897==    by 0xA6B876C: __vfprintf_internal (vfprintf-internal.c:1646)
+==12897==    by 0xA6A4D9A: printf (printf.c:33)
+==12897==    by 0x1091C2: main (main.c:23)
+==12897==  Uninitialised value was created by a heap allocation
+==12897==    at 0x483877F: malloc (vg_replace_malloc.c:307)
+==12897==    by 0x109151: my_func (main.c:9)
+==12897==    by 0x1091A5: main (main.c:21)
+==12897== 
+==12897== Conditional jump or move depends on uninitialised value(s)
+==12897==    at 0xA6B93A3: __vfprintf_internal (vfprintf-internal.c:1646)
+==12897==    by 0xA6A4D9A: printf (printf.c:33)
+==12897==    by 0x1091C2: main (main.c:23)
+==12897==  Uninitialised value was created by a heap allocation
+==12897==    at 0x483877F: malloc (vg_replace_malloc.c:307)
+==12897==    by 0x109151: my_func (main.c:9)
+==12897==    by 0x1091A5: main (main.c:21)
+==12897== 
+==12897== Conditional jump or move depends on uninitialised value(s)
+==12897==    at 0xA6B888C: __vfprintf_internal (vfprintf-internal.c:1646)
+==12897==    by 0xA6A4D9A: printf (printf.c:33)
+==12897==    by 0x1091C2: main (main.c:23)
+==12897==  Uninitialised value was created by a heap allocation
+==12897==    at 0x483877F: malloc (vg_replace_malloc.c:307)
+==12897==    by 0x109151: my_func (main.c:9)
+==12897==    by 0x1091A5: main (main.c:21)
+==12897== 
+--12897-- REDIR: 0xa7b1270 (libc.so.6:__mempcpy_avx_unaligned_erms) redirected to 0x48403c0 (mempcpy)
+--12897-- REDIR: 0xa7ae300 (libc.so.6:__strlen_avx2) redirected to 0x483bc80 (strlen)
+--12897-- REDIR: 0xa6d7360 (libc.so.6:free) redirected to 0x4839940 (free)
+==12897== 
+==12897== HEAP SUMMARY:
+==12897==     in use at exit: 1,048,576 bytes in 64 blocks
+==12897==   total heap usage: 65 allocs, 1 frees, 1,049,600 bytes allocated
+==12897== 
+==12897== Searching for pointers to 64 not-freed blocks
+==12897== Checked 765,616 bytes
+==12897== 
+==12897== 1,048,576 bytes in 64 blocks are definitely lost in loss record 1 of 1
+==12897==    at 0x483877F: malloc (vg_replace_malloc.c:307)
+==12897==    by 0x109151: my_func (main.c:9)
+==12897==    by 0x1091A5: main (main.c:21)
+==12897== 
+==12897== LEAK SUMMARY:
+==12897==    definitely lost: 1,048,576 bytes in 64 blocks
+==12897==    indirectly lost: 0 bytes in 0 blocks
+==12897==      possibly lost: 0 bytes in 0 blocks
+==12897==    still reachable: 0 bytes in 0 blocks
+==12897==         suppressed: 0 bytes in 0 blocks
+==12897== 
+==12897== ERROR SUMMARY: 23 errors from 5 contexts (suppressed: 0 from 0)
+==12897== 
+==12897== 1 errors in context 1 of 5:
+==12897== Conditional jump or move depends on uninitialised value(s)
+==12897==    at 0xA6B888C: __vfprintf_internal (vfprintf-internal.c:1646)
+==12897==    by 0xA6A4D9A: printf (printf.c:33)
+==12897==    by 0x1091C2: main (main.c:23)
+==12897==  Uninitialised value was created by a heap allocation
+==12897==    at 0x483877F: malloc (vg_replace_malloc.c:307)
+==12897==    by 0x109151: my_func (main.c:9)
+==12897==    by 0x1091A5: main (main.c:21)
+==12897== 
+==12897== 
+==12897== 1 errors in context 2 of 5:
+==12897== Conditional jump or move depends on uninitialised value(s)
+==12897==    at 0xA6B93A3: __vfprintf_internal (vfprintf-internal.c:1646)
+==12897==    by 0xA6A4D9A: printf (printf.c:33)
+==12897==    by 0x1091C2: main (main.c:23)
+==12897==  Uninitialised value was created by a heap allocation
+==12897==    at 0x483877F: malloc (vg_replace_malloc.c:307)
+==12897==    by 0x109151: my_func (main.c:9)
+==12897==    by 0x1091A5: main (main.c:21)
+==12897== 
+==12897== 
+==12897== 10 errors in context 3 of 5:
+==12897== Conditional jump or move depends on uninitialised value(s)
+==12897==    at 0xA69EF0C: _itoa_word (_itoa.c:179)
+==12897==    by 0xA6B876C: __vfprintf_internal (vfprintf-internal.c:1646)
+==12897==    by 0xA6A4D9A: printf (printf.c:33)
+==12897==    by 0x1091C2: main (main.c:23)
+==12897==  Uninitialised value was created by a heap allocation
+==12897==    at 0x483877F: malloc (vg_replace_malloc.c:307)
+==12897==    by 0x109151: my_func (main.c:9)
+==12897==    by 0x1091A5: main (main.c:21)
+==12897== 
+==12897== 
+==12897== 10 errors in context 4 of 5:
+==12897== Use of uninitialised value of size 8
+==12897==    at 0xA69EEFB: _itoa_word (_itoa.c:179)
+==12897==    by 0xA6B876C: __vfprintf_internal (vfprintf-internal.c:1646)
+==12897==    by 0xA6A4D9A: printf (printf.c:33)
+==12897==    by 0x1091C2: main (main.c:23)
+==12897==  Uninitialised value was created by a heap allocation
+==12897==    at 0x483877F: malloc (vg_replace_malloc.c:307)
+==12897==    by 0x109151: my_func (main.c:9)
+==12897==    by 0x1091A5: main (main.c:21)
+==12897== 
+==12897== ERROR SUMMARY: 23 errors from 5 contexts (suppressed: 0 from 0)
