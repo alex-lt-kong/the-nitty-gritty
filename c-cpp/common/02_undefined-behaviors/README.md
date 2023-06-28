@@ -240,11 +240,12 @@ unsigned integer type is always defined.
   Converting 2147483648.000000 to uint8_t gives 255
   ```
 
-### [7. Dereferencing a float pointer as an unsigned int pointer (a.k.a. strict aliasing rule violation)](./07_dereference-float-pointer-as-uint-pointer)
+### [7. Strict aliasing rule violation (e.g. Dereferencing a float pointer as an unsigned int pointer)](./07_strict-aliasing-rule-violation)
 
 * This is yet another nuanced case. The general idea is that doing the
 following causes UB:
   ```C
+  // Let's assume sizeof(float) == sizeof(unsigned int) == 4
   float pi = 3.14;
   unsigned int* pi_int = (unsigned int*)&pi;
   ```
@@ -279,13 +280,17 @@ following causes UB:
   > [88] The intent of this list is to specify those circumstances in which 
   > an object may or may not be aliased
   
-1  Section 6.2.7 of [C11][1] defines what does "compatible" mean for types.
+  * **Compatible** is explained in section 6.2.7 of [C11][1].
   Two types are "compatible" only if they are "the same". For example,
   `int32_t` and `int` are compatible and `int` and `float` are not compatible.
-  `int` and `short` are not compatible either.  
+  `int` and `short` are not compatible either.
+  * **Qualified** is explained in section 6.7.3 of  [C11][1]. Essentially,
+  a qualified version of a type means a type with qualifiers. Qualifiers
+  are keywords like `const`, `volatile`, etc.
   * A more detailed explanation can be found
   [here](https://www.cs.auckland.ac.nz/references/unix/digital/AQTLTBTE/DOCU_020.HTM)
-  .
+  . 
+
   * The standard lists a few cases where aliasing are allowed. Going through
   them one by one could be a bit tedious. To summerize, only the following
   and their obvious variants are legal aliasing:
@@ -332,7 +337,8 @@ following causes UB:
 that different type can't be aliased, compilers can apply a wide range of
 optimization techniques called "Type-Based Alias Analysis" (TBAA).
 
-* Two examples are prepared to demonstrate the effect of TBAA [here](./07_dereference-float-pointer-as-uint-pointer/lib.c):
+* Two examples are prepared to demonstrate the effect of TBAA
+[here](./07_strict-aliasing-rule-violation/lib.c):
   ```C
   void manipulate_inplace_int(int* arr, int* y, size_t arr_size) {
       for (int i = 0; i < arr_size; ++i)
@@ -346,7 +352,7 @@ optimization techniques called "Type-Based Alias Analysis" (TBAA).
   ```
 
 * These two functions differ by the type of `y` only. This trival difference
-  results in different [machine code](./07_dereference-float-pointer-as-uint-pointer/lib.asm):
+  results in different [machine code](./07_strict-aliasing-rule-violation/lib.asm):
   ```asm  
   void manipulate_inplace_int(int* arr, int* y, size_t arr_size) {
       for (int i = 0; i < arr_size; ++i)
@@ -397,6 +403,18 @@ optimization techniques called "Type-Based Alias Analysis" (TBAA).
   `arr` and `y` are not of compatible types, so that they can't be referring
   to the same memory location.
 
+* This rule has another very significant implication. There has long been a
+pain point in C that we don't have a proper `byte` type. Typically people
+might use `uint8_t` is a more self-explanatory alternative of `byte` or use
+the more common `unsigned char` type.
+  * Using `uint8_t` is, strictly speaking, a violation of the strict aliasing
+  rule. As 6.3.1.4 of [C11][1] documents, the standard-complain way to access
+  a variable must be done via either a "compatible" type or a character type.
+  Usint `uint8_t` to access memory with known data type could lead to undefined
+  behaviors.
+  * Paragraph 15 of section 6.2.5 of [C11][1] stipualtes that types `char`,
+  `signed char`, and `unsigned char` are collectively called the
+  *character types*.
 
 ### 8. Arbitrary pointers comparison
 
