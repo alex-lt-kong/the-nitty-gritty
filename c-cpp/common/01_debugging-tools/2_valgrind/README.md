@@ -2,6 +2,12 @@
 
 * `apt install valgrind`
 
+## Usage
+
+* Refer to [Makefile](./Makefile)
+
+* A useful [link](https://stackoverflow.com/questions/5134891/how-do-i-use-valgrind-to-find-memory-leaks)
+
 ## Limitations
 
 * it is quite slow;
