@@ -273,6 +273,7 @@ following causes UB:
   > — an aggregate or union type that includes one of the aforementioned
   > types among its members (including, recursively, a member of a
   > subaggregate or contained union), or
+  >
   > — a character type.
   >
   > -----
@@ -295,43 +296,22 @@ following causes UB:
   them one by one could be a bit tedious. To summerize, only the following
   and their obvious variants are legal aliasing:
 
-    1. 
-        ```C
-        int x = 1;
-        int *p = &x;
-        ```
-    1. 
-        ```C
-        int x = 1;
-        const int *p = &x;
-        ```
-    1. 
-        ```C
-        int x = 1;
-        unsigned int *p = (unsigned int*)&x;
-        ```
-    1. 
-        ```C
-        int x = 1;
-        const unsigned int *p = (const unsigned int*)&x;
-        ```
+    ```C
+  
+    int x = 1;
+    int *p = &x;
+    signed int *p = &x;            // Compatible type
+    const int *p = &x;             // Qualified version    
+    unsigned char *p = (char *)&x; // Character type
+    ```
     while the following and most other unmentioned ones are illegal:
     
-    1. 
-        ```C
-        int x = 1;
-        short *p = (short*)&x;
-        ```
-    1. 
-        ```C
-        int x = 1;
-        float *p = (float*)&x;
-        ```
-    1. 
-        ```C
-        int x = 1;
-        double *p = (double*)&x;
-        ```
+    ```C
+    int x = 1;
+    short *p = (short*)&x;
+    float *p = (float*)&x;
+    double *p = (double*)&x;
+    ```
     
 * The rationale behind the strict aliasing rule is performance. By assuming
 that different type can't be aliased, compilers can apply a wide range of
@@ -405,10 +385,10 @@ optimization techniques called "Type-Based Alias Analysis" (TBAA).
 
 * This rule has another very significant implication. There has long been a
 pain point in C that we don't have a proper `byte` type. Typically people
-might use `uint8_t` is a more self-explanatory alternative of `byte` or use
+might use `uint8_t` as a more self-explanatory alternative of `byte` or use
 the more common `unsigned char` type.
   * Using `uint8_t` is, strictly speaking, a violation of the strict aliasing
-  rule. As 6.3.1.4 of [C11][1] documents, the standard-complain way to access
+  rule. As 6.3.1.4 of [C11][1] provides, the standard-complain way to access
   a variable must be done via either a "compatible" type or a character type.
   Usint `uint8_t` to access memory with known data type could lead to undefined
   behaviors.
