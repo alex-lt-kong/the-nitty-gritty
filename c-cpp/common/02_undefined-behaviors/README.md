@@ -300,9 +300,9 @@ following causes UB:
   
     int x = 1;
     int *p = &x;
-    signed int *p = &x;            // Compatible type
-    const int *p = &x;             // Qualified version    
-    unsigned char *p = (char *)&x; // Character type
+    signed int *p = &x;                      // Compatible type
+    const int *p = &x;                       // Qualified version    
+    unsigned char *p = (unsigned char *)&x;  // Character type
     ```
     while the following and most other unmentioned ones are illegal:
     
