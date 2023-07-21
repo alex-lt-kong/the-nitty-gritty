@@ -1,10 +1,14 @@
-# Vectorization
+# Parallelism
 
-Vectorization is a huge topic... 
+Parallelism is a huge topic... The first part of this project is on CPU-based
+vectorization. 
 [A Guide to Vectorization with Intel C++ Compilers](https://www.intel.com/content/dam/develop/external/us/en/documents/compilerautovectorizationguide.pdf) (the Guide)
-could be a starting point for beginners.
+could be a starting point for beginners. The second part of this project moves
+the focus to GPU-based parallelism (Nvidia's CUDA)
 
-## Install Intel's C++ compiler
+## CPU-based approach (vectorization)
+
+### Install Intel's C++ compiler
 
 * `gcc` supports auto vectorization as well. However, since the Guide uses Intel's own compiler, here we also document
 how to install and use it.
@@ -22,7 +26,7 @@ and `icc` on Linux.
 * The `-vec-report` option documented in the Guide seems obsolete as of 2022, use `-qopt-report -qopt-report-phase=vec`
 instead.
 
-## Points to note:
+### Points to note:
 
 * The performance gain from vectorization can be difficult to measure, since CPU caching, memory bandwidth, etc 
  can all have an even larger impact on the performance.
@@ -56,3 +60,5 @@ will be the CPU's utilization during the execution of `add eax,DWORD PTR [rax]`?
 
 * Some experiments which are more closely related to memory are moved to the separate directory
 [01_memory-and-cpu-cache](./01_memory-and-cpu-cache).
+
+## GPU-based approach
