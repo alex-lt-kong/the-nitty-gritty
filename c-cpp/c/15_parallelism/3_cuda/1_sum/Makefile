@@ -1,6 +1,6 @@
-CC = gcc
-CFLAGS = -O2 -Wall -pedantic -Wextra -Wc++-compat
-
+CC = /usr/local/cuda/bin/nvcc
+CFLAGS = -O3
+INC=-I/usr/local/cuda/targets/x86_64-linux/include/
 
 main:
-	$(CC) main.c -o main.out $(CFLAGS)
+	$(CC) main.cu -o main.out $(CFLAGS) $(INC)
