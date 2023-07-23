@@ -1,15 +1,17 @@
-#include <stdio.h>
 #include <stdint.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
 
 #include "../utils.h"
 
 #define SIZE 256
-// The idea is that, the SIZE must be small enough to fit into CPU cache, so that we can test the "real" performance
-// of CPU, instead of keeping it waiting for data to be fetched from memory.
+// The idea is that, the SIZE must be small enough to fit into CPU cache, so
+// that we can test the "real" performance of CPU, instead of keeping it waiting
+// for data to be fetched from memory.
 
-void linear_func(uint32_t a, uint32_t b, uint32_t* arr, uint32_t* results, size_t arr_len) {
+void linear_func(uint32_t a, uint32_t b, uint32_t *arr, uint32_t *results,
+                 size_t arr_len) {
   for (int i = 0; i < arr_len; ++i) {
     results[i] = a * arr[i] + b;
   }
@@ -18,8 +20,8 @@ void linear_func(uint32_t a, uint32_t b, uint32_t* arr, uint32_t* results, size_
 int main() {
   srand(time(NULL));
   double elapsed_times;
-  uint32_t* arr = malloc(SIZE * sizeof(uint32_t));
-  uint32_t* results = malloc(SIZE * sizeof(uint32_t));
+  uint32_t *arr = malloc(SIZE * sizeof(uint32_t));
+  uint32_t *results = malloc(SIZE * sizeof(uint32_t));
   uint32_t a = rand() % 1024;
   uint32_t b = rand() % 1024;
   for (int j = 0; j < SIZE; ++j) {
