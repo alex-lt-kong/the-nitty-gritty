@@ -9,57 +9,115 @@
 
 #include "../../utils.h"
 
-typedef void calculationRoutine(double *a, double *b, double *c, ssize_t len);
+typedef void calculationRoutine(const double *a, const double *b, double *c,
+                                const ssize_t len);
 
 /* The function name/signature doesn't matter, it will be transparently sent to
  * GPU to execute.
  * This function, to be executed on NVIDIA GPU, is also known as "CUDA kernel".
  */
-__global__ void gpuVectorAddition(double *a, double *b, double *c,
-                                  ssize_t len) {
+__global__ void gpuVectorAdd(const double *a, const double *b, double *c,
+                             const ssize_t len) {
   int i = blockDim.x * blockIdx.x + threadIdx.x;
   if (i < len) {
-    c[i] = sqrt(a[i] / b[i]) + sqrt(b[i] / a[i]) + pow(a[i], 0.33) +
-           pow(b[i], 0.22);
+    c[i] = a[i] + b[i];
   }
 }
 
-void cpuVectorAddition(const double *a, const double *b, double *c,
-                       const ssize_t len) {
+__global__ void gpuVectorMul(const double *a, const double *b, double *c,
+                             const ssize_t len) {
+  int i = blockDim.x * blockIdx.x + threadIdx.x;
+  if (i < len) {
+    c[i] = a[i] * b[i];
+  }
+}
+
+__global__ void gpuVectorDiv(const double *a, const double *b, double *c,
+                             const ssize_t len) {
+  int i = blockDim.x * blockIdx.x + threadIdx.x;
+  if (i < len) {
+    c[i] = a[i] / b[i];
+  }
+}
+
+__global__ void gpuVectorPow(const double *a, const double *b, double *c,
+                             const ssize_t len) {
+  int i = blockDim.x * blockIdx.x + threadIdx.x;
+  if (i < len) {
+    c[i] = pow(a[i], b[i]);
+  }
+}
+
+void cpuVectorAdd(const double *a, const double *b, double *c,
+                  const ssize_t len) {
   for (int i = 0; i < len; ++i) {
-    c[i] = sqrt(a[i] / b[i]) + sqrt(b[i] / a[i]) + pow(a[i], 0.33) +
-           pow(b[i], 0.22);
+    c[i] = a[i] + b[i];
   }
 }
 
-void gpu_version(calculationRoutine funcPtr, double *a, double *b, double *c,
-                 const ssize_t len) {
+void cpuVectorMul(const double *a, const double *b, double *c,
+                  const ssize_t len) {
+  for (int i = 0; i < len; ++i) {
+    c[i] = a[i] * b[i];
+  }
+}
 
-  double *cuda_a = NULL;
-  double *cuda_b = NULL;
-  double *cuda_c = NULL;
+void cpuVectorDiv(const double *a, const double *b, double *c,
+                  const ssize_t len) {
+  for (int i = 0; i < len; ++i) {
+    c[i] = a[i] / b[i];
+  }
+}
+
+void cpuVectorPow(const double *a, const double *b, double *c,
+                  const ssize_t len) {
+  for (int i = 0; i < len; ++i) {
+    c[i] = pow(a[i], b[i]);
+  }
+}
+
+void callCPURoutine(calculationRoutine funcPtr, double *a, double *b, double *c,
+                    const ssize_t len) {
+  uint64_t t0, t1;
+  uint64_t cpu_elapsed;
+  printf("--- Running on CPU ---\n");
+  t0 = get_timestamp_in_microsec();
+  funcPtr(a, b, c, len);
+  t1 = get_timestamp_in_microsec();
+  cpu_elapsed = t1 - t0;
+  printf("Done, took %.2lfms\n", cpu_elapsed / 1000.0);
+}
+
+void callGPURoutine(calculationRoutine funcPtr, double *a, double *b, double *c,
+                    const ssize_t len) {
+
+  cudaError_t cudaError;
+  uint64_t t0, t1, elapsed, T0, T1;
+
+  printf("--- Running on GPU ---\n");
+  T0 = get_timestamp_in_microsec();
+  double *cudaA = NULL;
+  double *cudaB = NULL;
+  double *cudaC = NULL;
   int threads_per_block, blocks_per_grid;
-  cudaError_t cu_error;
   // Allocate memory for pointers into the GPU
-  if ((cu_error = cudaMalloc(&cuda_a, sizeof(double) * len)) != cudaSuccess ||
-      (cu_error = cudaMalloc(&cuda_b, sizeof(double) * len)) != cudaSuccess ||
-      (cu_error = cudaMalloc(&cuda_c, sizeof(double) * len)) != cudaSuccess) {
+  if ((cudaError = cudaMalloc(&cudaA, sizeof(double) * len)) != cudaSuccess ||
+      (cudaError = cudaMalloc(&cudaB, sizeof(double) * len)) != cudaSuccess ||
+      (cudaError = cudaMalloc(&cudaC, sizeof(double) * len)) != cudaSuccess) {
     // C/C++ implements short-circuit evaluation, meaning that for the ||
     // operator, if the first argument is evaluted to true, the 2nd
     // argument will not be evaluted
-    fprintf(stderr, "cudaMalloc() failed: %s\n", cudaGetErrorString(cu_error));
+    fprintf(stderr, "cudaMalloc() failed: %s\n", cudaGetErrorString(cudaError));
     goto err_cuda_malloc;
   }
 
-  uint64_t t0, t1, elapsed;
-
   t0 = get_timestamp_in_microsec();
   // Copy vectors into the GPU
-  if ((cu_error = cudaMemcpy(cuda_a, a, len * sizeof(double),
-                             cudaMemcpyHostToDevice)) != cudaSuccess ||
-      (cu_error = cudaMemcpy(cuda_b, b, len * sizeof(double),
-                             cudaMemcpyHostToDevice)) != cudaSuccess) {
-    fprintf(stderr, "cudaMemcpy() failed: %s\n", cudaGetErrorString(cu_error));
+  if ((cudaError = cudaMemcpy(cudaA, a, len * sizeof(double),
+                              cudaMemcpyHostToDevice)) != cudaSuccess ||
+      (cudaError = cudaMemcpy(cudaB, b, len * sizeof(double),
+                              cudaMemcpyHostToDevice)) != cudaSuccess) {
+    fprintf(stderr, "cudaMemcpy() failed: %s\n", cudaGetErrorString(cudaError));
     goto err_cuda_memcpy;
   }
   t1 = get_timestamp_in_microsec();
@@ -72,14 +130,14 @@ void gpu_version(calculationRoutine funcPtr, double *a, double *b, double *c,
   threads_per_block = 128;
   blocks_per_grid = (len + threads_per_block - 1) / threads_per_block;
   t0 = get_timestamp_in_microsec();
-  funcPtr<<<blocks_per_grid, threads_per_block>>>(cuda_a, cuda_b, cuda_c, len);
+  funcPtr<<<blocks_per_grid, threads_per_block>>>(cudaA, cudaB, cudaC, len);
   t1 = get_timestamp_in_microsec();
   printf("Took %.2lfms to calculate\n", (t1 - t0) / 1000.0);
 
   t0 = get_timestamp_in_microsec();
-  if ((cu_error = cudaMemcpy(c, cuda_c, len * sizeof(double),
-                             cudaMemcpyDeviceToHost)) != cudaSuccess) {
-    fprintf(stderr, "cudaMemcpy() failed: %s\n", cudaGetErrorString(cu_error));
+  if ((cudaError = cudaMemcpy(c, cudaC, len * sizeof(double),
+                              cudaMemcpyDeviceToHost)) != cudaSuccess) {
+    fprintf(stderr, "cudaMemcpy() failed: %s\n", cudaGetErrorString(cudaError));
     goto err_cuda_memcpy;
   }
   t1 = get_timestamp_in_microsec();
@@ -89,35 +147,14 @@ void gpu_version(calculationRoutine funcPtr, double *a, double *b, double *c,
          len * sizeof(double) / 1024.0 / 1024 / (elapsed / 1000.0 / 1000.0));
 err_cuda_memcpy:
 err_cuda_malloc:
-  cudaFree(cuda_a);
-  cudaFree(cuda_b);
-  cudaFree(cuda_c);
+  cudaFree(cudaA);
+  cudaFree(cudaB);
+  cudaFree(cudaC);
+  T1 = get_timestamp_in_microsec();
+  printf("Done, took %.2lfms\n", (T1 - T0) / 1000.0);
 }
 
-int main(void) {
-  int retval = 0;
-  int device;
-  cudaDeviceProp prop;
-  int inconsistent_count = 0;
-
-  srand(time(NULL));
-  const ssize_t len = 200 * 1000 * 1000;
-  double *a = (double *)malloc(len * sizeof(double));
-  double *b = (double *)malloc(len * sizeof(double));
-  double *c_cpu = (double *)calloc(len, sizeof(double));
-  double *c_gpu = (double *)calloc(len, sizeof(double));
-
-  if (cudaGetDevice(&device) != cudaSuccess ||
-      cudaGetDeviceProperties(&prop, device) != cudaSuccess) {
-    retval = -1;
-    fprintf(stderr, "GPU error\n");
-    goto err_gpu_error;
-  }
-  if (a == NULL || b == NULL || c_cpu == NULL || c_gpu == NULL) {
-    fprintf(stderr, "malloc() failed\n");
-    goto err_malloc;
-  }
-
+void prepareRandomNumbers(double *a, double *b, ssize_t len) {
   for (int i = 0; i < len; ++i) {
     a[i] = rand() % (RAND_MAX / 2 - 1);
     b[i] = rand() % (RAND_MAX / 2 - 1);
@@ -132,27 +169,12 @@ int main(void) {
   }
   printf("%.1lf MB random data generated\n",
          2 * len * sizeof(double) / 1024.0 / 1024);
+}
 
-  usleep(1000); // sleep for 1 ms
-  uint64_t t0, t1;
-  uint64_t cpu_elapsed, gpu_elapsed;
+void checkResults(const double *c_cpu, const double *c_gpu, const ssize_t len) {
+  printf("\nChecking if CPU/GPU results are identical...");
 
-  printf("=== Running on CPU ===\n");
-  t0 = get_timestamp_in_microsec();
-  (void)cpuVectorAddition(a, b, c_cpu, len);
-  t1 = get_timestamp_in_microsec();
-  cpu_elapsed = t1 - t0;
-  printf("Done, took %.2lfms\n\n", cpu_elapsed / 1000.0);
-
-  printf("=== Running on GPU (%s) ===\n", prop.name);
-  t0 = get_timestamp_in_microsec();
-  (void)gpu_version(&gpuVectorAddition, a, b, c_gpu, len);
-  t1 = get_timestamp_in_microsec();
-  gpu_elapsed = t1 - t0;
-  printf("Done, took %.2lfms\n\n", gpu_elapsed / 1000.0);
-
-  printf("Checking if CPU/GPU results are identical...\n");
-
+  int inconsistent_count = 0;
   for (int i = 0; i < len; ++i) {
     if (fabs(c_cpu[i] - c_gpu[i]) > 1e-6) {
       fprintf(stderr, "%d-th element is DIFFERENT (%lf vs %lf)!!!\n", i,
@@ -165,16 +187,78 @@ int main(void) {
     }
   }
   if (inconsistent_count == 0) {
-    printf("YES!\n");
+    printf("YES!\n\n");
   } else {
-    fprintf(stderr, "%d mismatches found!\n", inconsistent_count);
+    fprintf(stderr, "%d mismatches found!\n\n", inconsistent_count);
+  }
+}
+
+void printCPUandGPU() {
+  FILE *fp = fopen("/proc/cpuinfo", "r");
+  char line[PATH_MAX];
+  char *version = NULL;
+
+  while (fgets(line, PATH_MAX, fp)) {
+    if (strstr(line, "model name") != NULL) {
+      version = strchr(line, ':') + 2; // skip over ": "
+      break;
+    }
+  }
+
+  fclose(fp);
+
+  if (version) {
+    printf("CPU: %s", version);
+  } else {
+    printf("Failed to get CPU version.");
+  }
+
+  int device;
+  cudaDeviceProp prop;
+  cudaError_t cudaError;
+  if ((cudaError = cudaGetDevice(&device)) != cudaSuccess ||
+      (cudaError = cudaGetDeviceProperties(&prop, device)) != cudaSuccess) {
+    fprintf(stderr, "cudaGetDevice() failed: %s\n",
+            cudaGetErrorString(cudaError));
+  }
+  printf("GPU: %s\n\n", prop.name);
+}
+
+int main(void) {
+  int retval = 0;
+  printCPUandGPU();
+  const ssize_t len = 200 * 1000 * 1000;
+  double *a = (double *)malloc(len * sizeof(double));
+  double *b = (double *)malloc(len * sizeof(double));
+  double *cCPU = (double *)calloc(len, sizeof(double));
+  double *cGPU = (double *)calloc(len, sizeof(double));
+
+  srand(time(NULL));
+
+  calculationRoutine *cpuFuncPtrs[] = {&cpuVectorAdd, &cpuVectorMul,
+                                       &cpuVectorDiv, &cpuVectorPow};
+  calculationRoutine *gpuFuncPtrs[] = {&gpuVectorAdd, &gpuVectorMul,
+                                       &gpuVectorDiv, &gpuVectorPow};
+  char routineNames[][32] = {"vectorAdd", "vectorMul", "vectorDiv",
+                             "vectorPow"};
+
+  if (a == NULL || b == NULL || cCPU == NULL || cGPU == NULL) {
+    fprintf(stderr, "malloc() failed\n");
+    goto err_malloc;
+  }
+  prepareRandomNumbers(a, b, len);
+
+  for (int i = 0; i < sizeof(cpuFuncPtrs) / sizeof(calculationRoutine *); ++i) {
+    printf("\n========== Now running: %s ==========\n", routineNames[i]);
+    (void)callCPURoutine(cpuFuncPtrs[i], a, b, cCPU, len);
+    (void)callGPURoutine(gpuFuncPtrs[i], a, b, cGPU, len);
+    checkResults(cCPU, cGPU, len);
   }
 
 err_malloc:
   free(a);
   free(b);
-  free(c_cpu);
-  free(c_gpu);
-err_gpu_error:
+  free(cCPU);
+  free(cGPU);
   return retval;
 }
