@@ -1,0 +1,12 @@
+InlayHints:
+  Enabled: Yes
+  ParameterNames: No
+  DeducedTypes: No
+  Designators: No
+
+CompileFlags:   
+  Add:
+    - -xc++
+    - --cuda-path=/usr/local/cuda/
+    - --cuda-gpu-arch=sm_52
+    - -I/usr/local/cuda/targets/x86_64-linux/include/

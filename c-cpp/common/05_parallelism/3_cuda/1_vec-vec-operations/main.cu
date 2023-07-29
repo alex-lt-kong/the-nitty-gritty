@@ -99,7 +99,7 @@ void callGPURoutine(calculationRoutine funcPtr, double *a, double *b, double *c,
   double *cudaA = NULL;
   double *cudaB = NULL;
   double *cudaC = NULL;
-  int threads_per_block, blocks_per_grid;
+  int threadsPerBlock, blocksPerGrid;
   // Allocate memory for pointers into the GPU
   if ((cudaError = cudaMalloc(&cudaA, sizeof(double) * len)) != cudaSuccess ||
       (cudaError = cudaMalloc(&cudaB, sizeof(double) * len)) != cudaSuccess ||
@@ -127,10 +127,10 @@ void callGPURoutine(calculationRoutine funcPtr, double *a, double *b, double *c,
          2 * len * sizeof(double) / 1024.0 / 1024 /
              (elapsed / 1000.0 / 1000.0));
 
-  threads_per_block = 128;
-  blocks_per_grid = (len + threads_per_block - 1) / threads_per_block;
+  threadsPerBlock = 128;
+  blocksPerGrid = (len + threadsPerBlock - 1) / threadsPerBlock;
   t0 = get_timestamp_in_microsec();
-  funcPtr<<<blocks_per_grid, threads_per_block>>>(cudaA, cudaB, cudaC, len);
+  funcPtr<<<blocksPerGrid, threadsPerBlock>>>(cudaA, cudaB, cudaC, len);
   t1 = get_timestamp_in_microsec();
   printf("Took %.2lfms to calculate\n", (t1 - t0) / 1000.0);
 
