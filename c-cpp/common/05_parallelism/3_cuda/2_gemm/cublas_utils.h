@@ -155,10 +155,17 @@ void print_matrix(const int &m, const int &n, const double *A, const int &lda) {
   printf("[\n");
   for (int i = 0; i < m; i++) {
     for (int j = 0; j < n; j++) {
-      std::printf("%s%0.2f%s", j == 0 ? "  [" : "", A[i * lda + j],
+      std::printf("%s%0.4f%s", j == 0 ? "  [" : "", A[j * lda + i],
                   j < n - 1 ? ", " : "],\n");
+      if (j > 30) {
+        printf("...\n");
+        break;
+      }
     }
-    // std::printf("\n");
+    if (i > 30) {
+      printf("...\n");
+      break;
+    }
   }
   printf("]\n");
 }
