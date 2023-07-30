@@ -4,12 +4,13 @@ import numpy as np
 import time
 
 
-m = 10000
-k = 4000
-n = 6000
+m = 9000
+k = 6000
+n = 9000
+alpha = 0.1
 
 
-def getDoubleList(file_path: str, num_read: int) -> List[float]:
+def getDoubleList(file_path: str, num_read: int) -> List[np.float32]:
 
     with open(file_path) as f:
         data = []
@@ -24,8 +25,10 @@ def getDoubleList(file_path: str, num_read: int) -> List[float]:
 
 print('Reading A...')
 A = np.array(getDoubleList("./a.in", m * k)).reshape(-1, k, order="F")
+assert A.dtype == np.float32
 print('Done\nReading B...')
 B = np.array(getDoubleList("./b.in", k * n)).reshape(-1, n, order="F")
+assert B.dtype == np.float32
 print('Done')
 print("A")
 print(A)
@@ -34,13 +37,13 @@ print("B")
 print(B)
 print("=====")
 
-print(A.dtype)
-
 t0 = time.time()
-C = 0.1 * np.dot(A, B)
+C = alpha * np.dot(A, B)
 t1 = time.time()
 
 print("C")
 print(C)
-
-print(f'{(t1 - t0) * 1000}ms')
+print('Writing C...')
+np.savetxt("np.csv.out", C, delimiter=",", header='', comments='')
+print('Done')
+print(f'Total: {(t1 - t0) * 1000:.03f}ms')

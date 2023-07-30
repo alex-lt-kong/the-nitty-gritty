@@ -1,7 +1,10 @@
 #
 # === custom rules ===
 #
+*.csv.out
 *.out
+*.in
+*.bin
 # Python virtual environment
 .venv/
 venv/
