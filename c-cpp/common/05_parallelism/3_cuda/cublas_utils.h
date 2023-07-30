@@ -151,16 +151,24 @@ template <> struct traits<cuDoubleComplex> {
   }
 };
 
-void print_matrix(const int &m, const int &n, const double *A, const int &lda) {
-  printf("[\n");
-  for (int i = 0; i < (m > 50 ? 50 : m); i++) {
-    for (int j = 0; j < (n > 50 ? 50: n); j++) {
-      std::printf("%s%0.4f%s", j == 0 ? "  [" : "", A[j * lda + i],
-                  j < n - 1 ? ", " : "],\n");
+template <typename T>
+void print_matrix(const int &m, const int &n, const T *A, const int &lda) {
+  std::cout << "[\n";
+  for (int i = 0; i < m; i++) {
+    for (int j = 0; j < n; j++) {
+      std::cout << (j == 0 ? "  [" : "") << A[j * lda + i]
+                << (j < n - 1 ? ", " : "],\n");
+      if (j > 20) {
+        std::cout << "...\n";
+        break;
+      }
     }
-    // std::printf("\n");
+    if (i > 20) {
+      std::cout << "...\n";
+      break;
+    }
   }
-  printf("]\n");
+  std::cout << "]" << endl;
 }
 
 template <typename T>
