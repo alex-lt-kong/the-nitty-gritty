@@ -7,9 +7,9 @@
 using dtype = float;
 
 int main(void) {
-  blasint m = 20000;
-  blasint k = 6000;
-  blasint n = 9000;
+  blasint m = 30000;
+  blasint k = 8000;
+  blasint n = 11000;
   const blasint lda = m;
   const blasint ldb = k;
   const blasint ldc = m;
@@ -31,7 +31,9 @@ int main(void) {
 
   printf("B\n");
   print_matrix(k, n, B.data(), ldb);
-  printf("=====\n");
+  std::cout << "=====\nWriting C...\n";
+  write_matrix_to_csv(C, m, n, "./openblas.csv.out");
+  std::cout << "Done" << std::endl;
   uint64_t t0 = get_timestamp_in_microsec();
   /* When throwing error, the argument count starts from 0*/
   cblas_sgemm(CblasColMajor, CblasNoTrans, CblasNoTrans, m, n, k, alpha,
