@@ -2,11 +2,11 @@ CC=/usr/local/cuda/bin/nvcc
 CFLAGS=-O3
 LDFLAGS=-lcublas
 
-main: cublas.out
+main: cublas.bin
 
-cublas.out: cublas.cu
-	$(CC) cublas.cu -o cublas.out $(CFLAGS) $(LDFLAGS) 
+cublas.bin: cublas.cu ../../utils.hpp
+	$(CC) cublas.cu -o cublas.bin $(CFLAGS) $(LDFLAGS) 
 
 .PHONY:
 clean:
-	rm *.out
+	rm *.bin
