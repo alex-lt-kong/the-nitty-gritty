@@ -97,5 +97,9 @@
         "gstrfuncs.h": "c",
         "gtypes.h": "c",
         "stdio.h": "c"
-    }
+    },
+    "[python]": {
+        "editor.defaultFormatter": "ms-python.autopep8"
+    },
+    "python.formatting.provider": "none"
 }
