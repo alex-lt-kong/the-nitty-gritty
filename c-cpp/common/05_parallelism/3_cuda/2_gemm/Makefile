@@ -2,7 +2,7 @@ NVCC=/usr/local/cuda/bin/nvcc
 CXX=g++
 NVCFLAGS=-O3
 NVLDFLAGS=-lcublas
-OPCFLAGS=-O3 -Wall -pedantic -Wextra -Wc++-compat
+OPCFLAGS=-O3 -Wall -pedantic -Wextra
 OPLDFLAGS=-lopenblas
 
 main: cublas.bin openblas.bin
