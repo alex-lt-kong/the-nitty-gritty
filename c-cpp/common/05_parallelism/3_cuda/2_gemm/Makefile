@@ -12,6 +12,6 @@ cublas.bin: cublas.cu ../../utils.hpp ../../utils.h
 openblas.bin: openblas.cpp ../../utils.hpp ../../utils.h
 	$(CXX) openblas.cpp -o openblas.bin $(OPCFLAGS) $(OPLDFLAGS) 
 
-.PHONY:
+.PHONY: clean
 clean:
 	rm *.bin
