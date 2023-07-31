@@ -6,7 +6,7 @@ import time
 
 m = 30000
 k = 8000
-n = 1100
+n = 11000
 alpha = 0.1
 
 

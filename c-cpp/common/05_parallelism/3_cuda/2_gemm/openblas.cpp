@@ -9,7 +9,7 @@ using dtype = float;
 int main(void) {
   blasint m = 30000;
   blasint k = 8000;
-  blasint n = 1100;
+  blasint n = 11000;
   const blasint lda = m;
   const blasint ldb = k;
   const blasint ldc = m;
