@@ -18,7 +18,7 @@ void write_matrix_to_csv(const std::vector<T> &vec, const int m, const int n,
   for (int i = 0; i < m; ++i) {
     for (int j = 0; j < n; ++j) {
       file << vec[i + j * m];
-      if (i < m - 1) {
+      if (j < n - 1) {
         file << ",";
       }
     }
