@@ -33,10 +33,10 @@ int main(int argc, char *argv[]) {
 
   std::cout << "Reading A..." << std::endl;
   std::vector<dtype> h_A = readVector<dtype>("./a.in", m * k);
-  std::cout << "Done\nReading B... " << std::endl;
+  std::cout << "Done\nReading B..." << std::endl;
   std::vector<dtype> h_B = readVector<dtype>("./b.in", k * n);
   std::cout << "Done" << std::endl;
-  std::vector<dtype> h_C(m * n);
+  std::vector<dtype> h_C(m * n, 0.0);
 
   std::cout << h_A.size() << std::endl;
   std::cout << h_B.size() << std::endl;
@@ -53,7 +53,6 @@ int main(int argc, char *argv[]) {
   printf("=====\n");
 
   uint64_t t0 = get_timestamp_in_microsec();
-
   CUBLAS_CHECK(cublasCreate(&cublasH));
 
   uint64_t t1 = get_timestamp_in_microsec();
@@ -80,7 +79,7 @@ int main(int argc, char *argv[]) {
 
   uint64_t t5 = get_timestamp_in_microsec();
 
-  printf("C\n");
+  std::cout << "C\n";
   print_matrix(m, n, h_C.data(), ldc);
   std::cout << "=====\nWriting C...\n";
   write_matrix_to_csv(h_C, m, n, "./cublas.csv.out");

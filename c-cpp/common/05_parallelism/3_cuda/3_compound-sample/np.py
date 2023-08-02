@@ -38,6 +38,7 @@ print(B)
 print("=====")
 
 t0 = time.time()
+A = 0.1 * np.log(A + 11)
 C = alpha * np.dot(A, B)
 t1 = time.time()
 
