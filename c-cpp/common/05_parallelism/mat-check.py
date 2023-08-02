@@ -31,6 +31,8 @@ def main() -> None:
             diff_count += 1
             if diff_count >= 10:
                 print('mat-check exited due to too many mismatches')
+                print('A breakpoint is triggered and you can examine them manually')
+                breakpoint()
                 break
     if diff_count == 0:
         print('The dataframes are identical within the tolerance level')

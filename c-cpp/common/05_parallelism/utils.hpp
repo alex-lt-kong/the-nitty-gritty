@@ -5,8 +5,8 @@
 #include <vector>
 
 template <typename T>
-void write_matrix_to_csv(const std::vector<T> &vec, const int m, const int n,
-                         const std::string &path) {
+void write_matrix_to_csv(const std::vector<T> &vec, const size_t m,
+                         const size_t n, const std::string &path) {
   if (vec.size() != m * n) {
     throw std::runtime_error("vector size does not match matrix dimensions");
   }
@@ -15,8 +15,8 @@ void write_matrix_to_csv(const std::vector<T> &vec, const int m, const int n,
   std::ofstream file(path);
 
   // Write the matrix elements to the file
-  for (int i = 0; i < m; ++i) {
-    for (int j = 0; j < n; ++j) {
+  for (size_t i = 0; i < m; ++i) {
+    for (size_t j = 0; j < n; ++j) {
       file << vec[i + j * m];
       if (j < n - 1) {
         file << ",";
@@ -30,11 +30,12 @@ void write_matrix_to_csv(const std::vector<T> &vec, const int m, const int n,
 }
 
 template <typename T>
-void print_matrix(const int m, const int n, const T *A, const int lda) {
+void print_matrix(const size_t m, const size_t n, const T *A,
+                  const size_t lda) {
   std::cout << "[\n";
-  for (int i = 0; i < m; i++) {
+  for (size_t i = 0; i < m; i++) {
     if (m < 20 || (i < 5 || i > m - 5)) {
-      for (int j = 0; j < n; j++) {
+      for (size_t j = 0; j < n; j++) {
 
         if (n < 20 || (j < 5 || j > n - 5)) {
           if (j == 0) {
