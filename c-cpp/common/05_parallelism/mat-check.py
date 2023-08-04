@@ -15,9 +15,9 @@ def main() -> None:
     # Parse the arguments
     args = parser.parse_args()
 
-    print(f'Loading df1 from {args.csv1}...')
+    print(f'Loading df1 from [{args.csv1}]...')
     df1 = pd.read_csv(args.csv1, header=None)
-    print(f'Done\nLoading from {args.csv2}...')
+    print(f'Done\nLoading df2 from [{args.csv2}]...')
     df2 = pd.read_csv(args.csv2, header=None)
     print('Done')
 
