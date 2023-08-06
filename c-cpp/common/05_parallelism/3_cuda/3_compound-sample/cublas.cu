@@ -31,9 +31,9 @@ int main(int argc, char *argv[]) {
   CUDA_CHECK(cudaGetDeviceProperties(&prop, device));
   std::cout << "GPU: " << prop.name << std::endl;
 
-  size_t m = 30000;
-  size_t k = 8000;
-  size_t n = 11000;
+  size_t m = 3000;
+  size_t k = 1000;
+  size_t n = 2000;
   const size_t lda = m; // ld means "leading dimension"
   const size_t ldb = k;
   const size_t ldc = m;
@@ -42,13 +42,11 @@ int main(int argc, char *argv[]) {
 
   std::cout << "Reading A..." << std::endl;
   std::vector<dtype> h_A = readVector<dtype>("./a.in", m * k);
-  std::cout << "Done\nReading B..." << std::endl;
+  std::cout << "Done (" << h_A.size() << ")\nReading B... " << std::endl;
   std::vector<dtype> h_B = readVector<dtype>("./b.in", k * n);
-  std::cout << "Done" << std::endl;
+  std::cout << "Done (" << h_B.size() << ")" << std::endl;
   std::vector<dtype> h_C(m * n, 0.0);
 
-  std::cout << h_A.size() << std::endl;
-  std::cout << h_B.size() << std::endl;
   dtype *d_A = nullptr;
   dtype *d_B = nullptr;
   dtype *d_C = nullptr;
@@ -75,7 +73,11 @@ int main(int argc, char *argv[]) {
                              cudaMemcpyHostToDevice, stream));
   CUDA_CHECK(cudaMemcpyAsync(d_B, h_B.data(), sizeof(dtype) * k * n,
                              cudaMemcpyHostToDevice, stream));
+
   int block_size = 256;
+  // Changing it doesn't appear to have a significant impact on the
+  // performance of log_kernel<<<num_blocks, block_size>>>(d_A, m * k)--it
+  // always takes ~0.15ms
   int num_blocks = (m * k + block_size - 1) / block_size;
 
   log_kernel<<<num_blocks, block_size>>>(d_A, m * k);

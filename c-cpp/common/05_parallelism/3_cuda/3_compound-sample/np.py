@@ -4,9 +4,9 @@ import numpy as np
 import time
 
 
-m = 30000
-k = 8000
-n = 11000
+m = 3000
+k = 1000
+n = 2000
 alpha = 0.1
 
 
@@ -26,10 +26,10 @@ def getFloatList(file_path: str, num_read: int) -> List[np.float32]:
 print('Reading A...')
 A = np.array(getFloatList("./a.in", m * k)).reshape(-1, k, order="F")
 assert A.dtype == np.float32
-print('Done\nReading B...')
+print(f'Done ({A.size})\nReading B...')
 B = np.array(getFloatList("./b.in", k * n)).reshape(-1, n, order="F")
 assert B.dtype == np.float32
-print('Done')
+print(f'Done ({B.size})')
 print("A")
 print(A)
 print("=====")

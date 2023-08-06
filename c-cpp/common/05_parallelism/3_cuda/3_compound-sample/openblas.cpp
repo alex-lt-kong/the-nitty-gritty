@@ -14,9 +14,9 @@ void log_func(std::vector<dtype> &x) {
 }
 
 int main(void) {
-  blasint m = 30000;
-  blasint k = 8000;
-  blasint n = 11000;
+  blasint m = 3000;
+  blasint k = 1000;
+  blasint n = 2000;
   const blasint lda = m;
   const blasint ldb = k;
   const blasint ldc = m;
@@ -37,7 +37,6 @@ int main(void) {
   print_matrix(k, n, B.data(), ldb);
   std::cout << "=====\n";
 
-  std::cout << "Done" << std::endl;
   uint64_t t0 = get_timestamp_in_microsec();
   log_func(A);
   cblas_sscal(A.size(), 0.1, A.data(), 1);
