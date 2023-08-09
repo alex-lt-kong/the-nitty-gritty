@@ -4,9 +4,9 @@ import numpy as np
 import time
 
 
-m = 30000
-k = 8000
-n = 11000
+m = 77000
+k = 12000
+n = 23000
 alpha = 0.1
 
 
