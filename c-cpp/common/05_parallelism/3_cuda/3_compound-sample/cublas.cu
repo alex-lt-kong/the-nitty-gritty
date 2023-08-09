@@ -31,9 +31,9 @@ int main(int argc, char *argv[]) {
   CUDA_CHECK(cudaGetDeviceProperties(&prop, device));
   std::cout << "GPU: " << prop.name << std::endl;
 
-  size_t m = 3000;
-  size_t k = 1000;
-  size_t n = 2000;
+  size_t m = 50000;
+  size_t k = 9000;
+  size_t n = 13000;
   const size_t lda = m; // ld means "leading dimension"
   const size_t ldb = k;
   const size_t ldc = m;

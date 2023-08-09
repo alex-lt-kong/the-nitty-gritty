@@ -14,9 +14,9 @@ void log_func(std::vector<dtype> &x) {
 }
 
 int main(void) {
-  blasint m = 3000;
-  blasint k = 1000;
-  blasint n = 2000;
+  blasint m = 50000;
+  blasint k = 9000;
+  blasint n = 13000;
   const blasint lda = m;
   const blasint ldb = k;
   const blasint ldc = m;
