@@ -3,6 +3,8 @@
 # * looking at the globals() dictionary
 # * using ctypes's cast() method. ctypes is a foreign function library for Python.
 
+import ctypes
+
 a = 103
 b = 103
 a += 1
@@ -11,17 +13,16 @@ a += 1
 
 print(globals())
 
-import ctypes
-
 address = id(a)
 print(address)
+
 
 def get_by_address(address):
     for x in globals().values():
         if id(x) == address:
             return x
 
+
 print(get_by_address(address=address))
 
 print(ctypes.cast(address, ctypes.py_object).value)
-
