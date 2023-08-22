@@ -10,9 +10,10 @@
 #include "utils.hpp"
 
 using namespace std;
+using namespace cv;
 
 int main(int argc, const char *argv[]) {
-  cout << cv::getBuildInformation() << endl;
+  cout << getBuildInformation() << endl;
   if (argc != 3) {
     cerr << "Usage : " << argv[0] << "  <Source URI> <Dest path>" << endl;
     return -1;
@@ -23,42 +24,44 @@ int main(int argc, const char *argv[]) {
           "press Ctrl+C to exit the event loop gracefully."
        << endl;
 
-  cv::VideoCapture cap;
-  bool result =
-      cap.open(string(argv[1]), cv::CAP_ANY,
-               {cv::CAP_PROP_HW_ACCELERATION, cv::VIDEO_ACCELERATION_ANY});
+  VideoCapture cap;
+  bool result = cap.open(string(argv[1]), CAP_ANY,
+                         {CAP_PROP_HW_ACCELERATION, VIDEO_ACCELERATION_ANY});
   if (!result) {
     cerr << "Error!" << endl;
   }
-  cv::VideoWriter vwriter = cv::VideoWriter(
-      string(argv[2]), cv::CAP_ANY, cv::VideoWriter::fourcc('m', 'p', '4', 'v'),
-      25.0, cv::Size(1280, 720),
-      {cv::VIDEOWRITER_PROP_HW_ACCELERATION, cv::VIDEO_ACCELERATION_ANY});
+  VideoWriter vwriter = VideoWriter(
+      string(argv[2]), CAP_ANY, VideoWriter::fourcc('m', 'p', '4', 'v'), 25.0,
+      Size(1280, 720),
+      {VIDEOWRITER_PROP_HW_ACCELERATION, VIDEO_ACCELERATION_ANY});
 
-  cv::Mat hFrameCurr, hFramePrev;
+  Mat hFrameCurr, hFramePrev;
   size_t frameCount = 0;
   while (!e_flag) {
+    auto t0 = chrono::high_resolution_clock::now();
 
-    if (!hFrameCurr.empty()) {
-      hFramePrev = hFrameCurr.clone();
-    }
     if (!cap.read(hFrameCurr)) {
       cerr << "cap.read(hFrame) is False" << endl;
       break;
     }
     ++frameCount;
-    auto start = chrono::high_resolution_clock::now();
+    auto t1 = chrono::high_resolution_clock::now();
     float diff = getFrameChanges(hFramePrev, hFrameCurr);
-    auto end = chrono::high_resolution_clock::now();
+    auto t2 = chrono::high_resolution_clock::now();
+
+    if (!hFrameCurr.empty()) {
+      hFramePrev = hFrameCurr.clone();
+      vwriter.write(hFrameCurr);
+    }
+    auto t3 = chrono::high_resolution_clock::now();
     if (!hFramePrev.empty() && frameCount % 10 == 0) {
       cout << "frameCount: " << frameCount << ", size(): " << hFrameCurr.size()
            << ", channels(): " << hFrameCurr.channels() << ", diff: " << diff
            << "("
-           << chrono::duration_cast<chrono::milliseconds>(end - start).count()
-           << " ms)" << endl;
-    }
-    if (!hFrameCurr.empty()) {
-      vwriter.write(hFrameCurr);
+           << chrono::duration_cast<chrono::milliseconds>(t2 - t1).count()
+           << " ms) , iteration took: "
+           << chrono::duration_cast<chrono::milliseconds>(t3 - t1).count()
+           << " ms\n";
     }
   }
   vwriter.release();

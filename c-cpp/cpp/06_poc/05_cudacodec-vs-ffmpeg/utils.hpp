@@ -59,7 +59,7 @@ inline float getCudaFrameChanges(cv::cudacodec::GpuMat &prevFrame,
   }
 
   cv::cuda::absdiff(prevFrame, currFrame, diffFrame);
-  cv::cuda::cvtColor(diffFrame, diffFrame, cv::COLOR_BGRA2GRAY);
+  cv::cuda::cvtColor(diffFrame, diffFrame, cv::COLOR_BGR2GRAY);
   cv::cuda::threshold(diffFrame, diffFrame, 1, 255, cv::THRESH_BINARY);
   int nonZeroPixels = cv::cuda::countNonZero(diffFrame);
   return 100.0 * nonZeroPixels / (diffFrame.rows * diffFrame.cols);

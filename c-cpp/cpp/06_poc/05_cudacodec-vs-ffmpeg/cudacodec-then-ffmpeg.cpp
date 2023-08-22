@@ -6,6 +6,7 @@
 #include <opencv2/core.hpp>
 #include <opencv2/cudacodec.hpp>
 #include <opencv2/highgui.hpp>
+#include <opencv2/videoio.hpp>
 
 #include "utils.hpp"
 
@@ -26,13 +27,14 @@ int main(int argc, const char *argv[]) {
 
   cuda::GpuMat dFrameCurr, dFramePrev;
   Mat hFrame;
-
   Ptr<cudacodec::VideoReader> dReader =
       cudacodec::createVideoReader(string(argv[1]));
+
   dReader->set(cv::cudacodec::ColorFormat::BGR);
-  Ptr<cudacodec::VideoWriter> dWriter = cudacodec::createVideoWriter(
-      string(argv[2]), Size(1280, 720), cudacodec::Codec::H264, 25.0,
-      cudacodec::ColorFormat::BGR);
+  VideoWriter hWriter = VideoWriter(
+      string(argv[2]), CAP_ANY, VideoWriter::fourcc('m', 'p', '4', 'v'), 25.0,
+      Size(1280, 720),
+      {VIDEOWRITER_PROP_HW_ACCELERATION, VIDEO_ACCELERATION_ANY});
   size_t frameCount = 0;
   while (!e_flag) {
     auto t0 = chrono::high_resolution_clock::now();
@@ -47,11 +49,9 @@ int main(int argc, const char *argv[]) {
     auto t2 = chrono::high_resolution_clock::now();
 
     if (!dFrameCurr.empty()) {
-      dFramePrev = dFrameCurr.clone();
       dFrameCurr.download(hFrame);
-      // Need to emulate this download()/upload() cycle
-      dFrameCurr.upload(hFrame);
-      dWriter->write(dFrameCurr);
+      dFramePrev = dFrameCurr.clone();
+      hWriter.write(hFrame);
     }
     auto t3 = chrono::high_resolution_clock::now();
     if (!dFramePrev.empty() && frameCount % 10 == 0) {
@@ -64,7 +64,7 @@ int main(int argc, const char *argv[]) {
            << " ms\n";
     }
   }
-  dWriter->release();
-  cout << "dWriter->release()ed" << endl;
+  hWriter.release();
+  cout << "hWriter.release()ed" << endl;
   return 0;
 }
