@@ -5,6 +5,7 @@
 
 #include <opencv2/core.hpp>
 #include <opencv2/cudacodec.hpp>
+#include <opencv2/cudawarping.hpp>
 #include <opencv2/highgui.hpp>
 
 #include "utils.hpp"
@@ -25,6 +26,7 @@ int main(int argc, const char *argv[]) {
        << endl;
 
   cuda::GpuMat dFrameCurr, dFramePrev;
+  cudacodec::GpuMat diffFrame;
   Mat hFrame;
 
   Ptr<cudacodec::VideoReader> dReader =
@@ -43,12 +45,15 @@ int main(int argc, const char *argv[]) {
     }
     ++frameCount;
     auto t1 = chrono::high_resolution_clock::now();
-    float diff = getCudaFrameChanges(dFramePrev, dFrameCurr);
+    float diff = getCudaFrameChanges(dFramePrev, dFrameCurr, diffFrame);
     auto t2 = chrono::high_resolution_clock::now();
 
     if (!dFrameCurr.empty()) {
+      cuda::GpuMat t = dFrameCurr.clone();
+      // cuda::rotate(dFrameCurr, dFrameCurr, dFrameCurr.size(), 180);
       dFramePrev = dFrameCurr.clone();
       dFrameCurr.download(hFrame);
+      overlayDatetime(hFrame);
       // Need to emulate this download()/upload() cycle
       dFrameCurr.upload(hFrame);
       dWriter->write(dFrameCurr);
@@ -56,8 +61,8 @@ int main(int argc, const char *argv[]) {
     auto t3 = chrono::high_resolution_clock::now();
     if (!dFramePrev.empty() && frameCount % 10 == 0) {
       cout << "frameCount: " << frameCount << ", size(): " << dFrameCurr.size()
-           << ", channels(): " << dFrameCurr.channels() << ", diff: " << diff
-           << "("
+           << ", channels(): " << dFrameCurr.channels() << ", diff: " << fixed
+           << setprecision(2) << diff << "% ("
            << chrono::duration_cast<chrono::milliseconds>(t2 - t1).count()
            << " ms) , iteration took: "
            << chrono::duration_cast<chrono::milliseconds>(t3 - t1).count()

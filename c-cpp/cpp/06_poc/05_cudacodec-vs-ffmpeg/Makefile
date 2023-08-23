@@ -2,7 +2,7 @@
 CXX=g++
 CXXFLAGS=-O2 -Wall -pedantic -Wextra
 INC=-I/usr/local/include/opencv4/
-LDFLAGS=-lopencv_cudacodec -lopencv_core -lopencv_videoio -lopencv_imgproc -lopencv_cudaimgproc -lopencv_cudaarithm  -lopencv_imgcodecs
+LDFLAGS=-lopencv_cudacodec -lopencv_core -lopencv_videoio -lopencv_imgproc -lopencv_cudaimgproc -lopencv_cudaarithm  -lopencv_imgcodecs -lopencv_cudawarping
 
 
 all: cudacodec.out ffmpeg.out cudacodec-then-ffmpeg.out
