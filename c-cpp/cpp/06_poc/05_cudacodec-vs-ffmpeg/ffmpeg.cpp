@@ -31,7 +31,7 @@ int main(int argc, const char *argv[]) {
     cerr << "Error!" << endl;
   }
   VideoWriter vwriter = VideoWriter(
-      string(argv[2]), CAP_ANY, VideoWriter::fourcc('m', 'p', '4', 'v'), 25.0,
+      string(argv[2]), CAP_ANY, VideoWriter::fourcc('X', '2', '6', '4'), 25.0,
       Size(1280, 720),
       {VIDEOWRITER_PROP_HW_ACCELERATION, VIDEO_ACCELERATION_ANY});
 
@@ -51,13 +51,15 @@ int main(int argc, const char *argv[]) {
 
     if (!hFrameCurr.empty()) {
       hFramePrev = hFrameCurr.clone();
+      overlayDatetime(hFrameCurr);
+      // rotate(hFrameCurr, hFrameCurr, ROTATE_180);
       vwriter.write(hFrameCurr);
     }
     auto t3 = chrono::high_resolution_clock::now();
     if (!hFramePrev.empty() && frameCount % 10 == 0) {
       cout << "frameCount: " << frameCount << ", size(): " << hFrameCurr.size()
-           << ", channels(): " << hFrameCurr.channels() << ", diff: " << diff
-           << "("
+           << ", channels(): " << hFrameCurr.channels() << ", diff: " << fixed
+           << setprecision(2) << diff << "% ("
            << chrono::duration_cast<chrono::milliseconds>(t2 - t1).count()
            << " ms) , iteration took: "
            << chrono::duration_cast<chrono::milliseconds>(t3 - t1).count()
