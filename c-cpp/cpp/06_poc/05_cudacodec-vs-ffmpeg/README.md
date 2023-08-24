@@ -39,7 +39,7 @@ by issuing `nvidia-smi`)
 * Download Nvidia's Video Codec SDK. This is a very confusing step as seems
 it is documented nowhere except in a stack exchange post
 [here](https://stackoverflow.com/questions/65740367/reading-a-video-on-gpu-using-c-and-cuda)
-  * Long story short, we need to download Nvidia's VIdeo Codec SDK
+  * Long story short, we need to download Nvidia's Video Codec SDK
   [here](https://developer.nvidia.com/video-codec-sdk) and copy all header files
   in `./Interface/` directory to corresponding CUDA's include directory
   (e.g., `/usr/local/cuda/targets/x86_64-linux/include/`)
@@ -49,6 +49,13 @@ it is documented nowhere except in a stack exchange post
     terminate called after throwing an instance of 'cv::Exception'
     what():  OpenCV(4.7.0) ./repos/opencv/modules/core/include/opencv2/core/private.cuda.hpp:112: error: (-213:The function/feature is not implemented) The called functionality is disabled for current build or platform in function 'throw_no_cuda'
     ```
+  * It is also noteworthy that the so called "Nvidia's Video Codec SDK" is the
+  same as the "nv-codec-headers.git" mentioned in the [HWAccelIntro](https://trac.ffmpeg.org/wiki/HWAccelIntro)
+  of the OpenCV with FFmpeg route documented below. However, FFmpeg states
+  that it uses a slightly modified version of Nvidia Video Codec SDK and
+  experiment also shows that the headers installed by nv-codec-headers won't
+  be recognized by OpenCV's cmake. So we need two copies of the same set of
+  headers files for two routes to work concurrently.
 
 * Prepare [opencv_contrib](https://github.com/opencv/opencv_contrib) repository.
 OpenCV needs it to build `cuda` support.
@@ -76,27 +83,8 @@ OpenCV needs it to build `cuda` support.
   --     NVIDIA PTX archs:
   ```
 
-  The same information should be printed if `cv::getBuildInformation()` is called.
+  The same information should be printed when `cv::getBuildInformation()` is called.
 
-FFmpeg route:
-
-```
-apt remove libavcodec-dev libavformat-dev libavutil-dev libswscale-dev
-cmake \
--D CMAKE_BUILD_TYPE=RELEASE \
--D CMAKE_INSTALL_PREFIX=/usr/local \
--D WITH_CUDA=ON \
--D WITH_NVCUVID=ON \
--D WITH_NVCUVENC=ON \
--D BUILD_opencv_cudacodec=ON \
--D CMAKE_CXX_FLAGS="-I~/repos/Video_Codec_SDK_12.1.14/Interface/" \
--D OPENCV_EXTRA_MODULES_PATH=~/repos/opencv_contrib/modules/ \
--D OPENCV_GENERATE_PKGCONFIG=ON \
--D OPENCV_PC_FILE_NAME=opencv.pc \
--D BUILD_EXAMPLES=OFF \
--D BUILD_SHARED_LIBS=OFF \
-..
-```
 
 ### OpenCV with FFmpeg (`avcodec`/`avformat`/etc) that enables CUDA
 
