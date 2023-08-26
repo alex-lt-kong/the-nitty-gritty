@@ -1,4 +1,4 @@
-#include "opencv2/core/cuda.hpp"
+
 #include <chrono>
 #include <iomanip>
 #include <iostream>
@@ -7,11 +7,15 @@
 #include <stdlib.h>
 #include <string.h>
 #include <string>
+#include <thread>
 
 #include <opencv2/core.hpp>
+#include <opencv2/core/cuda.hpp>
 #include <opencv2/cudaarithm.hpp>
 #include <opencv2/cudacodec.hpp>
 #include <opencv2/cudaimgproc.hpp>
+#include <opencv2/cudawarping.hpp>
+#include <opencv2/highgui.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 
