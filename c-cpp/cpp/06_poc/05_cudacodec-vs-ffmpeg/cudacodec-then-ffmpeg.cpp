@@ -1,14 +1,3 @@
-
-#include <chrono>
-#include <iostream>
-#include <string>
-
-#include <opencv2/core.hpp>
-#include <opencv2/cudacodec.hpp>
-#include <opencv2/cudawarping.hpp>
-#include <opencv2/highgui.hpp>
-#include <opencv2/videoio.hpp>
-
 #include "utils.hpp"
 
 using namespace std;
@@ -39,11 +28,10 @@ int main(int argc, const char *argv[]) {
       {VIDEOWRITER_PROP_HW_ACCELERATION, VIDEO_ACCELERATION_ANY});
   size_t frameCount = 0;
   while (!e_flag) {
-    auto t0 = chrono::high_resolution_clock::now();
-
     if (!dReader->nextFrame(dFrameCurr)) {
       cerr << "dReader->nextFrame(dFrame) is False" << endl;
-      break;
+      this_thread::sleep_for(10000ms);
+      dReader = cudacodec::createVideoReader(string(argv[1]));
     }
     ++frameCount;
     auto t1 = chrono::high_resolution_clock::now();
@@ -57,16 +45,18 @@ int main(int argc, const char *argv[]) {
       dFramePrev = dFrameCurr.clone();
       overlayDatetime(hFrame);
       hWriter.write(hFrame);
+    } else {
+      cerr << "frameCount: " << frameCount << " is empty" << endl;
     }
     auto t3 = chrono::high_resolution_clock::now();
-    if (!dFramePrev.empty() && frameCount % 10 == 0) {
+    if (!dFramePrev.empty() && frameCount % 100 == 0) {
       cout << "frameCount: " << frameCount << ", size(): " << dFrameCurr.size()
            << ", channels(): " << dFrameCurr.channels() << ", diff: " << fixed
            << setprecision(2) << diff << "% ("
            << chrono::duration_cast<chrono::milliseconds>(t2 - t1).count()
            << " ms) , iteration took: "
            << chrono::duration_cast<chrono::milliseconds>(t3 - t1).count()
-           << " ms\n";
+           << " ms" << endl;
     }
   }
   hWriter.release();
