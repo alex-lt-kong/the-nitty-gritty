@@ -90,6 +90,9 @@ memory and use its destructor to `free()` the memory--brilliant! a
 
 ## Pointers with RAII and [the rule of three](https://en.cppreference.com/w/cpp/language/rule_of_three)
 
+* Before exploring this section, you may want to take a look at the examples
+under the [constructor-basics](./constructor-basics/) directory.
+
 * So far, so good--playing in the C++ playground, things are nice and tidy.
 However, as always, it becomes more interesting (or horrible if you wish) when
 C comes into play.
@@ -105,26 +108,26 @@ and `free()`ed in destructor, perfect RAII:
     class Wallet {
     private:
         void mallocPtrs() {
-            this->curr_ptr0 = (int*)malloc(sizeof(int) * ARR_SIZE);
-            this->curr_ptr1 = (int*)malloc(sizeof(int) * ARR_SIZE);
+            this->ptr0 = (int*)malloc(sizeof(int) * ARR_SIZE);
+            this->ptr1 = (int*)malloc(sizeof(int) * ARR_SIZE);
         }
     public:
-        int* curr_ptr0;
-        int* curr_ptr1;
+        int* ptr0;
+        int* ptr1;
 
         Wallet () {
             printf("Wallet () called\n");
             mallocPtrs();
         }
         ~Wallet () {
-            free(this->curr_ptr0);
-            free(this->curr_ptr1);
+            free(this->ptr0);
+            free(this->ptr1);
         }
 
     };
     ```
     * The code should work 99.9% of time if both `malloc()`s do not fail. But
-    what if *both* of them fail? It means `curr_ptr0` and `curr_ptr1` will be
+    what if *both* of them fail? It means `ptr0` and `ptr1` will be
     both `NULL`, and any subsequent dereference could cause unexpected
     result! We need to prevent this.
 
@@ -135,28 +138,28 @@ fails. This should prevent NULL pointers dereference:
     class Wallet {
     private:
         void mallocPtrs() {
-            this->curr_ptr0 = (int*)malloc(sizeof(int) * ARR_SIZE);
-            if (this->curr_ptr0 == NULL) {
+            this->ptr0 = (int*)malloc(sizeof(int) * ARR_SIZE);
+            if (this->ptr0 == NULL) {
                 std::bad_alloc exception;
                 throw exception;
             }
-            this->curr_ptr1 = (int*)malloc(sizeof(int) * ARR_SIZE);
-            if (this->curr_ptr1== NULL) {
+            this->ptr1 = (int*)malloc(sizeof(int) * ARR_SIZE);
+            if (this->ptr1== NULL) {
                 std::bad_alloc exception;
                 throw exception;
             }
         }
     public:
-        int* curr_ptr0;
-        int* curr_ptr1;
+        int* ptr0;
+        int* ptr1;
 
         Wallet () {
             printf("Wallet () called\n");
             mallocPtrs();
         }
         ~Wallet () {
-            free(this->curr_ptr0);
-            free(this->curr_ptr1);
+            free(this->ptr0);
+            free(this->ptr1);
         }
     };
     ```
@@ -165,7 +168,7 @@ fails. This should prevent NULL pointers dereference:
     What if the first `malloc()` succeeds and the second `malloc()`
     fails? A `bad_alloc` exception will be thrown, RAII's principle is followed.
     But wait, what happens to the large amount of memory `malloc()`ed for and
-    pointed by `curr_ptr0`? No one takes care of it. It will be left on the heap
+    pointed by `ptr0`? No one takes care of it. It will be left on the heap
     lonely, forever! No, we need to handle this as well.
 
 * Another version is prepared to handle this. Now we will manually `free()`
@@ -176,46 +179,49 @@ fails:
     class Wallet {
     private:
         void mallocPtrs() {
-            this->curr_ptr0 = (int*)malloc(sizeof(int) * ARR_SIZE);
-            if (this->curr_ptr0 == NULL) {
+            this->ptr0 = (int*)malloc(sizeof(int) * ARR_SIZE);
+            if (this->ptr0 == NULL) {
                 std::bad_alloc exception;
                 throw exception;
             }
-            this->curr_ptr1 = (int*)malloc(sizeof(int) * ARR_SIZE);
-            if (this->curr_ptr1== NULL) {
+            this->ptr1 = (int*)malloc(sizeof(int) * ARR_SIZE);
+            if (this->ptr1== NULL) {
                 // handle the already malloc()'ed pointer manually.
-                free(this->curr_ptr0);
+                free(this->ptr0);
                 std::bad_alloc exception;
                 throw exception;
             }
         }
     public:
-        int* curr_ptr0;
-        int* curr_ptr1;
+        int* ptr0;
+        int* ptr1;
 
         Wallet () {
             printf("Wallet () called\n");
             mallocPtrs();
         }
         ~Wallet () {
-            free(this->curr_ptr0);
-            free(this->curr_ptr1);
+            free(this->ptr0);
+            free(this->ptr1);
         }
     };
     ```
+
+### Add copy constructor
+
 * We are done? Not yet! Think about this common usage:
 
     ```C++
     Wallet first_wallet = Wallet();
-    first_wallet.curr_ptr0[0] = 1;
-    first_wallet.curr_ptr1[2] = 2147483647;
+    first_wallet.ptr0[0] = 1;
+    first_wallet.ptr1[2] = 2147483647;
     Wallet second_wallet = first_wallet;
-    second_wallet.curr_ptr0[0] = 31415926;
-    second_wallet.curr_ptr1[2] = -1;
+    second_wallet.ptr0[0] = 31415926;
+    second_wallet.ptr1[2] = -1;
     ```
     * As we don't define a copy constructor, the compiler will prepare one
-    for us. However, compiler doesn't know if we want to copy `curr_ptr0` and
-    `curr_ptr1` by reference or by value. But as we have two integer pointers,
+    for us. However, compiler doesn't know if we want to copy `ptr0` and
+    `ptr1` by reference or by value. But as we have two integer pointers,
     the default copy constructor will copy only the value of these pointers.
     That is, it is copy by reference.
     * The most singificant implication is that two seemingly distinct objects
@@ -239,11 +245,13 @@ fails:
     as well.
     * After `first_wallet` goes out of scope, we rightfully `free()` both
     pointers. But wait, what happens when `second_wallet`'s destructor is
-    called? `curr_ptr0` and `curr_ptr1` are being `free()`ed again, it's
+    called? `ptr0` and `ptr1` are being `free()`ed again, it's
     a [double free](https://encyclopedia.kaspersky.com/glossary/double-free/)!
     Nonono, this shouldn't happen. We need to prepare a
     [copy constructor](./constructor) for it.
     * Apart from the above, we also need to prepare a copy assignment operator.
+
+### Copy assignment operator and the rule of three
 
 * A much more robust version is like below. This is something known as
 [the rule of three](https://en.cppreference.com/w/cpp/language/rule_of_three):
@@ -252,22 +260,22 @@ fails:
     class Wallet {
     private:
         void mallocPtrs() {
-            this->curr_ptr0 = (int*)malloc(sizeof(int) * ARR_SIZE);
-            if (this->curr_ptr0 == NULL) {
+            this->ptr0 = (int*)malloc(sizeof(int) * ARR_SIZE);
+            if (this->ptr0 == NULL) {
                 std::bad_alloc exception;
                 throw exception;
             }
-            this->curr_ptr1 = (int*)malloc(sizeof(int) * ARR_SIZE);
-            if (this->curr_ptr1== NULL) {
-                free(this->curr_ptr0);
+            this->ptr1 = (int*)malloc(sizeof(int) * ARR_SIZE);
+            if (this->ptr1== NULL) {
+                free(this->ptr0);
                 // Need to handle the already malloc()'ed pointer manually.
                 std::bad_alloc exception;
                 throw exception;
             }
         }
     public:
-        int* curr_ptr0;
-        int* curr_ptr1;
+        int* ptr0;
+        int* ptr1;
 
         Wallet () {
             printf("Wallet () called\n");
@@ -276,20 +284,20 @@ fails:
         // Copy constructor
         Wallet(const Wallet& rhs) {
             mallocPtrs();  
-            memcpy(this->curr_ptr0, rhs.curr_ptr0, sizeof(int) * ARR_SIZE);
-            memcpy(this->curr_ptr1, rhs.curr_ptr1, sizeof(int) * ARR_SIZE);
+            memcpy(this->ptr0, rhs.ptr0, sizeof(int) * ARR_SIZE);
+            memcpy(this->ptr1, rhs.ptr1, sizeof(int) * ARR_SIZE);
             printf("copy Wallet() called\n");
         }
         // Copy assignment operator
         Wallet& operator=(const Wallet& rhs) {
-            memcpy(this->curr_ptr0, rhs.curr_ptr0, sizeof(int) * ARR_SIZE);
-            memcpy(this->curr_ptr1, rhs.curr_ptr1, sizeof(int) * ARR_SIZE);
+            memcpy(this->ptr0, rhs.ptr0, sizeof(int) * ARR_SIZE);
+            memcpy(this->ptr1, rhs.ptr1, sizeof(int) * ARR_SIZE);
             printf("operator=(const Wallet& rhs) called\n");
             return *this;
         }
         ~Wallet () {
-            free(this->curr_ptr0);
-            free(this->curr_ptr1);
+            free(this->ptr0);
+            free(this->ptr1);
         }
     };
     ```
@@ -305,54 +313,53 @@ re-use existing `malloc()`ed memory. What if `ARR_SIZE` is dynamic? It makes
 copy constructor and copy assignment operator much more complicated.
 
     ```C++
-
-    class DynamicWallet {
+    class Wallet {
     private:
         void mallocPtrs() {
-            curr_ptr0 = (int*)malloc(sizeof(int) * wallet_size);
-            if (curr_ptr0 == NULL) {
+            ptr0 = (int*)malloc(sizeof(int) * wallet_size);
+            if (ptr0 == NULL) {
                 std::bad_alloc exception;
                 throw exception;
             }
-            curr_ptr1 = (int*)malloc(sizeof(int) * wallet_size);
-            if (curr_ptr1== NULL) {
-                free(curr_ptr0);
+            ptr1 = (int*)malloc(sizeof(int) * wallet_size);
+            if (ptr1== NULL) {
+                free(ptr0);
                 // Need to handle the already malloc()'ed pointer manually.
                 std::bad_alloc exception;
                 throw exception;
             }
         }
     public:
-        int* curr_ptr0;
-        int* curr_ptr1;
+        int* ptr0;
+        int* ptr1;
         size_t  wallet_size;
-        DynamicWallet (size_t wallet_size) {
-            cout << "DynamicWallet () called" << endl;
+        Wallet (size_t wallet_size) {
+            cout << "Wallet () called" << endl;
             this->wallet_size = wallet_size;
             mallocPtrs();
         }
         // Copy constructor
-        DynamicWallet(const DynamicWallet& rhs) {
+        Wallet(const Wallet& rhs) {
             wallet_size = rhs.wallet_size;
             mallocPtrs();
-            memcpy(curr_ptr0, rhs.curr_ptr0, sizeof(int) * wallet_size);
-            memcpy(curr_ptr1, rhs.curr_ptr1, sizeof(int) * wallet_size);
-            cout << "copy DynamicWallet() called" << endl;
+            memcpy(ptr0, rhs.ptr0, sizeof(int) * wallet_size);
+            memcpy(ptr1, rhs.ptr1, sizeof(int) * wallet_size);
+            cout << "copy Wallet() called" << endl;
         }
         // Copy assignment operator
-        DynamicWallet& operator=(const DynamicWallet& rhs) {
+        Wallet& operator=(const Wallet& rhs) {
             this->wallet_size = rhs.wallet_size;
-            free(curr_ptr0);
-            free(curr_ptr1);
+            free(ptr0);
+            free(ptr1);
             mallocPtrs();
-            memcpy(curr_ptr0, rhs.curr_ptr0, sizeof(int) * wallet_size);
-            memcpy(curr_ptr1, rhs.curr_ptr1, sizeof(int) * wallet_size);
-            cout << "operator=(const DynamicWallet& rhs) called" << endl;
+            memcpy(ptr0, rhs.ptr0, sizeof(int) * wallet_size);
+            memcpy(ptr1, rhs.ptr1, sizeof(int) * wallet_size);
+            cout << "operator=(const Wallet& rhs) called" << endl;
             return *this;
         }
-        ~DynamicWallet () {
-            free(curr_ptr0);
-            free(curr_ptr1);
+        ~Wallet () {
+            free(ptr0);
+            free(ptr1);
         }
     }
     ```
@@ -360,17 +367,54 @@ copy constructor and copy assignment operator much more complicated.
   * If `wallet_size` is dynamic, we need to `free()` previously `malloc()`ed
   memory and then `malloc()` again.
 
+### Self-assignment and exception safety
+
   * But is the above example good enough? Unfortunately, the answer is no.
   What could go wrong if we do the following?:
 
     ```C++
-        DynamicWallet first_dwallet = DynamicWallet(2048);
-        first_dwallet.curr_ptr0[0] = 3;
-        first_dwallet.curr_ptr1[2047] = 666;
-        first_dwallet = first_dwallet
+    Wallet first_dwallet = Wallet(2048);
+    first_dwallet.ptr0[0] = 3;
+    first_dwallet.ptr1[2047] = 666;
+    first_dwallet = first_dwallet // self-assignment!
     ```
 
-* A version that corrects this bug can be found [here](./pointer.cpp)
+* A revised version of the copy assignment operator is like follows:
+
+    ```C++
+    Wallet &operator=(const Wallet &rhs) {
+        if (this != &rhs) {                       // not a self-assignment
+            if (wallet_size != rhs.wallet_size) { // resource cannot be reused
+                freePtrs();
+                wallet_size = rhs.wallet_size;
+                mallocPtrs();
+            }
+            memcpy(ptr0, rhs.ptr0, sizeof(int) * wallet_size);
+            memcpy(ptr1, rhs.ptr1, sizeof(int) * wallet_size);
+        }
+        cout << endl;
+        return *this;
+    }
+    ```
+* Now let's think about what could happen if an exception is thrown in
+`mallocPtrs()`: as `ptr0` and `ptr1` have both been `free()`ed, and
+`mallocPtrs()` `free()`s `ptr0` in case of `malloc()` fails to allocate
+memory to `ptr1`, there shouldn't be any memory leak.
+    * In this scenario, we say the implementation provides basic exception
+    guarantee.
+    * However, `*this` object is left in a unusable state and its previous
+    data have already been wiped out--this is not something we want. Ideally,
+    if the system fails to allocate resources for new data, old data should be
+    kept intact--just like the "transaction" concept in SQL database.
+    * If we are able to keep the old data intact in case of exception being
+    thrown in copy assignment operator, we say the function provides strong
+    exception guarantee.
+    * Current implementation does not provide strong exception guarantee but it
+    does provide basic exception guarantee.
+
+* Providing strong exception guarantee comes at a cost--we need to create a
+temporary object and then swap `*this`'s resources with the temporary object's
+resources. This is not always easy to implement and could penalize performance.
 
 ### A better solution
 

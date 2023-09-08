@@ -9,54 +9,7 @@
 
 using namespace std;
 
-class StaticWallet {
-private:
-  void mallocPtrs() {
-    curr_ptr0 = (int *)malloc(sizeof(int) * ARR_SIZE);
-    if (curr_ptr0 == NULL) {
-      bad_alloc exception;
-      throw exception;
-    }
-    curr_ptr1 = (int *)malloc(sizeof(int) * ARR_SIZE);
-    if (curr_ptr1 == NULL) {
-      free(curr_ptr0);
-      // Need to handle the already malloc()'ed pointer manually.
-      bad_alloc exception;
-      throw exception;
-    }
-  }
-
-public:
-  int *curr_ptr0;
-  int *curr_ptr1;
-
-  StaticWallet() {
-    cout << "StaticWallet () called" << endl;
-    mallocPtrs();
-  }
-  // Copy constructor
-  StaticWallet(const StaticWallet &rhs) {
-    mallocPtrs();
-    memcpy(curr_ptr0, rhs.curr_ptr0, sizeof(int) * ARR_SIZE);
-    memcpy(curr_ptr1, rhs.curr_ptr1, sizeof(int) * ARR_SIZE);
-    cout << "copy StaticWallet() called" << endl;
-  }
-  // Copy assignment operator
-  StaticWallet &operator=(const StaticWallet &rhs) {
-    if (this != &rhs) { // not a self-assignment
-      memcpy(curr_ptr0, rhs.curr_ptr0, sizeof(int) * ARR_SIZE);
-      memcpy(curr_ptr1, rhs.curr_ptr1, sizeof(int) * ARR_SIZE);
-      cout << "operator=(const StaticWallet& rhs) called" << endl;
-    }
-    return *this;
-  }
-  ~StaticWallet() {
-    free(curr_ptr0);
-    free(curr_ptr1);
-  }
-};
-
-class DynamicWallet {
+class Wallet {
 private:
   int *ptr0 = nullptr;
   int *ptr1 = nullptr;
@@ -96,7 +49,7 @@ private:
   }
 
 public:
-  DynamicWallet(size_t wallet_size) {
+  Wallet(size_t wallet_size) {
 
     cout << "DynamicWallet (" << wallet_size << ") called" << endl;
     this->wallet_size = wallet_size;
@@ -106,7 +59,7 @@ public:
   // Copy constructor: if *this instance is NOT initialized and we want to
   // initialize *this object with an existing object, copy constructor will be
   // called.
-  DynamicWallet(const DynamicWallet &rhs) {
+  Wallet(const Wallet &rhs) {
     wallet_size = rhs.wallet_size;
     mallocPtrs();
     // Wait, rhs.curr_ptr0 is a private member of rhs, how can we access it?
@@ -120,10 +73,13 @@ public:
   // Copy assignment operator: if *this instance is already initialized and we
   // want to replace its content with the content from an existing object,
   // copy assignment operator will be called
-  DynamicWallet &operator=(const DynamicWallet &rhs) {
+  Wallet &operator=(const Wallet &rhs) {
     cout << "copy assignment operator called";
     if (this != &rhs) {                     // not a self-assignment
       if (wallet_size != rhs.wallet_size) { // resource cannot be reused
+        // This copy assignment operator only provides basic exception
+        // guarantee--while it hopefully leaks no memory whatsoever, *this
+        // object will NOT be "rolled back" if mallocPtrs() throws an exception.
         cout << " and wallet resized";
         freePtrs();
         wallet_size = rhs.wallet_size;
@@ -151,43 +107,12 @@ public:
   // implicitly defined. The same applies to copy assignment operator and
   // move assignment operator.
 
-  ~DynamicWallet() noexcept { freePtrs(); }
+  ~Wallet() noexcept { freePtrs(); }
 };
 
 int main() {
-  cout << "\n===== StaticWallet =====\n" << endl;
-  StaticWallet first_wallet = StaticWallet();
-  first_wallet.curr_ptr0[0] = 1;
-  first_wallet.curr_ptr1[2] = 2147483647;
-  cout << "first_wallet: " << first_wallet.curr_ptr0[0] << ", "
-       << first_wallet.curr_ptr1[2] << endl
-       << endl;
-
-  StaticWallet second_wallet = first_wallet;
-  second_wallet.curr_ptr0[0] = 31415926;
-  second_wallet.curr_ptr1[2] = -1;
-  cout << "first_wallet: " << first_wallet.curr_ptr0[0] << ", "
-       << first_wallet.curr_ptr1[2] << endl;
-  cout << "second_wallet: " << second_wallet.curr_ptr0[0] << ", "
-       << second_wallet.curr_ptr1[2] << endl
-       << endl;
-
-  StaticWallet third_wallet = StaticWallet();
-  third_wallet = first_wallet;
-  third_wallet.curr_ptr0[0] = 666;
-  third_wallet.curr_ptr1[2] = 2333;
-  cout << "first_wallet: " << first_wallet.curr_ptr0[0] << ", "
-       << first_wallet.curr_ptr1[2] << endl;
-  cout << "second_wallet: " << second_wallet.curr_ptr0[0] << ", "
-       << second_wallet.curr_ptr1[2] << endl;
-  cout << "third_wallet: " << third_wallet.curr_ptr0[0] << ", "
-       << third_wallet.curr_ptr1[2] << endl
-       << endl
-       << endl;
-
-  cout << "\n===== DynamicWallet =====\n" << endl;
   cout << "* Basic operation" << endl;
-  DynamicWallet first_dwallet = DynamicWallet(2048);
+  Wallet first_dwallet = Wallet(2048);
   first_dwallet(0, 0) = 3;
   first_dwallet(1, 2047) = 666;
   cout << "first_dwallet: " << first_dwallet(0, 0) << ", "
@@ -195,7 +120,7 @@ int main() {
        << endl;
 
   cout << "* Trying copy constructor" << endl;
-  DynamicWallet second_dwallet = first_dwallet;
+  Wallet second_dwallet = first_dwallet;
   second_dwallet(0, 0) = 31415926;
   second_dwallet(1, 2047) = -1;
   cout << "first_dwallet: " << first_dwallet(0, 0) << ", "
@@ -206,7 +131,7 @@ int main() {
 
   cout << "* Trying copy assignment opeartor with different wallet size"
        << endl;
-  DynamicWallet third_dwallet = DynamicWallet(1);
+  Wallet third_dwallet = Wallet(1);
   third_dwallet = first_dwallet;
   third_dwallet(0, 0) = -123;
 
@@ -220,7 +145,7 @@ int main() {
 
   cout << "* Trying copy assignment opeartor with different wallet size"
        << endl;
-  DynamicWallet fourth_dwallet = DynamicWallet(2048);
+  Wallet fourth_dwallet = Wallet(2048);
   fourth_dwallet = first_dwallet;
   fourth_dwallet(0, 0) = -9527;
   fourth_dwallet(1, 2047) = 16888;
