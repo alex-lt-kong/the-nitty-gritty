@@ -6,15 +6,15 @@
 another object of the same class. In simple terms, a copy constructor is used
 to create of "copy" of an existing object.
 
-* Before talking about how copy constructor is defined and used, we need to
-delve in a bit deeper on the design of C++.
+* Before talking about how a copy constructor is defined and used, we need to
+delve a bit deeper into the design of C++.
 
 * One key mindset difference between C and C++ is that in C people mostly use
 pointers to refer to an "object", which has to be `malloc()`ed and `free()`ed
 manually. While in C++ objects behave like "common variables" such as integer,
 float, etc. For example:
     * Objects are passed by value by default, you pass an object to a function
-    then modify the object, the object being passed won't be changed.
+    then modify the object, and the object being passed won't be changed.
     * Assigning an object to another object will create a new object, instead
     of creating a pointer pointing to the same memory location.
 
@@ -39,7 +39,7 @@ float, etc. For example:
     5
     10
     ```
-    * Objects will go out of scope and being automatically released as long as
+    * Objects will go out of scope and are automatically released as long as
     it is defined on stack (i.e., `MyClass myObject = MyClass();`)
     instead of on heap (i.e., `MyClass myObject = new MyClass();`), just like
     normal variables (e.g., `int a = 5;`);
@@ -48,12 +48,12 @@ float, etc. For example:
     which is discussed separately.
 
 * This design also differs greatly from Java/C#, where almost all objects are
-reference types which behave like pointers except they are garbage collected.
+reference types that behave like pointers except they are garbage collected.
 
 * Copy constructor is an important function to support the above design--we
-need to frequently make copies of an object just like we make copies of integer
-(e.g., `int a = b;`). There are a few cases where copy constructors will be
-called, including:
+need to frequently make copies of an object just like we make copies of an
+integer (e.g., `int a = b;`). There are a few cases where copy constructors
+will be called, including:
     * initialization: `T a = b;` or `T a(b);`, where b is of type T;
     * function argument passing: `f(a);`, where a is of type T and f is
     `void f(T t)`;
@@ -63,14 +63,14 @@ called, including:
 
 * If a class is not "too complicated" (what does "too complicated" means is 
 a difficult topic, let's skip it here), C++ compilers will implicitly create
-a copy constructor for us, if we don't define it explicitly.
+a copy constructor for us if we don't define it explicitly.
     * But we can always create a copy constructor ourselves, usually its
     signature is just `MyClass::MyClass(const MyClass& myObject);`
     * The implicit copy constructor could also be a trap. Say we have a
     raw pointer as a non-static member of a class, the implicit copy constructor
     could be added. But when we make a copy of the class, what will happen?
-    A copy of the pointer, not the memory on heap pointed by the pointer, i.e.,
-    a shallow copy, will be returned. If the original object owns the heap
+    A copy of the pointer, not the memory on the heap pointed by the pointer,
+    i.e., a shallow copy, will be returned. If the original object owns the heap
     memory, if the original object goes out of scope, the copy object may
     refer to a memory address that is invalid.
 
@@ -78,7 +78,7 @@ a copy constructor for us, if we don't define it explicitly.
 ## Move constructor
 
 * Before delving into the concept of move constructor, we may want to take a
-look at the dilemma move constructors tries to solve.
+look at the dilemma move constructors try to solve.
 
 * Even before we explore the dilemma, we need to have a rough idea of "rvalue".
     * For example, `x`, `y`, `z` below are **l**values as they are on the
@@ -132,8 +132,8 @@ look at the dilemma move constructors tries to solve.
     `hel + wor` work.
 
 * But this is utterly wasteful--the anonymous `hel + wor` will be thrown away
-very soon, why bother making a copy of it? Let's just transfer, a.k.a., "move",
-its content from the rvalue to `foobar`. Isn't it wonderful?
+very soon, so why bother making a copy of it? Let's just transfer, a.k.a.,
+"move", its content from the rvalue to `foobar`. Isn't it wonderful?
     * This is how a move constructor is used in [move-constructor.cpp](./move-constructor.cpp):
 
     ```C++    
@@ -162,7 +162,7 @@ its content from the rvalue to `foobar`. Isn't it wonderful?
     * This is a bit similar to Rust.
 
 * Move constructors of all the types used with STL containers, for example,
-need to be declared `noexcept`. Otherwise STL will choose copy constructors
+need to be declared `noexcept`; otherwise STL will choose copy constructors
 instead. The same is valid for move assignment operations.
 
 
@@ -171,7 +171,7 @@ instead. The same is valid for move assignment operations.
 * Copy elision or RVO is a "minor" but very significant optimization.
 
 * Consider the following case (Let's ignore function inline, compile-time
-computation, etc):
+computation, etc.):
     ```C++
     vector<double> GetScores() {
         vector<double> scores{ 1.414, 3.141, 2.71, 99, -1, 0.001 };
@@ -199,8 +199,8 @@ computation, etc):
     * But if we do try this and benchmark, we will see the performance dropping,
     instead of going up. What happens?
 
-* This is because ISO C++ standard has something beyond move constructor (and
-to a large extent makes move constructor much less common): copy elision.
+* This is because ISO C++ standard has something beyond the move constructor
+(and to a large extent makes move constructor much less common): copy elision.
     * It means that a C++ compiler can simply skip copy/move
     constructors altogether and just set the value directly to the object.
     * In the above case, it means something like this:
