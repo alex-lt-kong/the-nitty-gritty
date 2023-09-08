@@ -1,9 +1,14 @@
-OPTS = -O3 -Wall -pedantic -Wextra 
-CC = g++
+CXX=g++
+CXXFLAGS=-O3 -Wall -pedantic -Wextra
 
-main:
-	$(CC) main.cpp -o main.out $(OPT)
-	$(CC) pointer.cpp -o pointer.out $(OPT)
+all: main.out pointer.out
 
+main.out: main.cpp
+	$(CXX) main.cpp -o main.out $(CXXFLAGS)
+
+pointer.out: pointer.cpp
+	$(CXX) pointer.cpp -o pointer.out $(CXXFLAGS)
+
+.PHONY:
 clean:
 	rm *.out
