@@ -1,41 +1,41 @@
 # Resource acquisition is initialization
 
-* RAII is an awkward name for a useful feature. Essentially, it is equivalent
-to (if not better than) a `finally` keyword if properly used.
+* RAII is an awkward name for a useful feature. One can understand it as C++'s
+answer to a `finally` keyword in Python, etc.
 
 * Let's consider this Python snippet:
 
-    ```python
-        try:
-            conn = pyodbc.connect(conn_str)
-            cursor = conn.cursor()
-            # db operations
-        except Exception as ex:
-            print(ex)
-        finally:
-            if conn is not None:
-                conn.close()
+    ```Python
+    try:
+        conn = pyodbc.connect(conn_str)
+        cursor = conn.cursor()
+        # db operations
+    except Exception as ex:
+        print(ex)
+    finally:
+        if conn is not None:
+            conn.close()
     ```
 
     * `finally` is needed because we don't want `conn` to be left open whether
     or not an exception is thrown.
 
 
-* C++'s answer is rather straightforward, let's wrap the resource releasing
+* In comparison, RAII is rather straightforward, let's wrap the resource releasing
 in destructor and always call destructor even if an exception is thrown:
 
     ```C++
-        class DatabaseHelper {
-        public:
-        DatabaseHelper(RawDBConn* rawConn_) : rawConn(rawConn_) {};
-        ~DatabaseHelper() {delete rawConn; }
-        ... // omitted operator*, etc
-        private:
-        RawDBConn* rawConn;
-        };
+    class DatabaseHelper {
+    public:
+    DatabaseHelper(RawDBConn* rawConn_) : rawConn(rawConn_) {};
+    ~DatabaseHelper() {delete rawConn; }
+    ... // omitted operator*, etc
+    private:
+    RawDBConn* rawConn;
+    };
 
-        DatabaseHelper handle(createNewResource());
-        handle->performInvalidOperation();
+    DatabaseHelper handle(createNewResource());
+    handle->performInvalidOperation();
     ```
 
     * The "official" opinion from
@@ -59,19 +59,23 @@ in destructor and always call destructor even if an exception is thrown:
         * the destructor releases the resource and never throws exceptions; 
 
 
-* What if constructors or destructors throw exceptions? Things will get a bit
+* What if constructors or destructors throw exceptions? Things get a bit
 messier here.
 
-    * In case of constructors:
-        * If a constructor throws an exception, the object’s destructor is *not*
-        run. If your object has already done something that needs to be undone
-        (such as allocating some memory, opening a file, or locking a semaphore),
-        this "stuff that needs to be undone" must be remembered by a data member
-        inside the object.
-    * In case of destructors:
-        * Similar to Python's Exception raised in `finally` section, if exception
-        is thrown within destructors, it has to be handled manually. This is beyond
-        the scope of RAII.
+    * In case of exceptions thrown by a constructor, the object’s destructor is
+    *not* invoked. If your object has already done something that needs to be
+    undone (such as allocating some memory, opening a file, or locking a
+    semaphore), this "stuff that needs to be undone" must be manually released
+    in the constructor's error handling code.
+    * But why the destructor is not called if an exception is thrown within
+    a constructor? In C++, the lifecycle of an object starts when its
+    initialization is done (roughly the same as "constructor returns
+    successfully"). If an exception is raised in its constructor, the object's
+    lifecycle has not started yet, so its destructor will not be called.
+    * In case of destructors--[destructors should never fail](https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#Re-never-fail). If
+    some function calls in a destructor could possibly throw exceptions, we
+    should handle the exception within destructor, rather than propagating
+    the exception up the call stack.
 
 * Apart from being handy for database connection management, etc
 RAII is also the underlying principle of [smart pointers](../10_smart-pointers).
@@ -232,7 +236,7 @@ fails:
     object goes out of scope, its destructor is automatically called. In the
     above sample, `first_wallet` and `second_wallet` go out of scope one
     after another and their destructor being called. This is what RAII requires
-    as well
+    as well.
     * After `first_wallet` goes out of scope, we rightfully `free()` both
     pointers. But wait, what happens when `second_wallet`'s destructor is
     called? `curr_ptr0` and `curr_ptr1` are being `free()`ed again, it's

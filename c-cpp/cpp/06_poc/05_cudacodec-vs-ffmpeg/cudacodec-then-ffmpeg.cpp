@@ -49,7 +49,7 @@ int main(int argc, const char *argv[]) {
       cerr << "frameCount: " << frameCount << " is empty" << endl;
     }
     auto t3 = chrono::high_resolution_clock::now();
-    if (!dFramePrev.empty() && frameCount % 100 == 0) {
+    if (!dFramePrev.empty() && frameCount % 1 == 0) {
       cout << "frameCount: " << frameCount << ", size(): " << dFrameCurr.size()
            << ", channels(): " << dFrameCurr.channels() << ", diff: " << fixed
            << setprecision(2) << diff << "% ("
