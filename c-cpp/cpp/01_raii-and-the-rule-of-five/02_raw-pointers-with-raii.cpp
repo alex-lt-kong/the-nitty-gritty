@@ -82,6 +82,8 @@ public:
         cout << " and wallet resized";
         freePtrs();
         wallet_size = rhs.wallet_size;
+        // Using realloc() may further improve performance, but this is not
+        // the purpose of this PoC and thus it is not used.
         mallocPtrs();
       } else {
         cout << " and previous memory reused for new data";
@@ -159,5 +161,6 @@ int main() {
   first_dwallet = first_dwallet;
   cout << "first_dwallet: " << first_dwallet(0, 0) << ", "
        << first_dwallet(1, 2047) << endl;
+
   return 0;
 }

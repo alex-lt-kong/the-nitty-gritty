@@ -83,6 +83,7 @@ Say we use a class to wrap a raw pointer, using constructor to `malloc()`
 memory and use its destructor to `free()` the memory--brilliant! a
 "smart pointer" already!
 
+
 ## Pointers with RAII and [the rule of three](https://en.cppreference.com/w/cpp/language/rule_of_three)
 
 * Before exploring this section, you may want to take a look at the examples
@@ -190,7 +191,8 @@ fails:
   };
   ```
 
-### Add copy constructor
+
+### Copy constructor
 
 * We are done? Not yet! Think about this common usage:
 
@@ -233,7 +235,26 @@ fails:
   called? `ptr0` and `ptr1` are being `free()`ed again, it's
   a [double free](https://encyclopedia.kaspersky.com/glossary/double-free/)!
   Nonono, this shouldn't happen. We need to prepare a
-  [copy constructor](./constructor-basics/copy-constructor.cpp) for it.
+  [copy constructor](./constructor-basics/copy-constructor.cpp) for it:
+  
+  ```C++
+  class Wallet {
+  private:
+    /**/
+    void mallocPtrs() { /**/ }
+    void freePtrs() noexcept { /**/ }
+  public:
+    /* ... */
+    // Copy constructor
+    Wallet(const Wallet& rhs) {
+      mallocPtrs();  
+      memcpy(ptr0, rhs.ptr0, sizeof(int) * wallet_size);
+      memcpy(ptr1, rhs.ptr1, sizeof(int) * wallet_size);
+    }   
+    /* ... */
+  };
+  ```
+
 
 ### Copy assignment operator and the rule of three
 
@@ -241,8 +262,9 @@ fails:
 an existing `Wallet` object, we need a copy constructor, but if `second_wallet`
 has already been initialized and we want to replace its data with the data
 from another `Wallet` object (and properly handle memory resources of course),
-copy constructor won't help--as constructor won't be called. In this case, we
-need a copy assignment operator.
+copy constructor won't help--as the object has already been initialized, its
+constructor won't be called again. In this case, we need a copy assignment
+operator.
 
 * Together with a copy constructor and a destructor, it is known as
 [the rule of three](https://en.cppreference.com/w/cpp/language/rule_of_three):
@@ -250,23 +272,11 @@ need a copy assignment operator.
   ```C++
   class Wallet {
   private:
-    int* ptr0 = nullptr;
-    int* ptr1 = nullptr;
-    size_t wallet_size = 0;
-    void mallocPtrs() {
-      ptr0 = (int*)malloc(sizeof(int) * wallet_size);
-      if (ptr0 == NULL) { throw std::bad_alloc(); }
-      ptr1 = (int*)malloc(sizeof(int) * wallet_size);
-      if (ptr1== NULL) {
-        free(ptr0);
-        throw std::bad_alloc();
-      }
-    }
+    /**/
+    void mallocPtrs() { /**/ }
+    void freePtrs() noexcept { /**/ }
   public:
-    Wallet (size_t wallet_size) {
-      this->wallet_size = wallet_size;
-      mallocPtrs();
-    }
+    /* ... */
     // Copy constructor
     Wallet(const Wallet& rhs) {
       mallocPtrs();  
@@ -274,133 +284,85 @@ need a copy assignment operator.
       memcpy(ptr1, rhs.ptr1, sizeof(int) * wallet_size);
     }
     // Copy assignment operator
-    Wallet& operator=(const Wallet& rhs) {
-      memcpy(ptr0, rhs.ptr0, sizeof(int) * wallet_size);
-      memcpy(ptr1, rhs.ptr1, sizeof(int) * wallet_size);
+    Wallet &operator=(const Wallet &rhs) {
+      if (this != &rhs) {                     // not a self-assignment
+        if (wallet_size != rhs.wallet_size) { // resource cannot be reused
+          freePtrs();
+          wallet_size = rhs.wallet_size;
+          mallocPtrs();
+        }
+        memcpy(ptr0, rhs.ptr0, sizeof(int) * wallet_size);
+        memcpy(ptr1, rhs.ptr1, sizeof(int) * wallet_size);
+      }
       return *this;
-    }
-    ~Wallet () {
-      free(ptr0);
-      free(ptr1);
-    }
+    } 
+    /* ... */
   };
   ```
-  * The difference between a copy constructor and a copy assignment operator
-  is that "a copy constructor is used to initialize a previously
-  UNinitialized object from some other object's data. An assignment
-  operator is used to replace the data of a previously INitialized object
-  with some other object's data. "
 
-* The above sample works fine, but it still hides some important complexity
-because `wallet_size` is something predefined and fixed, so that we can always
-re-use existing `malloc()`ed memory. What if `wallet_size` is dynamic? It makes
-copy constructor and copy assignment operator much more complicated.
+* A copy assignment operator is more complicated than a copy constructor
+because we need to manually release the resources already been allocated to
+the object.
 
-    ```C++
-    class Wallet {
-    private:
-        void mallocPtrs() {
-            ptr0 = (int*)malloc(sizeof(int) * wallet_size);
-            if (ptr0 == NULL) {
-                std::bad_alloc exception;
-                throw exception;
-            }
-            ptr1 = (int*)malloc(sizeof(int) * wallet_size);
-            if (ptr1== NULL) {
-                free(ptr0);
-                // Need to handle the already malloc()'ed pointer manually.
-                std::bad_alloc exception;
-                throw exception;
-            }
-        }
-    public:
-        int* ptr0;
-        int* ptr1;
-        size_t  wallet_size;
-        Wallet (size_t wallet_size) {
-            cout << "Wallet () called" << endl;
-            this->wallet_size = wallet_size;
-            mallocPtrs();
-        }
-        // Copy constructor
-        Wallet(const Wallet& rhs) {
-            wallet_size = rhs.wallet_size;
-            mallocPtrs();
-            memcpy(ptr0, rhs.ptr0, sizeof(int) * wallet_size);
-            memcpy(ptr1, rhs.ptr1, sizeof(int) * wallet_size);
-            cout << "copy Wallet() called" << endl;
-        }
-        // Copy assignment operator
-        Wallet& operator=(const Wallet& rhs) {
-            this->wallet_size = rhs.wallet_size;
-            free(ptr0);
-            free(ptr1);
-            mallocPtrs();
-            memcpy(ptr0, rhs.ptr0, sizeof(int) * wallet_size);
-            memcpy(ptr1, rhs.ptr1, sizeof(int) * wallet_size);
-            cout << "operator=(const Wallet& rhs) called" << endl;
-            return *this;
-        }
-        ~Wallet () {
-            free(ptr0);
-            free(ptr1);
-        }
-    }
-    ```
+* Another significant feature is the "self-assignment guard" that
+handles the below use case:
 
-  * If `wallet_size` is dynamic, we need to `free()` previously `malloc()`ed
-  memory and then `malloc()` again.
+  ```C++
+  Wallet first_dwallet = Wallet(2048);
+  first_dwallet.ptr0[0] = 3;
+  first_dwallet.ptr1[2047] = 666;
+  first_dwallet = first_dwallet // self-assignment!
+  ```
+  * Without self-assignment check, the memory will be wiped out and we will
+  copy from nowhere.
 
-### Self-assignment and exception safety
 
-  * But is the above example good enough? Unfortunately, the answer is no.
-  What could go wrong if we do the following?:
+### Exception safety
 
-    ```C++
-    Wallet first_dwallet = Wallet(2048);
-    first_dwallet.ptr0[0] = 3;
-    first_dwallet.ptr1[2047] = 666;
-    first_dwallet = first_dwallet // self-assignment!
-    ```
-
-* A revised version of the copy assignment operator is like follows:
-
-    ```C++
-    Wallet &operator=(const Wallet &rhs) {
-        if (this != &rhs) {                       // not a self-assignment
-            if (wallet_size != rhs.wallet_size) { // resource cannot be reused
-                freePtrs();
-                wallet_size = rhs.wallet_size;
-                mallocPtrs();
-            }
-            memcpy(ptr0, rhs.ptr0, sizeof(int) * wallet_size);
-            memcpy(ptr1, rhs.ptr1, sizeof(int) * wallet_size);
-        }
-        cout << endl;
-        return *this;
-    }
-    ```
-* Now let's think about what could happen if an exception is thrown in
-`mallocPtrs()`: as `ptr0` and `ptr1` have both been `free()`ed, and
-`mallocPtrs()` `free()`s `ptr0` in case of `malloc()` fails to allocate
-memory to `ptr1`, there shouldn't be any memory leak.
-    * In this scenario, we say the implementation provides basic exception
-    guarantee.
-    * However, `*this` object is left in a unusable state and its previous
-    data have already been wiped out--this is not something we want. Ideally,
-    if the system fails to allocate resources for new data, old data should be
-    kept intact--just like the "transaction" concept in SQL database.
-    * If we are able to keep the old data intact in case of exception being
-    thrown in copy assignment operator, we say the function provides strong
-    exception guarantee.
-    * Current implementation does not provide strong exception guarantee but it
-    does provide basic exception guarantee.
+* Using the copy assignment operator as an example, let's think about what
+could happen if an exception is thrown in `mallocPtrs()`: as `ptr0` and `ptr1`
+have both been `free()`ed, and `mallocPtrs()` `free()`s `ptr0` in case of
+`malloc()` fails to allocate memory to `ptr1`, there shouldn't be any memory
+leak.
+  * In this scenario, we say the implementation provides basic exception
+  guarantee.
+  * However, `*this` object is left in an unusable state and its previous
+  data have already been wiped out--this is not something we want. Ideally,
+  if the system fails to allocate resources for new data, old data should be
+  kept intact--just like the "transaction" concept in SQL database.
+  * If we are able to keep the old data intact in case of exception being
+  thrown in copy assignment operator, we say the function provides strong
+  exception guarantee.
+  * Current implementation does not provide strong exception guarantee but it
+  does provide basic exception guarantee.
 
 * Providing strong exception guarantee comes at a cost--we need to create a
 temporary object and then swap `*this`'s resources with the temporary object's
 resources. This is not always easy to implement and could penalize performance.
 
-### A better solution
+* According to [Wikipedia](https://en.wikipedia.org/wiki/Exception_safety), at
+least basic exception safety is required to write robust code.
+
+
+## The rule of five: move constructor and move assignment operator
+
+* The `Wallet` class, in its current shape, follows the rule of three. It is
+actually pretty complete already. But since C++11, we can defined two more
+functions, namely move constructor and move assignment operator, to utilize
+the latest feature of C++. This is called
+[the rule of five](https://en.cppreference.com/w/cpp/language/rule_of_three).
+
+  * Note that a copy constructor will be implicitly defined if we don't prepare
+  one ourselves. For a move constructor, it will only be implicitly defined
+  if all of the following is true:
+    * there are no user-declared copy constructors;
+    * there are no user-declared copy assignment operators;
+    * there are no user-declared move assignment operators;
+    * there is no user-declared destructor. 
+  * So we don't need to be concerned about unexpected results from an implicitly
+  defined move constructor.
+
+## A better solution
 
 * The above practice is mainly used to demonstrate the peculiarity of the
 interplay between C and C++.
@@ -412,7 +374,6 @@ interplay between C and C++.
 
 ## References
 
-* [Microsoft - Smart pointers (Modern C++)](https://learn.microsoft.com/en-us/cpp/cpp/smart-pointers-modern-cpp?view=msvc-170)
 * [CPP Reference - smart pointers](https://en.cppreference.com/book/intro/smart_pointers)
 * [Standard C++ Foundation - How should I handle resources if my constructors may throw exceptions?](https://isocpp.org/wiki/faq/exceptions#selfcleaning-members)
 * [StackOverflow - What's the difference between assignment operator and copy constructor?](https://stackoverflow.com/questions/11706040/whats-the-difference-between-assignment-operator-and-copy-constructor)
