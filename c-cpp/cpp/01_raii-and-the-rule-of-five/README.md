@@ -5,88 +5,83 @@ answer to a `finally` keyword in Python, etc.
 
 * Let's consider this Python snippet:
 
-    ```Python
-    try:
-        conn = pyodbc.connect(conn_str)
-        cursor = conn.cursor()
-        # db operations
-    except Exception as ex:
-        print(ex)
-    finally:
-        if conn is not None:
-            conn.close()
-    ```
+  ```Python
+  try:
+      conn = pyodbc.connect(conn_str)
+      cursor = conn.cursor()
+      # db operations
+  except Exception as ex:
+      print(ex)
+  finally:
+      if conn is not None:
+          conn.close()
+  ```
 
-    * `finally` is needed because we don't want `conn` to be left open whether
-    or not an exception is thrown.
-
+  * `finally` is needed because we don't want `conn` to be left open whether
+  or not an exception is thrown.
 
 * In comparison, RAII is rather straightforward, let's wrap the resource releasing
 in destructor and always call destructor even if an exception is thrown:
 
-    ```C++
-    class DatabaseHelper {
-    public:
-    DatabaseHelper(RawDBConn* rawConn_) : rawConn(rawConn_) {};
-    ~DatabaseHelper() {delete rawConn; }
-    ... // omitted operator*, etc
-    private:
-    RawDBConn* rawConn;
-    };
+  ```C++
+  class DatabaseHelper {
+  public:
+  DatabaseHelper(RawDBConn* rawConn_) : rawConn(rawConn_) {};
+  ~DatabaseHelper() {delete rawConn; }
+  ... // omitted operator*, etc
+  private:
+  RawDBConn* rawConn;
+  };
 
-    DatabaseHelper handle(createNewResource());
-    handle->performInvalidOperation();
-    ```
+  DatabaseHelper handle(createNewResource());
+  handle->performInvalidOperation();
+  ```
 
-    * The "official" opinion from
-    [Bjarne Stroustrup](https://www.stroustrup.com/bs_faq2.html#finally)
-    also argues that RAII is almost always better than a "finally" keyword.
+  * The "official" opinion from
+  [Bjarne Stroustrup](https://www.stroustrup.com/bs_faq2.html#finally)
+  also argues that RAII is almost always better than a "finally" keyword.
 
-    * Theoretically, RAII means "to bind the life cycle of a
-    resource that must be acquired before use (allocated heap memory, thread
-    of execution, open socket, open file, locked mutex, disk space,
-    database connection—anything that exists in limited supply) to the lifetime
-    of an object. ".
-        * Microsoft summarizes the RAII principle as "to give ownership of any
-        heap-allocated resource—for example, dynamically-allocated memory or
-        system object handles—to a stack-allocated object whose destructor
-        contains the code to delete or free the resource and also any
-        associated cleanup code."
-
-    * To be specific, RAII encapsulates each resource into a class, where:
-        * the constructor acquires the resource and establishes all class
-        invariants or throws an exception if that cannot be done,
-        * the destructor releases the resource and never throws exceptions; 
+  * Theoretically, RAII means "to bind the life cycle of a
+  resource that must be acquired before use (allocated heap memory, thread
+  of execution, open socket, open file, locked mutex, disk space,
+  database connection—anything that exists in limited supply) to the lifetime
+  of an object.".
+    * [This Microsoft tutorial](https://learn.microsoft.com/en-us/cpp/cpp/smart-pointers-modern-cpp?view=msvc-170)
+    summarizes the RAII principle as "to give ownership of any
+    heap-allocated resource—for example, dynamically-allocated memory or
+    system object handles—to a stack-allocated object whose destructor
+    contains the code to delete or free the resource and also any
+    associated cleanup code."
+  * To be specific, RAII encapsulates each resource into a class, where:
+    * the constructor acquires the resource and establishes all class
+    invariants or throws an exception if that cannot be done;
+    * the destructor releases the resource and never throws exceptions; 
 
 
 * What if constructors or destructors throw exceptions? Things get a bit
 messier here.
 
-    * In case of exceptions thrown by a constructor, the object’s destructor is
-    *not* invoked. If your object has already done something that needs to be
-    undone (such as allocating some memory, opening a file, or locking a
-    semaphore), this "stuff that needs to be undone" must be manually released
-    in the constructor's error handling code.
-    * But why the destructor is not called if an exception is thrown within
-    a constructor? In C++, the lifecycle of an object starts when its
-    initialization is done (roughly the same as "constructor returns
-    successfully"). If an exception is raised in its constructor, the object's
-    lifecycle has not started yet, so its destructor will not be called.
-    * In case of destructors--[destructors should never fail](https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#Re-never-fail). If
-    some function calls in a destructor could possibly throw exceptions, we
-    should handle the exception within destructor, rather than propagating
-    the exception up the call stack.
+  * In case of exceptions thrown by a constructor, the object’s destructor is
+  *not* invoked. If your object has already done something that needs to be
+  undone (such as allocating some memory, opening a file, or locking a
+  semaphore), this "stuff that needs to be undone" must be manually released
+  in the constructor's error handling code.
+  * But why the destructor is not called if an exception is thrown within
+  a constructor? In C++, the lifecycle of an object starts when its
+  initialization is done (roughly the same as "constructor returns
+  successfully"). If an exception is raised in its constructor, the object's
+  lifecycle has not started yet, so its destructor will not be called.
+  * In case of destructors--
+  [destructors should never fail](https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#Re-never-fail).
+  If some function calls in a destructor could possibly throw exceptions, we
+  should handle the exception within destructor, rather than propagating
+  the exception up the call stack.
 
 * Apart from being handy for database connection management, etc
 RAII is also the underlying principle of [smart pointers](../10_smart-pointers).
 Say we use a class to wrap a raw pointer, using constructor to `malloc()`
 memory and use its destructor to `free()` the memory--brilliant! a
 "smart pointer" already!
-
-    * But sure, the issue is a bit more complicated than this. The above attempt
-    only works if one heap memory object has only one pointer pointing to it;
-    otherwise other pointers will end up pointing to nowhere, causing
-    unexpected behaviors.
 
 ## Pointers with RAII and [the rule of three](https://en.cppreference.com/w/cpp/language/rule_of_three)
 
@@ -97,39 +92,39 @@ under the [constructor-basics](./constructor-basics/) directory.
 However, as always, it becomes more interesting (or horrible if you wish) when
 C comes into play.
 
-* What if, for whatever reason, we need to to `malloc()` raw pointers in a
-constructor and `free()` them in destructors? Going down this rabbit hole,
-things start to turn surreal.
+* What if, for whatever reason, we need to `malloc()` two, instead of one, raw
+pointers in a constructor and `free()` them in destructors? Going down
+this rabbit hole, things start to turn surreal.
 
 * Think about this naive implementation. Memory is `malloc()`ed in constructor
 and `free()`ed in destructor, perfect RAII:
 
-    ```C++
-    class Wallet {
-    private:
-        void mallocPtrs() {
-            this->ptr0 = (int*)malloc(sizeof(int) * ARR_SIZE);
-            this->ptr1 = (int*)malloc(sizeof(int) * ARR_SIZE);
-        }
-    public:
-        int* ptr0;
-        int* ptr1;
+  ```C++
+  class Wallet {
+  private:
+    int *ptr0 = nullptr;
+    int *ptr1 = nullptr;
+    size_t wallet_size = 0;
+    void mallocPtrs() {
+      ptr0 = (int*)malloc(sizeof(int) * wallet_size);
+      ptr1 = (int*)malloc(sizeof(int) * wallet_size);
+    }
+  public:
+    Wallet (size_t wallet_size) {
+      this->wallet_size = wallet_size;
+      mallocPtrs();
+    }
+    ~Wallet () {
+      free(ptr0);
+      free(ptr1);
+    }
 
-        Wallet () {
-            printf("Wallet () called\n");
-            mallocPtrs();
-        }
-        ~Wallet () {
-            free(this->ptr0);
-            free(this->ptr1);
-        }
-
-    };
-    ```
-    * The code should work 99.9% of time if both `malloc()`s do not fail. But
-    what if *both* of them fail? It means `ptr0` and `ptr1` will be
-    both `NULL`, and any subsequent dereference could cause unexpected
-    result! We need to prevent this.
+  };
+  ```
+  * The code should work 99.9% of time if both `malloc()`s do not fail. But
+  what if *both* of them fail? It means `ptr0` and `ptr1` will be
+  both `NULL`, and any subsequent dereference could cause unexpected
+  result! We need to prevent this.
 
 * A slightly better version. Now we throw `bad_alloc` exception if `malloc()`
 fails. This should prevent NULL pointers dereference:
@@ -137,179 +132,168 @@ fails. This should prevent NULL pointers dereference:
     ```C++
     class Wallet {
     private:
-        void mallocPtrs() {
-            this->ptr0 = (int*)malloc(sizeof(int) * ARR_SIZE);
-            if (this->ptr0 == NULL) {
-                std::bad_alloc exception;
-                throw exception;
-            }
-            this->ptr1 = (int*)malloc(sizeof(int) * ARR_SIZE);
-            if (this->ptr1== NULL) {
-                std::bad_alloc exception;
-                throw exception;
-            }
-        }
+      int* ptr0;
+      int* ptr1;
+      void mallocPtrs() {
+        ptr0 = (int*)malloc(sizeof(int) * wallet_size);
+        if (ptr0 == NULL) { throw std::bad_alloc(); }
+        ptr1 = (int*)malloc(sizeof(int) * wallet_size);
+        if (ptr1== NULL) { throw std::bad_alloc(); }
+      }
     public:
-        int* ptr0;
-        int* ptr1;
-
-        Wallet () {
-            printf("Wallet () called\n");
-            mallocPtrs();
-        }
-        ~Wallet () {
-            free(this->ptr0);
-            free(this->ptr1);
-        }
+      Wallet (size_t wallet_size) {
+        this->wallet_size = wallet_size;
+        mallocPtrs();
+      }
+      ~Wallet () {
+        free(ptr0);
+        free(ptr1);
+      }
     };
     ```
 
-    * Well yes, it doesn't suffer from NULL pointer dereference. Awesome!
-    What if the first `malloc()` succeeds and the second `malloc()`
-    fails? A `bad_alloc` exception will be thrown, RAII's principle is followed.
-    But wait, what happens to the large amount of memory `malloc()`ed for and
-    pointed by `ptr0`? No one takes care of it. It will be left on the heap
-    lonely, forever! No, we need to handle this as well.
+  * Well yes, it doesn't suffer from NULL pointer dereference. Awesome!
+  What if the first `malloc()` succeeds and the second `malloc()`
+  fails? A `bad_alloc` exception will be thrown, RAII's principle is followed.
+  But wait, what happens to the large amount of memory `malloc()`ed for and
+  pointed by `ptr0`? No one takes care of it. It will be left on the heap
+  lonely, forever! No, we need to handle this as well.
 
 * Another version is prepared to handle this. Now we will manually `free()`
 the memory `malloc()`ed for the 1st pointer in case only the 2nd `malloc()`
 fails:
 
-    ```C++
-    class Wallet {
-    private:
-        void mallocPtrs() {
-            this->ptr0 = (int*)malloc(sizeof(int) * ARR_SIZE);
-            if (this->ptr0 == NULL) {
-                std::bad_alloc exception;
-                throw exception;
-            }
-            this->ptr1 = (int*)malloc(sizeof(int) * ARR_SIZE);
-            if (this->ptr1== NULL) {
-                // handle the already malloc()'ed pointer manually.
-                free(this->ptr0);
-                std::bad_alloc exception;
-                throw exception;
-            }
-        }
-    public:
-        int* ptr0;
-        int* ptr1;
-
-        Wallet () {
-            printf("Wallet () called\n");
-            mallocPtrs();
-        }
-        ~Wallet () {
-            free(this->ptr0);
-            free(this->ptr1);
-        }
-    };
-    ```
+  ```C++
+  class Wallet {
+  private:
+    int* ptr0 = nullptr;
+    int* ptr1 = nullptr;
+    void mallocPtrs() {
+      ptr0 = (int*)malloc(sizeof(int) * wallet_size);
+      if (ptr0 == NULL) { throw std::bad_alloc(); }
+      ptr1 = (int*)malloc(sizeof(int) * wallet_size);
+      if (ptr1== NULL) {
+        // handle the already malloc()'ed pointer manually.
+        free(ptr0);
+        throw std::bad_alloc();
+      }
+    }
+  public:
+    Wallet (size_t wallet_size) {
+      this->wallet_size = wallet_size;
+      mallocPtrs();
+    }
+    ~Wallet () {
+      free(ptr0);
+      free(ptr1);
+    }
+  };
+  ```
 
 ### Add copy constructor
 
 * We are done? Not yet! Think about this common usage:
 
-    ```C++
-    Wallet first_wallet = Wallet();
-    first_wallet.ptr0[0] = 1;
-    first_wallet.ptr1[2] = 2147483647;
-    Wallet second_wallet = first_wallet;
-    second_wallet.ptr0[0] = 31415926;
-    second_wallet.ptr1[2] = -1;
-    ```
-    * As we don't define a copy constructor, the compiler will prepare one
-    for us. However, compiler doesn't know if we want to copy `ptr0` and
-    `ptr1` by reference or by value. But as we have two integer pointers,
-    the default copy constructor will copy only the value of these pointers.
-    That is, it is copy by reference.
-    * The most singificant implication is that two seemingly distinct objects
-    will share the same buffers. Meaning that changing one object's value
-    will impact the other's.
-    * But it is more than this, running the above code result in something
-    like below:
+  ```C++
+  Wallet first_wallet = Wallet();
+  first_wallet.ptr0[0] = 1;
+  first_wallet.ptr1[2] = 2147483647;
+  // We want "fill in" second_wallet by making a copy of first_wallet
+  Wallet second_wallet = first_wallet;
+  // Changing the data in second_wallet should not have any impact on the 
+  // data in first_wallet, for sure.
+  second_wallet.ptr0[0] = 31415926;
+  second_wallet.ptr1[2] = -1;
+  ```
+  * As we don't define a copy constructor, the compiler will prepare one
+  for us. However, compiler doesn't know if we want to copy `ptr0` and
+  `ptr1` by reference or by value. But as we have two integer pointers,
+  the default copy constructor will copy only the value of these pointers.
+  That is, it is copy by reference.
+  * The most singificant implication is that two seemingly distinct objects
+  will share the same buffers. Meaning that changing one object's value
+  will impact the other's.
+  * But it is more than this, running the above code result in something
+  like below:
 
-    ```C++
-    Wallet () called
-    first_wallet: 1, 2147483647
-    first_wallet: 31415926, -1
-    second_wallet: 31415926, -1
-    Segmentation fault
-    ```
-    * Well we accept that there will be buffer sharing, but WTH is there a
-    Segfault?? It has to do with C++'s automatic memory management. When an
-    object goes out of scope, its destructor is automatically called. In the
-    above sample, `first_wallet` and `second_wallet` go out of scope one
-    after another and their destructor being called. This is what RAII requires
-    as well.
-    * After `first_wallet` goes out of scope, we rightfully `free()` both
-    pointers. But wait, what happens when `second_wallet`'s destructor is
-    called? `ptr0` and `ptr1` are being `free()`ed again, it's
-    a [double free](https://encyclopedia.kaspersky.com/glossary/double-free/)!
-    Nonono, this shouldn't happen. We need to prepare a
-    [copy constructor](./constructor) for it.
-    * Apart from the above, we also need to prepare a copy assignment operator.
+  ```C++
+  first_wallet: 1, 2147483647
+  first_wallet: 31415926, -1
+  second_wallet: 31415926, -1
+  Segmentation fault
+  ```
+  * Well we accept that there will be buffer sharing, but WTH is there a
+  Segfault?? It has to do with C++'s automatic memory management. When an
+  object goes out of scope, its destructor is automatically called. In the
+  above sample, `first_wallet` and `second_wallet` go out of scope one
+  after another and their destructor being called. This is what RAII requires
+  as well.
+  * After `first_wallet` goes out of scope, we rightfully `free()` both
+  pointers. But wait, what happens when `second_wallet`'s destructor is
+  called? `ptr0` and `ptr1` are being `free()`ed again, it's
+  a [double free](https://encyclopedia.kaspersky.com/glossary/double-free/)!
+  Nonono, this shouldn't happen. We need to prepare a
+  [copy constructor](./constructor-basics/copy-constructor.cpp) for it.
 
 ### Copy assignment operator and the rule of three
 
-* A much more robust version is like below. This is something known as
+* If `second_wallet` is not initialized and we want to fill data into it from
+an existing `Wallet` object, we need a copy constructor, but if `second_wallet`
+has already been initialized and we want to replace its data with the data
+from another `Wallet` object (and properly handle memory resources of course),
+copy constructor won't help--as constructor won't be called. In this case, we
+need a copy assignment operator.
+
+* Together with a copy constructor and a destructor, it is known as
 [the rule of three](https://en.cppreference.com/w/cpp/language/rule_of_three):
 
-    ```C++
-    class Wallet {
-    private:
-        void mallocPtrs() {
-            this->ptr0 = (int*)malloc(sizeof(int) * ARR_SIZE);
-            if (this->ptr0 == NULL) {
-                std::bad_alloc exception;
-                throw exception;
-            }
-            this->ptr1 = (int*)malloc(sizeof(int) * ARR_SIZE);
-            if (this->ptr1== NULL) {
-                free(this->ptr0);
-                // Need to handle the already malloc()'ed pointer manually.
-                std::bad_alloc exception;
-                throw exception;
-            }
-        }
-    public:
-        int* ptr0;
-        int* ptr1;
-
-        Wallet () {
-            printf("Wallet () called\n");
-            mallocPtrs();
-        }
-        // Copy constructor
-        Wallet(const Wallet& rhs) {
-            mallocPtrs();  
-            memcpy(this->ptr0, rhs.ptr0, sizeof(int) * ARR_SIZE);
-            memcpy(this->ptr1, rhs.ptr1, sizeof(int) * ARR_SIZE);
-            printf("copy Wallet() called\n");
-        }
-        // Copy assignment operator
-        Wallet& operator=(const Wallet& rhs) {
-            memcpy(this->ptr0, rhs.ptr0, sizeof(int) * ARR_SIZE);
-            memcpy(this->ptr1, rhs.ptr1, sizeof(int) * ARR_SIZE);
-            printf("operator=(const Wallet& rhs) called\n");
-            return *this;
-        }
-        ~Wallet () {
-            free(this->ptr0);
-            free(this->ptr1);
-        }
-    };
-    ```
-    * The difference between a copy constructor and a copy assignment operator
-    is that "a copy constructor is used to initialize a previously
-    UNinitialized object from some other object's data. An assignment
-    operator is used to replace the data of a previously INitialized object
-    with some other object's data. "
+  ```C++
+  class Wallet {
+  private:
+    int* ptr0 = nullptr;
+    int* ptr1 = nullptr;
+    size_t wallet_size = 0;
+    void mallocPtrs() {
+      ptr0 = (int*)malloc(sizeof(int) * wallet_size);
+      if (ptr0 == NULL) { throw std::bad_alloc(); }
+      ptr1 = (int*)malloc(sizeof(int) * wallet_size);
+      if (ptr1== NULL) {
+        free(ptr0);
+        throw std::bad_alloc();
+      }
+    }
+  public:
+    Wallet (size_t wallet_size) {
+      this->wallet_size = wallet_size;
+      mallocPtrs();
+    }
+    // Copy constructor
+    Wallet(const Wallet& rhs) {
+      mallocPtrs();  
+      memcpy(ptr0, rhs.ptr0, sizeof(int) * wallet_size);
+      memcpy(ptr1, rhs.ptr1, sizeof(int) * wallet_size);
+    }
+    // Copy assignment operator
+    Wallet& operator=(const Wallet& rhs) {
+      memcpy(ptr0, rhs.ptr0, sizeof(int) * wallet_size);
+      memcpy(ptr1, rhs.ptr1, sizeof(int) * wallet_size);
+      return *this;
+    }
+    ~Wallet () {
+      free(ptr0);
+      free(ptr1);
+    }
+  };
+  ```
+  * The difference between a copy constructor and a copy assignment operator
+  is that "a copy constructor is used to initialize a previously
+  UNinitialized object from some other object's data. An assignment
+  operator is used to replace the data of a previously INitialized object
+  with some other object's data. "
 
 * The above sample works fine, but it still hides some important complexity
-because `ARR_SIZE` is something predefined and fixed, so that we can always
-re-use existing `malloc()`ed memory. What if `ARR_SIZE` is dynamic? It makes
+because `wallet_size` is something predefined and fixed, so that we can always
+re-use existing `malloc()`ed memory. What if `wallet_size` is dynamic? It makes
 copy constructor and copy assignment operator much more complicated.
 
     ```C++

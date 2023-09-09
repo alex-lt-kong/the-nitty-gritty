@@ -13,7 +13,7 @@ class Wallet {
 private:
   int *ptr0 = nullptr;
   int *ptr1 = nullptr;
-  size_t wallet_size = 0;
+  ssize_t wallet_size = -1;
 
   void freePtrs() noexcept {
     free(ptr0);
@@ -21,14 +21,6 @@ private:
   }
 
   void mallocPtrs() {
-
-    if (wallet_size == 0) {
-      // man malloc: If size is 0, then malloc() returns either NULL, or a
-      // unique pointer value that can later be successfully passed to free().
-      // To avoid confusion and possible issue with memcpy(), etc., let's just
-      // ban this
-      throw invalid_argument("wallet_size must be positive");
-    }
     ptr0 = (int *)malloc(sizeof(int) * wallet_size);
     if (ptr0 == nullptr) {
       throw bad_alloc();
@@ -44,13 +36,20 @@ private:
       // another functions and an exception is thrown, destructor will be called
       // we we risk double free()ing curr_ptr0 if it is not set to nullptr.
       ptr0 = nullptr;
+      wallet_size = -1;
       throw bad_alloc();
     }
   }
 
 public:
-  Wallet(size_t wallet_size) {
-
+  Wallet(ssize_t wallet_size) {
+    if (wallet_size <= 0) {
+      // man malloc: If size is 0, then malloc() returns either NULL, or a
+      // unique pointer value that can later be successfully passed to free().
+      // To avoid confusion and possible issue with memcpy(), etc., let's just
+      // ban this
+      throw invalid_argument("wallet_size must be positive");
+    }
     cout << "DynamicWallet (" << wallet_size << ") called" << endl;
     this->wallet_size = wallet_size;
     mallocPtrs();
@@ -98,7 +97,7 @@ public:
   }
 
   int &operator()(size_t i, size_t j) {
-    if (i > 1 || j >= wallet_size) {
+    if (i > 1 || (ssize_t)j >= wallet_size) {
       throw out_of_range("");
     }
     return (i == 0 ? ptr0[j] : ptr1[j]);
