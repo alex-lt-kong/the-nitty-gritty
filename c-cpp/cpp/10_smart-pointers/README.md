@@ -10,12 +10,12 @@ means of operator overloading, the behaviors of a traditional (raw) pointer,
 features. 
 
 * Practically, the implementation of smart pointers is based on the idea of
-[RAII](../01_raii/):
-    * In a smart pointer's constructor, memory is allocated; in a smart
-    pointer's destructor, memory is deallocated.
-    * So when a smart pointer object goes out of scope, following the RAII
-    principle, the smart pointer's destructor is called and memory gets
-    automatically released.
+[RAII](../01_raii-and-the-rule-of-five):
+  * In a smart pointer's constructor, memory is allocated; in a smart
+  pointer's destructor, memory is deallocated.
+  * So when a smart pointer object goes out of scope, following the RAII
+  principle, the smart pointer's destructor is called and memory gets
+  automatically released.
 
 ## `std::unique_ptr<>`
 
@@ -23,13 +23,12 @@ features.
 unique_ptr does not share its pointer. It cannot be copied to another
 `unique_ptr`, passed by value to a function, or used in any C++ Standard
 Library algorithm that requires copies to be made.
-    * A `unique_ptr` can be moved though--this means that the ownership of
-    the memory resource is transferred to another `unique_ptr` and the
-    original `unique_ptr` no longer owns it:
-
-    ```C++
-    unique_ptr<int> smart_int_arr2 = std::move(smart_int_arr);
-    ```
+  * A `unique_ptr` can be moved--this means that the ownership of
+  the memory resource is transferred to another `unique_ptr` and the
+  original `unique_ptr` no longer owns it:
+  ```C++
+  std::unique_ptr<int> smart_int_arr2 = std::move(smart_int_arr);
+  ```
 
 * As always, the first hello world program looks sane and simple, but...things
 becomes more complicated, when we try to incoporate existing C code into C++.
