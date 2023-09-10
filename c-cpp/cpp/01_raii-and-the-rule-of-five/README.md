@@ -146,10 +146,7 @@ fails. This should prevent NULL pointers dereference:
         this->wallet_size = wallet_size;
         mallocPtrs();
       }
-      ~Wallet () {
-        free(ptr0);
-        free(ptr1);
-      }
+      ~Wallet () { /**/ }
     };
     ```
 
@@ -184,10 +181,7 @@ fails:
       this->wallet_size = wallet_size;
       mallocPtrs();
     }
-    ~Wallet () {
-      free(ptr0);
-      free(ptr1);
-    }
+    ~Wallet () { /**/ }
   };
   ```
 
@@ -242,7 +236,6 @@ fails:
   private:
     /**/
     void mallocPtrs() { /**/ }
-    void freePtrs() noexcept { /**/ }
   public:
     /* ... */
     // Copy constructor
@@ -274,7 +267,6 @@ operator.
   private:
     /**/
     void mallocPtrs() { /**/ }
-    void freePtrs() noexcept { /**/ }
   public:
     /* ... */
     // Copy constructor
@@ -287,7 +279,7 @@ operator.
     Wallet &operator=(const Wallet &rhs) {
       if (this != &rhs) {                     // not a self-assignment
         if (wallet_size != rhs.wallet_size) { // resource cannot be reused
-          freePtrs();
+          this->~Wallet();
           wallet_size = rhs.wallet_size;
           mallocPtrs();
         }

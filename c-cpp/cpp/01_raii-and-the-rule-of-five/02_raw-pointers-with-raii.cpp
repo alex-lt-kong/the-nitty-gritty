@@ -1,9 +1,11 @@
-#include <iostream>
-#include <new>
-#include <stdexcept>
+#include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+#include <iostream>
+#include <new>
+#include <stdexcept>
 
 #define ARR_SIZE 65536
 
@@ -11,16 +13,9 @@ using namespace std;
 
 class Wallet {
 private:
-  int *ptr0 = nullptr;
-  int *ptr1 = nullptr;
-  ssize_t wallet_size = -1;
-
-  void freePtrs() noexcept {
-    free(ptr0);
-    free(ptr1);
-  }
-
   void mallocPtrs() {
+    // This is a prime opportunity to try realloc() but for the sake of
+    // simplicity, it is not used
     ptr0 = (int *)malloc(sizeof(int) * wallet_size);
     if (ptr0 == nullptr) {
       throw bad_alloc();
@@ -42,6 +37,11 @@ private:
   }
 
 public:
+  // In order to check the internal state of the class, we expose all member
+  // variables to users
+  int *ptr0 = nullptr;
+  int *ptr1 = nullptr;
+  ssize_t wallet_size = -1;
   Wallet(ssize_t wallet_size) {
     if (wallet_size <= 0) {
       // man malloc: If size is 0, then malloc() returns either NULL, or a
@@ -68,6 +68,16 @@ public:
     memcpy(ptr1, rhs.ptr1, sizeof(int) * wallet_size);
     cout << "copy constructor called" << endl;
   }
+  // Move constructor
+  Wallet(Wallet &&rhs) noexcept {
+    wallet_size = rhs.wallet_size;
+    ptr0 = rhs.ptr0;
+    ptr1 = rhs.ptr1;
+    rhs.wallet_size = -1;
+    rhs.ptr0 = nullptr;
+    rhs.ptr1 = nullptr;
+    cout << "move constructor called" << endl;
+  }
 
   // Copy assignment operator: if *this instance is already initialized and we
   // want to replace its content with the content from an existing object,
@@ -79,8 +89,9 @@ public:
         // This copy assignment operator only provides basic exception
         // guarantee--while it hopefully leaks no memory whatsoever, *this
         // object will NOT be "rolled back" if mallocPtrs() throws an exception.
-        cout << " and wallet resized";
-        freePtrs();
+        cout << " and wallet resized from " << wallet_size << " to "
+             << rhs.wallet_size;
+        this->~Wallet();
         wallet_size = rhs.wallet_size;
         // Using realloc() may further improve performance, but this is not
         // the purpose of this PoC and thus it is not used.
@@ -97,6 +108,23 @@ public:
     cout << endl;
     return *this;
   }
+  // Move assignment operator
+  Wallet &operator=(Wallet &&rhs) {
+    cout << "move assignment operator called";
+    if (this != &rhs) {
+      this->~Wallet();
+      wallet_size = rhs.wallet_size;
+      ptr0 = rhs.ptr0;
+      ptr1 = rhs.ptr1;
+      rhs.ptr0 = nullptr;
+      rhs.ptr1 = nullptr;
+      rhs.wallet_size = -1;
+      cout << endl;
+    } else {
+      cout << " but it is a self-assignment" << endl;
+    }
+    return *this;
+  }
 
   int &operator()(size_t i, size_t j) {
     if (i > 1 || (ssize_t)j >= wallet_size) {
@@ -108,59 +136,95 @@ public:
   // implicitly defined. The same applies to copy assignment operator and
   // move assignment operator.
 
-  ~Wallet() noexcept { freePtrs(); }
+  ~Wallet() noexcept {
+    free(ptr0);
+    free(ptr1);
+  }
 };
 
 int main() {
-  cout << "* Basic operation" << endl;
-  Wallet first_dwallet = Wallet(2048);
-  first_dwallet(0, 0) = 3;
-  first_dwallet(1, 2047) = 666;
-  cout << "first_dwallet: " << first_dwallet(0, 0) << ", "
-       << first_dwallet(1, 2047) << endl
-       << endl;
+  cout << "* Basic operation\n";
+  Wallet first_wallet = Wallet(2048);
+  first_wallet(0, 0) = 3;
+  first_wallet(1, 2047) = 666;
+  assert(first_wallet(0, 0) == 3);
+  assert(first_wallet(1, 2047) == 666);
+  cout << "Okay\n" << endl;
 
-  cout << "* Trying copy constructor" << endl;
-  Wallet second_dwallet = first_dwallet;
-  second_dwallet(0, 0) = 31415926;
-  second_dwallet(1, 2047) = -1;
-  cout << "first_dwallet: " << first_dwallet(0, 0) << ", "
-       << first_dwallet(1, 2047) << endl;
-  cout << "second_dwallet: " << second_dwallet(0, 0) << ", "
-       << second_dwallet(1, 2047) << endl
-       << endl;
+  cout << "* Trying copy constructor\n";
+  Wallet second_wallet = first_wallet;
+  second_wallet(0, 0) = 31415926;
+  second_wallet(1, 2047) = -1;
+  // As second_wallet is a copy of first_wallet, they should have their own
+  // internal data buffer
+  assert(first_wallet(0, 0) == 3);
+  assert(first_wallet(1, 2047) == 666);
+  assert(second_wallet(0, 0) == 31415926);
+  assert(second_wallet(1, 2047) == -1);
+  cout << "Okay\n" << endl;
 
-  cout << "* Trying copy assignment opeartor with different wallet size"
-       << endl;
+  cout << "* Trying copy assignment opeartor with different wallet size\n";
   Wallet third_dwallet = Wallet(1);
-  third_dwallet = first_dwallet;
+  third_dwallet = first_wallet;
   third_dwallet(0, 0) = -123;
 
-  cout << "first_dwallet: " << first_dwallet(0, 0) << ", "
-       << first_dwallet(1, 2047) << endl;
-  cout << "second_dwallet: " << second_dwallet(0, 0) << ", "
-       << second_dwallet(1, 2047) << endl;
-  cout << "third_dwallet: " << third_dwallet(0, 0) << ", "
-       << third_dwallet(1, 2047) << endl
-       << endl;
+  // first_wallet/second_wallet/third_wallet should have different internal data
+  // buffer, changing any one of them shouldn't impact the rest of them
+  assert(first_wallet(0, 0) == 3);
+  assert(first_wallet(1, 2047) == 666);
+  assert(second_wallet(0, 0) == 31415926);
+  assert(second_wallet(1, 2047) == -1);
+  assert(third_dwallet(0, 0) == -123);
+  assert(third_dwallet(1, 2047) == 666);
+  cout << "Okay\n" << endl;
 
-  cout << "* Trying copy assignment opeartor with different wallet size"
-       << endl;
-  Wallet fourth_dwallet = Wallet(2048);
-  fourth_dwallet = first_dwallet;
-  fourth_dwallet(0, 0) = -9527;
-  fourth_dwallet(1, 2047) = 16888;
+  cout << "* Trying copy assignment opeartor with different wallet size\n";
+  Wallet fourth_wallet = Wallet(2048);
+  fourth_wallet = first_wallet;
+  fourth_wallet(0, 0) = -9527;
+  fourth_wallet(1, 2047) = 16888;
+  fourth_wallet(1, 765) = 2147483647;
 
-  cout << "first_dwallet: " << first_dwallet(0, 0) << ", "
-       << first_dwallet(1, 2047) << endl;
-  cout << "fourth_dwallet: " << fourth_dwallet(0, 0) << ", "
-       << fourth_dwallet(1, 2047) << endl
-       << endl;
+  assert(first_wallet(0, 0) == 3);
+  assert(first_wallet(1, 2047) == 666);
+  assert(fourth_wallet(0, 0) == -9527);
+  assert(fourth_wallet(1, 765) == 2147483647);
+  assert(fourth_wallet(1, 2047) == 16888);
+  cout << "Okay\n" << endl;
 
-  cout << "* Trying self-assignment" << endl;
-  first_dwallet = first_dwallet;
-  cout << "first_dwallet: " << first_dwallet(0, 0) << ", "
-       << first_dwallet(1, 2047) << endl;
+  cout << "* Trying self-assignment\n";
+  first_wallet = first_wallet;
+
+  assert(first_wallet(0, 0) == 3);
+  assert(first_wallet(1, 2047) == 666);
+  cout << "Okay\n" << endl;
+
+  cout << "* Trying move constructor\n";
+  Wallet fifth_wallet = first_wallet;
+  fifth_wallet(1, 2) = 468;
+  assert(fifth_wallet(0, 0) == 3);
+  assert(fifth_wallet(1, 2047) == 666);
+  assert(fifth_wallet(1, 2) == 468);
+  Wallet sixth_wallet = move(fifth_wallet);
+  assert(sixth_wallet(0, 0) == 3);
+  assert(sixth_wallet(1, 2047) == 666);
+  assert(sixth_wallet(1, 2) == 468);
+  // fifth_wallet's ownership is gone, its internal buffer should always be NULL
+  assert(fifth_wallet.ptr0 == nullptr);
+  assert(fifth_wallet.ptr1 == nullptr);
+  assert(fifth_wallet.wallet_size == -1);
+  cout << "Okay\n" << endl;
+
+  cout << "* Trying move assignment operator\n";
+  sixth_wallet = move(second_wallet);
+  sixth_wallet(1, 2) = 469;
+  assert(sixth_wallet(0, 0) == 31415926);
+  assert(sixth_wallet(1, 2) == 469);
+  assert(sixth_wallet(1, 2047) == -1);
+  assert(second_wallet.ptr0 == nullptr);
+  assert(second_wallet.ptr1 == nullptr);
+  assert(second_wallet.wallet_size == -1);
+  cout << "Okay\n" << endl;
 
   return 0;
 }
