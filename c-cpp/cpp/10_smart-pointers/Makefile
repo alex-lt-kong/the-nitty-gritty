@@ -1,4 +1,11 @@
-OPTS = -O3 -Wall -pedantic -Wc++-compat -Wextra 
+CXX=g++
+CXXFLAGS=-O3 -Wall -pedantic -Wextra
 
-main.out: main.cpp
-	g++ main.cpp -o main.out $(OPT)
+all: unique_ptr.out
+
+unique_ptr.out: unique_ptr.cpp
+	$(CXX) unique_ptr.cpp -o unique_ptr.out $(CXXFLAGS)
+
+.PHONY:
+clean:
+	rm *.out
