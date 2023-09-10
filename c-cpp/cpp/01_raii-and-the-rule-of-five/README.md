@@ -354,6 +354,7 @@ the latest feature of C++. This is called
   * So we don't need to be concerned about unexpected results from an implicitly
   defined move constructor.
 
+
 ## A better solution
 
 * The above practice is mainly used to demonstrate the peculiarity of the

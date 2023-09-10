@@ -7,8 +7,6 @@
 #include <new>
 #include <stdexcept>
 
-#define ARR_SIZE 65536
-
 using namespace std;
 
 class Wallet {
