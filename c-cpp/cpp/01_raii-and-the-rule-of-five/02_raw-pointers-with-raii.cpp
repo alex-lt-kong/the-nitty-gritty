@@ -203,7 +203,7 @@ int main() {
   assert(fifth_wallet(0, 0) == 3);
   assert(fifth_wallet(1, 2047) == 666);
   assert(fifth_wallet(1, 2) == 468);
-  Wallet sixth_wallet = move(fifth_wallet);
+  Wallet sixth_wallet = std::move(fifth_wallet);
   assert(sixth_wallet(0, 0) == 3);
   assert(sixth_wallet(1, 2047) == 666);
   assert(sixth_wallet(1, 2) == 468);
@@ -214,7 +214,7 @@ int main() {
   cout << "Okay\n" << endl;
 
   cout << "* Trying move assignment operator\n";
-  sixth_wallet = move(second_wallet);
+  sixth_wallet = std::move(second_wallet);
   sixth_wallet(1, 2) = 469;
   assert(sixth_wallet(0, 0) == 31415926);
   assert(sixth_wallet(1, 2) == 469);

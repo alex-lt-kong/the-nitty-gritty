@@ -75,7 +75,7 @@ a copy constructor for us if we don't define it explicitly.
     refer to a memory address that is invalid.
 
 
-## Move constructor
+## Move constructor and rvalue
 
 * Before delving into the concept of move constructor, we may want to take a
 look at the dilemma move constructors try to solve.
@@ -124,7 +124,7 @@ look at the dilemma move constructors try to solve.
 
 * What does `hel` + `wor` return?
     * It returns a new anonymous `std::string` object that contains
-    "hello world!". This unnamed new object is a rvalue.
+    "hello world!". This unnamed new object is an rvalue.
     * Then, we will pass this rvalue to `std::string()`, invoking the copy
     constructor of `std:string`, which will make a copy of the rvalue and
     return the new object to `foobar` by value.
