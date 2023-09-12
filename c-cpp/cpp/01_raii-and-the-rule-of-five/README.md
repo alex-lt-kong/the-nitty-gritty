@@ -125,7 +125,7 @@ and `free()`ed in destructor, perfect RAII:
   * The code should work 99.9% of time if both `malloc()`s do not fail. But
   what if *both* of them fail? It means `ptr0` and `ptr1` will be
   both `NULL`, and any subsequent dereference could cause unexpected
-  result! We need to prevent this.
+  results! We need to prevent this.
 
 * A slightly better version. Now we throw `bad_alloc` exception if `malloc()`
 fails. This should prevent NULL pointers dereference:
@@ -202,15 +202,15 @@ fails:
   second_wallet.ptr1[2] = -1;
   ```
   * As we don't define a copy constructor, the compiler will prepare one
-  for us. However, compiler doesn't know if we want to copy `ptr0` and
+  for us. However, the compiler doesn't know if we want to copy `ptr0` and
   `ptr1` by reference or by value. But as we have two integer pointers,
   the default copy constructor will copy only the value of these pointers.
   That is, it is copy by reference.
-  * The most singificant implication is that two seemingly distinct objects
+  The most significant implication is that two seemingly distinct objects
   will share the same buffers. Meaning that changing one object's value
   will impact the other's.
-  * But it is more than this, running the above code result in something
-  like below:
+  * But it is more than this, running the above code results in something
+  like the below:
 
   ```C++
   first_wallet: 1, 2147483647
@@ -218,11 +218,12 @@ fails:
   second_wallet: 31415926, -1
   Segmentation fault
   ```
-  * Well we accept that there will be buffer sharing, but WTH is there a
+
+  * Well, we accept that there will be buffer sharing, but WTH is there a
   Segfault?? It has to do with C++'s automatic memory management. When an
   object goes out of scope, its destructor is automatically called. In the
   above sample, `first_wallet` and `second_wallet` go out of scope one
-  after another and their destructor being called. This is what RAII requires
+  after another and their destructor is called. This is what RAII requires
   as well.
   * After `first_wallet` goes out of scope, we rightfully `free()` both
   pointers. But wait, what happens when `second_wallet`'s destructor is
@@ -339,7 +340,7 @@ least basic exception safety is required to write robust code.
 ## The rule of five: move constructor and move assignment operator
 
 * The `Wallet` class, in its current shape, follows the rule of three. It is
-actually pretty complete already. But since C++11, we can defined two more
+actually pretty complete already. But since C++11, we can define two more
 functions, namely move constructor and move assignment operator, to utilize
 the latest feature of C++. This is called
 [the rule of five](https://en.cppreference.com/w/cpp/language/rule_of_three).
@@ -347,13 +348,55 @@ the latest feature of C++. This is called
   * Note that a copy constructor will be implicitly defined if we don't prepare
   one ourselves. For a move constructor, it will only be implicitly defined
   if all of the following is true:
-    * there are no user-declared copy constructors;
-    * there are no user-declared copy assignment operators;
-    * there are no user-declared move assignment operators;
-    * there is no user-declared destructor. 
+    * There are no user-declared copy constructors;
+    * There are no user-declared copy assignment operators;
+    * There are no user-declared move assignment operators;
+    * There is no user-declared destructor. 
   * So we don't need to be concerned about unexpected results from an implicitly
   defined move constructor.
 
+* The use of move constructor and move assignment operator can be demonstrated
+in the following snippet:
+
+  ```C++
+  void start_new_thread() {
+    Wallet myWallet = Wallet(2147483647);
+    myThread = std::thread([](Wallet w) {
+      // Long-running task
+    }, myWallet);
+    myThread.detach();
+  }
+  ```
+
+* The function tries to pass a HUGE object to a thread, which should work but
+would be very slow as each time the copy constructor is called to allocate
+memory for a brand new object. We can't pass the object by reference by
+simply changing `Wallet w` to `Wallet &w` as `myWallet` will be out of scope
+immediately after `myThread.detach()`.
+  * There are definitely ways to circumvent this dilemma. For example, we make
+  `Wallet myWallet` a global object. But they are not as natural.
+
+* C++11 introduces the so-called move semantics that can achieve this. Examining
+the above code, we notice a pattern: while `w` needs to be constructed and new
+memory will be allocated, `myWallet` will go out of scope very soon and memory
+it manages will need to be deallocated. Why not just "hand over" the
+internal buffer of `myWallet` to `w`? We can eliminate one unnecessary
+allocation and one unnecessary deallocation by doing this.
+  * This "handing over" is implemented as move constructor and move assignment
+  operator:
+  ```C++
+  void start_new_thread() {
+    Wallet myWallet = Wallet(2147483647);
+    myThread = std::thread([](Wallet &&w) {
+      // Long-running task
+    }, std::move(myWallet));
+    myThread.detach();
+    // Can't access myWallet now as its internal buffer has been handed over to
+    // other objects.
+    assert(myWallet.ptr0 == nullptr);
+    assert(myWallet.ptr1 == nullptr);
+  }
+  ```
 
 ## A better solution
 
