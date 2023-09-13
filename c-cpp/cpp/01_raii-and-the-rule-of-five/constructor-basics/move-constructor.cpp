@@ -69,7 +69,7 @@ public:
     NaiveString operator=(NaiveString &&rhs) noexcept {
         
         cout << "[Interal] move assignment operator called, ";
-        if (this != &rhs) {
+        if (this != &rhs) { // self-assignment protection
             cout << "and it is making an impact, rhs._str: [" << rhs._str
                  << "]" << endl;
             free(this->_str);
@@ -134,7 +134,7 @@ int main()
 
     cout << "Test 7" << endl;
     ns_fb.PrintInternalPointerAddress();
-    NaiveString ns_fb1 = move(ns_fb);
+    NaiveString ns_fb1 = std::move(ns_fb);
     ns_fb.PrintInternalPointerAddress();
     ns_fb1.PrintInternalPointerAddress();
     return 0;
