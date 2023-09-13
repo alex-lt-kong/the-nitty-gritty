@@ -2,20 +2,37 @@
 
 using namespace std;
 
-void func1(const int& a) {
-    cout << a << endl;
-    // a = 5; // error: assignment of read-only reference ‘a’
-}
-
-void func2(int&& a) {
+template <typename T>
+void func1(T a) {
+    ++a;
     cout << a << endl;
 }
 
-void func3(int a) {
+template <typename T>
+void func2(T& a) {
+    ++a;
+    cout << a << endl;
+}
+
+template <typename T>
+void func3(const T& a) {
+    // ++a; // error: Variable 'a' declared const here
+    cout << a << endl;
+}
+
+template <typename T>
+void func4(T&& a) {
+    ++a;
     cout << a << endl;
 }
 
 int main(void) {
-    int a = 5;
+    // 5 is an rvalue
+    func1(5);
+    // func2(5); // error: Candidate function [with T = int] not viable: expects an lvalue for 1st argument
+    func3(5);
+    func4(5);
+    
+    
     return 0;
 }

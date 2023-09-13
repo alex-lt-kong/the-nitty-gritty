@@ -13,31 +13,31 @@ delve a bit deeper into the design of C++.
 pointers to refer to an "object", which has to be `malloc()`ed and `free()`ed
 manually. While in C++ objects behave like "common variables" such as integer,
 float, etc. For example:
-    * Objects are passed by value by default, you pass an object to a function
-    then modify the object, and the object being passed won't be changed.
-    * Assigning an object to another object will create a new object, instead
-    of creating a pointer pointing to the same memory location.
+  * Objects are passed by value by default, you pass an object to a function
+  then modify the object, and the object being passed won't be changed.
+  * Assigning an object to another object will create a new object, instead
+  of creating a pointer pointing to the same memory location.
 
-    ```C++
-    MyItemType a;
-    MyItemType b;
-    a.someNumber = 5;
-    b = a;
+  ```C++
+  MyItemType a;
+  MyItemType b;
+  a.someNumber = 5;
+  b = a;
 
-    cout << a.someNumber << endl;
-    cout << b.someNumber << endl;
+  cout << a.someNumber << endl;
+  cout << b.someNumber << endl;
 
-    b.someNumber = 10;
+  b.someNumber = 10;
 
-    cout << a.someNumber << endl;
-    cout << b.someNumber << endl;
-    ``` 
-    Output:
-    ```
-    5  
-    5
-    5
-    10
+  cout << a.someNumber << endl;
+  cout << b.someNumber << endl;
+  ``` 
+  Output:
+  ```
+  5  
+  5
+  5
+  10
     ```
     * Objects will go out of scope and are automatically released as long as
     it is defined on stack (i.e., `MyClass myObject = MyClass();`)
@@ -54,28 +54,30 @@ reference types that behave like pointers except they are garbage collected.
 need to frequently make copies of an object just like we make copies of an
 integer (e.g., `int a = b;`). There are a few cases where copy constructors
 will be called, including:
-    * initialization: `T a = b;` or `T a(b);`, where b is of type T;
-    * function argument passing: `f(a);`, where a is of type T and f is
-    `void f(T t)`;
-    * function return: `return a;` inside a function such as `T f()`, where a
-    is of type T, which has no move constructor.  
+  * initialization: `T a = b;` or `T a(b);`, where b is of type T;
+  * function argument passing: `f(a);`, where a is of type T and f is
+  `void f(T t)`;
+  * function return: `return a;` inside a function such as `T f()`, where a
+  is of type T, which has no move constructor.  
 
 
-* If a class is not "too complicated" (what does "too complicated" means is 
-a difficult topic, let's skip it here), C++ compilers will implicitly create
+* If a class is not "too complicated" (what "too complicated" means is 
+a more complex topic, let's skip it here), C++ compilers will implicitly create
 a copy constructor for us if we don't define it explicitly.
-    * But we can always create a copy constructor ourselves, usually its
-    signature is just `MyClass::MyClass(const MyClass& myObject);`
-    * The implicit copy constructor could also be a trap. Say we have a
-    raw pointer as a non-static member of a class, the implicit copy constructor
-    could be added. But when we make a copy of the class, what will happen?
-    A copy of the pointer, not the memory on the heap pointed by the pointer,
-    i.e., a shallow copy, will be returned. If the original object owns the heap
-    memory, if the original object goes out of scope, the copy object may
-    refer to a memory address that is invalid.
+  * But we can always create a copy constructor ourselves, usually its
+  signature is just `MyClass::MyClass(const MyClass& myObject);`
+  * The implicit copy constructor could also be a trap. Say we have a
+  raw pointer as a non-static member of a class, the implicit copy constructor
+  could be added. But when we make a copy of the class, what will happen?
+  A copy of the pointer, not the memory on the heap pointed by the pointer,
+  i.e., a shallow copy, will be returned. If the original object owns the heap
+  memory, if the original object goes out of scope, the copy object may
+  refer to a memory address that is invalid.
 
 
 ## Move constructor and rvalue
+
+### What is "rvalue" anyway?
 
 * Before delving into the concept of move constructor, we may want to take a
 look at the dilemma move constructors try to solve.
@@ -88,82 +90,114 @@ look at the dilemma move constructors try to solve.
     int y = x * 2;
     int z = y;
     ```
-    while `x` and `y` below are still lvalue, `x+1`, `y*2` are **r**values:
+    * while `x` and `y` below are still lvalue, `x+1`, `y*2` are **r**values:
     ```C
     int x = x + 1;
     int y = y * 2;
     ```
-    because you can't put them to the left of the assignment statement:
+    * because you can't put them to the left of the assignment statement:
     ```C
     int x, y;
     x + 1 = 2; // WTF? This is non-sense
     y * 2 = 4;
     ```
+    * Applying this principle, `5`, `"hello world!"`, etc. are also **l**value.
 
-* While `x + 1 = 2` is non-sense, we may agree that the following should work:
+### How can move constructor help?
 
-    ```C++
-    std::string hel = "hello ";
-    std::string wor = "world!";
-    // This seems fine, as hel + wor is a rvalue and 
-    // it rightfully appears on the rhs
-    std::string foobar = hel + wor; 
-    std::cout << foobar << std::endl;
-    // >> hello world!
-    ```
-
-    * The above is nothing but syntactic sugar on top of this:
-
-    ```C++
-    std::string hel = std::string("hello ");
-    std::string wor = std::string("world!");
-    std::string foobar = std::string(hel + wor);
-    std::cout << foobar << std::endl;
-    ```
-
+* It is rather natural that the following should work:
+  ```C++
+  std::string hel = "hello ";
+  std::string wor = "world!";
+  // This seems fine, as hel + wor is a rvalue and 
+  // it rightfully appears on the rhs
+  std::string foobar = hel + wor; 
+  std::cout << foobar << std::endl;
+  // >> hello world!
+  ```
+  * The above is nothing but syntactic sugar on top of this:
+  ```C++
+  std::string hel = std::string("hello ");
+  std::string wor = std::string("world!");
+  std::string foobar = std::string(hel + wor);
+  std::cout << foobar << std::endl;
+  ```
 
 * What does `hel` + `wor` return?
-    * It returns a new anonymous `std::string` object that contains
-    "hello world!". This unnamed new object is an rvalue.
-    * Then, we will pass this rvalue to `std::string()`, invoking the copy
-    constructor of `std:string`, which will make a copy of the rvalue and
-    return the new object to `foobar` by value.
-    * Side note: `str::string` must overload the `+` operator to make
-    `hel + wor` work.
+  * It returns a new anonymous `std::string` object that contains
+  "hello world!". This unnamed new object is an rvalue.
+  * Then, we will pass this rvalue to `std::string()`. Without a move
+  constructor, the copy constructor of `std:string` will be called, which
+  makes a copy of the rvalue and return the new object to `foobar` by value.
 
-* But this is utterly wasteful--the anonymous `hel + wor` will be thrown away
-very soon, so why bother making a copy of it? Let's just transfer, a.k.a.,
-"move", its content from the rvalue to `foobar`. Isn't it wonderful?
-    * This is how a move constructor is used in [move-constructor.cpp](./move-constructor.cpp):
+* But this is utterly wasteful--the anonymous `hel + wor`, as an rvalue (i.e.,
+an unnamed temporary object), will be thrown away very soon, so why bother
+making a copy of it? Let's just transfer, a.k.a., "move", its content from the
+rvalue to `foobar`. Isn't it wonderful?
+  * This is how a move constructor is used in
+  [move-constructor.cpp](./move-constructor.cpp):
 
-    ```C++    
-    NaiveString(NaiveString&& rhs) {
-        _str = rhs._str; // "Ownership transfer"
-        // Note that we need to set the rhs's internal pointer to nullptr,
-        // so that when the rvalue goes out of scope, it won't release my
-        // resource (it's ownership has been transferred)
-        rhs._str = nullptr;
-    }
-    ```
-
-    * `NavieString&& rhs` is called an `rvalue reference` introduced in C++11.
 
 * There is a separate scenario where we want the move constructor to be called:
 
-    ```C++
-    std::string hel = std::string("hello");
-    // using std::move, we explicity transfer the ownership of "hello " from hel
-    // to hell
-    std::string hell = std::move(hel);
-    cout << hel << endl; // UB!
-    cout << hell << endl; // prints "hello "
-    ```
-
-    * This is a bit similar to Rust.
+  ```C++
+  std::string hel = std::string("hello");
+  // using std::move, we explicity transfer the ownership of "hello " from hel
+  // to hell
+  std::string hell = std::move(hel);
+  cout << hel << endl; // UB!
+  cout << hell << endl; // prints "hello "
+  ```
+  * This is a bit similar to Rust.
+  * Note that `std::move()` doesn't actually move anything out of it's own.
+  It's just a fancy name for a cast to a `T&&`.
 
 * Move constructors of all the types used with STL containers, for example,
 need to be declared `noexcept`; otherwise STL will choose copy constructors
 instead. The same is valid for move assignment operations.
+
+### Why do we need rvalue reference for move constructor to work?
+
+* A typical class with move constructor is like the below:
+```C++
+class MyClass {
+private:
+  ssize_t buf_size;
+  void* buf_ptr;
+public:
+  MyClass(MyClass &&rhs) {
+    if (this != &rhs) {
+      buf_size = rhs.buf_size;
+      buf_ptr = rhs.buf_ptr;
+      rhs.buf_ptr = nullptr;
+      rhs.buf_size = -1;
+    }
+    return *this;
+  }
+}
+```
+
+* The problem is, for move constructor, how about we just use **l**value
+reference, meaning that we change `MyClass(MyClass &&rhs)` to simply
+`MyClass(MyClass &rhs)`? Passing an object to it and it can still transfer
+the ownership.
+  * For example:
+  ```C++
+  MyClass a = MyClass();
+  // should work even if we change the move constructor's
+  // signautre to from `MyClass(MyClass &&rhs)` to `MyClass(MyClass &rhs)`
+  // as a is an lvalue.
+  MyClass b = std::move(a); 
+  ```
+* The superficial answer is that it may make it identical to copy constructor,
+which may cause difficulty for a compiler to pick the right method to call.
+But the real reason is more than this.
+* The understand the reason, one needs to read
+[lvalue-vs-rvalue.cpp](./lvalue-vs-rvalue.cpp) and understand the design
+of C++. Long story short, **r**value reference makes it possible
+for us to modify an rvalue in the function call. This is needed by move
+semantics. Without introducing `T&&`, this is impossible: `const T&` 
+accepts rvalue but it must be read-only and `T&` rejects rvalues altogether.
 
 
 ## Copy elision (a.k.a., return value optimization or RVO)
@@ -172,46 +206,46 @@ instead. The same is valid for move assignment operations.
 
 * Consider the following case (Let's ignore function inline, compile-time
 computation, etc.):
-    ```C++
-    vector<double> GetScores() {
-        vector<double> scores{ 1.414, 3.141, 2.71, 99, -1, 0.001 };
-        return scores;
-    }
-    int main() {
-        vector<double> myScores = GetScores();
-        return 0;
-    }    
-    ```
-    * What happens when we `return scores;`? By rights: `scores` is about to
-    be out of scope and destroyed; a copy of `scores` is prepared and 
-    assigned to `myScores`.
-    * This is worrying--what if `scores` is a vector with 1 million elements? We
-    are going to copy all of them?
+  ```C++
+  vector<double> GetScores() {
+      vector<double> scores{ 1.414, 3.141, 2.71, 99, -1, 0.001 };
+      return scores;
+  }
+  int main() {
+      vector<double> myScores = GetScores();
+      return 0;
+  }    
+  ```
+  * What happens when we `return scores;`? By rights: `scores` is about to
+  be out of scope and destroyed; a copy of `scores` is prepared and 
+  assigned to `myScores`.
+  * This is worrying--what if `scores` is a vector with 1 million elements? We
+  are going to copy all of them?
 
 * After learning move constructor, we can make it a lot smarter by revising
-    `GetScores()` to this:
-    ```C++
-    vector<double> GetScores() {
-        vector<double> scores{ 1.414, 3.141, 2.71, 99, -1, 0.001 };
-        return std::move(scores); // Let's move!
-    }
-    ```
-    * But if we do try this and benchmark, we will see the performance dropping,
-    instead of going up. What happens?
+`GetScores()` to this:
+  ```C++
+  vector<double> GetScores() {
+      vector<double> scores{ 1.414, 3.141, 2.71, 99, -1, 0.001 };
+      return std::move(scores); // Let's move!
+  }
+  ```
+  * But if we do try this and benchmark, we will see the performance dropping,
+  instead of going up. What happens?
 
-* This is because ISO C++ standard has something beyond the move constructor
-(and to a large extent makes move constructor much less common): copy elision.
-    * It means that a C++ compiler can simply skip copy/move
-    constructors altogether and just set the value directly to the object.
-    * In the above case, it means something like this:
-
-    ```C++
-    int main() {
-        vector<double> myScores = { 1.414, 3.141, 2.71, 99, -1, 0.001 };
-        return 0;
-    }    
-    ```
-    * So there is no copy, move, no nothing.
+* This is because ISO C++ standard has something beyond (and before
+the introduction of) the move constructor (and to a large extent makes move
+constructor much less common): copy elision.
+  * It means that a C++ compiler can simply skip copy/move
+  constructors altogether and just set the value directly to the object.
+  * In the above case, it means something like this:
+  ```C++
+  int main() {
+      vector<double> myScores = { 1.414, 3.141, 2.71, 99, -1, 0.001 };
+      return 0;
+  }    
+  ```
+  * So there is no copy, no move, no nothing.
 
 * Note that this is a violation of C++'s "as-if" rule.
     * The "as-if" rule requires that all optimization techniques must not
@@ -225,6 +259,22 @@ computation, etc.):
 * Perhaps the C++ committee sees the benefit of copy elision as large enough
 to justify the exception so that a very explicit rule is added to the ISO C++
 standard to allow this counter-intuitive behavior.
+
+* It is also worth noting that RVO is not guaranteed to be applied in all cases,
+for example:
+  ```C++
+  vector<double> GetScores() {
+      vector<double> scores1{ 1.414, 3.141, 2.71, 99, -1, 0.001 };
+      vector<double> scores2{ 1.414, 3.141, 2.71, 99, -1, 0.001 };
+      vector<double> scores3{ 1.414, 3.141, 2.71, 99, -1, 0.001 };
+      int a = 
+      if (rand() % 3 == 0) { return scores1; }
+      else if (rand() % 3 == 1) { return scores2; }
+      else { return scores3; }
+  }
+  ```
+  * But compilers are still free to apply other optimization techniques such
+  as function inlining.
 
 
 ## References

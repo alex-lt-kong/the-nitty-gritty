@@ -2,7 +2,7 @@ CXX=clang++
 CXXFLAGS=-O2 -Wall -pedantic -Wextra 
 
 
-main: base-constructor.out copy-constructor.out move-constructor.out copy-elision.out
+main: base-constructor.out copy-constructor.out move-constructor.out copy-elision.out lvalue-vs-rvalue.out
 
 lvalue-vs-rvalue.out:  lvalue-vs-rvalue.cpp
 	$(CXX) $(CXXFLAGS) lvalue-vs-rvalue.cpp -g -o lvalue-vs-rvalue.out
