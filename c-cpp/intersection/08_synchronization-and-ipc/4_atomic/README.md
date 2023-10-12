@@ -22,7 +22,10 @@
   in the same manner.
 
   - But it is easy to envisage that on an x86-32 CPU, accessing `int64_t` might
-    need more than one instruction and thus it is not atomic.
+    need more than one instruction and thus it is not atomic. Also noteworthy
+    is that pointer types are guranteed to be as "atomic" as `int`, because
+    pointers' size is always the size of `int`, regardless type of pointers (
+    e.g., `char*`, `uint64_t*`, `some_big_struct*`)
 
   - Also, people from
     [this thread](https://stackoverflow.com/questions/77262636/atomic-operation-with-glibc-c-different-from-atomic?noredirect=1#comment136222958_77262636)
