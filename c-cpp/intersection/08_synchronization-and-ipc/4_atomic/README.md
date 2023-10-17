@@ -89,7 +89,7 @@
   the value of scnt is 52380
   ```
 
-- Why so? The devil is in the definition of "atomic", we does not only want
+- Why so? The devil is in the definition of "atomic", we do not only want
   the read and write to be "separately atomic", we need them to be atomic
   "as a whole". This is called "atomic read–modify–write" or "atomic RMW".
   While `++cnt` does look like one single instruction, it may actually a
