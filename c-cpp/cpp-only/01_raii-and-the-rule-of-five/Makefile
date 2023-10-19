@@ -1,14 +1,22 @@
-CXX=g++
-CXXFLAGS=-O3 -Wall -pedantic -Wextra
+CXX = clang++
+CXXFLAGS = -O3 -Wall -pedantic -Wextra
 
-all: 01_naive-example.out 02_raw-pointers-with-raii.out
+RM = rm
 
-01_naive-example.out: 01_naive-example.cpp
-	$(CXX) 01_naive-example.cpp -o 01_naive-example.out $(CXXFLAGS)
+# Directory to store the built targets
+BUILD_DIR = ./build
+TARGETS = 01_naive-example 02_raw-pointers-with-raii
+# The paths to the built targets
+TARGET_PATHS = $(addprefix $(BUILD_DIR)/,$(TARGETS))
 
-02_raw-pointers-with-raii.out: 02_raw-pointers-with-raii.cpp
-	$(CXX) 02_raw-pointers-with-raii.cpp -o 02_raw-pointers-with-raii.out $(CXXFLAGS)
+all: $(TARGET_PATHS)
 
-.PHONY:
+$(BUILD_DIR)/%: %.cpp
+	@mkdir -p $(BUILD_DIR)
+# $@ is an automatic variable that represents target
+# $< is an automatic variable that represents dependency
+	$(CXX) $(CXXFLAGS) $(LDFLAGS) -o $@ $<
+	
+.PHONY: clean
 clean:
-	rm *.out
+	$(RM) -r $(BUILD_DIR)
