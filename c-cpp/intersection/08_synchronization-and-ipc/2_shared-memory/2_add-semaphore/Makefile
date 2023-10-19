@@ -1,11 +1,23 @@
-OPTS = -O2 -Wall -Wc++-compat -pedantic -Wextra
-LIBS = -lrt -lpthread
 CC = clang
+CFLAGS = -O2 -Wall -Wc++-compat -pedantic -Wextra
+LDFLAGS = -lrt -lpthread
 
-main:
-	$(CC) -o shm-writer.out shm-writer.c $(OPTS) $(LIBS)
-	$(CC) -o shm-reader.out shm-reader.c $(OPTS) $(LIBS)
+RM = rm
 
+# Directory to store the built targets
+BUILD_DIR = ./build
+TARGETS = shm-writer shm-reader
+# The paths to the built targets
+TARGET_PATHS = $(addprefix $(BUILD_DIR)/,$(TARGETS))
+
+all: $(TARGET_PATHS)
+
+$(BUILD_DIR)/%: %.c
+	@mkdir -p $(BUILD_DIR)
+# $@ is an automatic variable that represents target
+# $< is an automatic variable that represents dependency
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $<
+	
 .PHONY: clean
 clean:
-	rm *.out
+	$(RM) -r $(BUILD_DIR)
