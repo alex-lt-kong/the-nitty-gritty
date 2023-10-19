@@ -1,22 +1,24 @@
-CXX=clang++
-CXXFLAGS=-O2 -Wall -pedantic -Wextra 
+CXX = clang++
+CXXFLAGS = -O3 -Wall -pedantic -Wextra
 
+RM = rm
 
-main: base-constructor.out copy-constructor.out move-constructor.out copy-elision.out lvalue-vs-rvalue.out
+# Directory to store the built targets
+BUILD_DIR = ./build
+TARGETS = base-constructor copy-constructor copy-elision lvalue-vs-rvalue move-constructor
+# The paths to the built targets
+TARGET_PATHS = $(addprefix $(BUILD_DIR)/,$(TARGETS))
 
-lvalue-vs-rvalue.out:  lvalue-vs-rvalue.cpp
-	$(CXX) $(CXXFLAGS) lvalue-vs-rvalue.cpp -g -o lvalue-vs-rvalue.out
-base-constructor.out: base-constructor.cpp
-	$(CXX) $(CXXFLAGS) base-constructor.cpp -o base-constructor.out
-copy-constructor.out: copy-constructor.cpp
-	$(CXX) $(CXXFLAGS)  copy-constructor.cpp -o copy-constructor.out
-move-constructor.out: move-constructor.cpp
-	$(CXX) $(CXXFLAGS) -fno-elide-constructors move-constructor.cpp -o move-constructor-noec.out
-	$(CXX) $(CXXFLAGS) move-constructor.cpp -o move-constructor.out
-copy-elision.out:  copy-elision.cpp
-	$(CXX) $(CXXFLAGS) copy-elision.cpp -g -o copy-elision.out
-# gdb --quiet --eval-command="set disassembly-flavor intel" --eval-command="disassemble /m getStringVec" --batch ./copy-elision.out > ./copy-elision.asm
+all: $(TARGET_PATHS) move-constructor-noec
 
-.PHONY:
+$(BUILD_DIR)/%: %.cpp
+	@mkdir -p $(BUILD_DIR)
+# $@ is an automatic variable that represents target
+# $< is an automatic variable that represents dependency
+	$(CXX) $(CXXFLAGS) $(LDFLAGS) -o $@ $<
+move-constructor-noec: move-constructor.cpp
+	$(CXX) $(CXXFLAGS) -fno-elide-constructors move-constructor.cpp -o $(BUILD_DIR)/move-constructor-noec
+
+.PHONY: clean
 clean:
-	rm *.out
+	$(RM) -r $(BUILD_DIR)
