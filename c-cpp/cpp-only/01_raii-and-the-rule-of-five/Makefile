@@ -1,5 +1,5 @@
-CXX = clang++
-CXXFLAGS = -O3 -Wall -pedantic -Wextra
+CXX = g++
+CXXFLAGS = -Wall -pedantic -Wextra -fsanitize=address
 
 RM = rm
 
