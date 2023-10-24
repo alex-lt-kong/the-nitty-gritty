@@ -1,4 +1,5 @@
 #include <assert.h>
+#include <limits.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -16,10 +17,12 @@ private:
     // simplicity, it is not used
     ptr0 = (int *)malloc(sizeof(int) * wallet_size);
     if (ptr0 == nullptr) {
+      cout << "1st malloc() failed\n";
       throw bad_alloc();
     }
     ptr1 = (int *)malloc(sizeof(int) * wallet_size);
     if (ptr1 == nullptr) {
+      cout << "2nd malloc() failed\n";
       // Need to free() the already malloc()'ed pointer manually
       // as destructor will NOT be call if exception is thrown in
       // constructor
@@ -142,7 +145,7 @@ public:
 
 int main() {
   cout << "* Basic operation\n";
-  Wallet first_wallet = Wallet(2048);
+  auto first_wallet = Wallet(2048);
   first_wallet(0, 0) = 3;
   first_wallet(1, 2047) = 666;
   assert(first_wallet(0, 0) == 3);
@@ -150,7 +153,7 @@ int main() {
   cout << "Okay\n" << endl;
 
   cout << "* Trying copy constructor\n";
-  Wallet second_wallet = first_wallet;
+  auto second_wallet = first_wallet;
   second_wallet(0, 0) = 31415926;
   second_wallet(1, 2047) = -1;
   // As second_wallet is a copy of first_wallet, they should have their own
@@ -162,7 +165,7 @@ int main() {
   cout << "Okay\n" << endl;
 
   cout << "* Trying copy assignment opeartor with different wallet size\n";
-  Wallet third_dwallet = Wallet(1);
+  auto third_dwallet = Wallet(1);
   third_dwallet = first_wallet;
   third_dwallet(0, 0) = -123;
 
@@ -177,7 +180,7 @@ int main() {
   cout << "Okay\n" << endl;
 
   cout << "* Trying copy assignment opeartor with different wallet size\n";
-  Wallet fourth_wallet = Wallet(2048);
+  auto fourth_wallet = Wallet(2048);
   fourth_wallet = first_wallet;
   fourth_wallet(0, 0) = -9527;
   fourth_wallet(1, 2047) = 16888;
@@ -223,6 +226,33 @@ int main() {
   assert(second_wallet.ptr1 == nullptr);
   assert(second_wallet.wallet_size == -1);
   cout << "Okay\n" << endl;
+
+  // By default, Linux uses opportunistic memory allocation, so that successful
+  // malloc() may still fail and get killed later. This also obfuscate the
+  // behavior we want to observe. Need to turn it off by issuing:
+  // echo 2 > /proc/sys/vm/overcommit_memory
+  // Reference:
+  // https://stackoverflow.com/questions/16674370/why-does-malloc-or-new-never-return-null
+  // This option breaks AddressSanitizer, but Valgrind still works:
+  //  valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes \
+  //  --verbose --log-file=valgrind-out.txt ./build/02_raw-pointers-with-raii
+  cout << "* Trying to fail only the 2nd malloc()\n";
+  try {
+    ssize_t wallet_size = INT_MAX / 2;
+    auto seventh_wallet = Wallet(wallet_size);
+    seventh_wallet(0, 234) = 987;
+    seventh_wallet(0, wallet_size - 1) = -987;
+    seventh_wallet(1, 2) = 123;
+    seventh_wallet(1, wallet_size - 1) = 213124;
+    assert(seventh_wallet(0, 234) == 987);
+    assert(seventh_wallet(0, wallet_size - 1) == -987);
+    assert(seventh_wallet(1, 2) == 123);
+    assert(seventh_wallet(1, wallet_size - 1) == 213124);
+  } catch (bad_alloc const &) {
+    cout << "Okay: bad_alloc caught as expected, but you need to check if ONLY "
+            "the 2nd malloc() failed.\n"
+         << endl;
+  }
 
   return 0;
 }
