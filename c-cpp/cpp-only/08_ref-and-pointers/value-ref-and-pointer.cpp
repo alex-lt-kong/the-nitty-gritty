@@ -1,5 +1,4 @@
 #include <iostream>
-#include <stdio.h>
 #include <string>
 
 using namespace std;
@@ -18,41 +17,45 @@ public:
 
   SimpleClass(const SimpleClass &obj) {
     this->val = obj.val;
-    printf("Copy constructor is called()\n");
+    cout << "Copy constructor is called()\n";
   }
 };
 
 void a_naive_function(SimpleClass simple_obj) {
+
+  cout << "a_naive_function()\n";
   simple_obj.setNewVal(1234);
-  printf("simple_obj.getVal()@a_naive_function(): %d\n", simple_obj.getVal());
+  cout << "simple_obj.getVal(): " << simple_obj.getVal() << "/n" << endl;
 }
 
 void a_naive_but_by_ref_function(SimpleClass &simple_obj) {
+
+  cout << "a_naive_but_by_ref_function()\n";
   simple_obj.setNewVal(1234);
-  printf("simple_obj.getVal()@a_naive_but_by_ref_function(): %d\n",
-         simple_obj.getVal());
+  cout << "simple_obj.getVal(): " << simple_obj.getVal() << "\n" << endl;
 }
 
 void a_naive_but_by_ref_with_ptr_function(SimpleClass &simple_obj) {
+
+  cout << "a_naive_but_by_ref_with_ptr_function()\n";
   (&simple_obj)->setNewVal(1234);
-  printf("simple_obj.getVal()@a_naive_but_by_ref_with_ptr_function(): %d\n",
-         (&simple_obj)->getVal());
+  cout << "simple_obj.getVal(): " << (&simple_obj)->getVal() << "\n" << endl;
 }
 
 void a_naive_but_by_pointer_function(SimpleClass *simple_obj) {
+
+  cout << "a_naive_but_by_pointer_function()\n";
   simple_obj->setNewVal(1234);
-  printf("simple_obj.getVal()@a_naive_but_by_pointer_function(): %d\n",
-         simple_obj->getVal());
+  cout << "simple_obj.getVal(): " << simple_obj->getVal() << "\n" << endl;
 }
 
 void test_pass_arguments_by_value() {
+
+  cout << "test_pass_arguments_by_value()\n";
   SimpleClass simple_obj = SimpleClass(10);
-  printf("simple_obj.getVal()@test_pass_arguments_by_value(): %d\n",
-         simple_obj.getVal());
+  cout << "simple_obj.getVal():" << simple_obj.getVal() << "\n";
   a_naive_function(simple_obj);
-  printf("simple_obj.getVal()@test_pass_arguments_by_value(): %d\n",
-         simple_obj.getVal());
-  printf("\n");
+  cout << "simple_obj.getVal(): " << simple_obj.getVal() << "\n" << endl;
 }
 
 void test_pass_arguments_by_reference() {
