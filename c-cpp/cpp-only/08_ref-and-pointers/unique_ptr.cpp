@@ -38,7 +38,7 @@ void unique_ptr_converted_from_dumb_ptr(size_t arr_size) {
   // In reality, malloc() should be some deep-rooted C functions,
   // probably in a compiled so file. Here we simplify the scenario by
   // directly using a malloc()
-  for (int i = 0; i < arr_size; i++) {
+  for (size_t i = 0; i < arr_size; i++) {
     dynamic_int_arr[i] = i;
   }
   unique_ptr<int[], FreeDeleter> smart_int_ptr(dynamic_int_arr);
