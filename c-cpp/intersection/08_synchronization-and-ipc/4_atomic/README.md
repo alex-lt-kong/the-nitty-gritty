@@ -2,6 +2,8 @@
 
 ## C
 
+### sig_atomic_t
+
 - According to 8.1.1 of the
   [Intel® 64 and IA-32 Architectures Software Developer’s Manual](https://www.intel.com/content/dam/www/public/us/en/documents/manuals/64-ia-32-architectures-software-developer-vol-3a-part-1-manual.pdf)
   and the 24.4.7.2 of the
@@ -114,5 +116,33 @@
     without explicitly asking the compiler/CPU to do so, the instruction may
     still well be non-atomic!
 
+### \_Atomic
+
 - So long story short, since C11, we should just use `_Atomic`, which
   handles all the dirty details for us once and for all
+
+- Per section 4 of 6.7.2.4 and 6.7.3 of
+  [draft C11 standard](https://www.open-std.org/jtc1/sc22/wg14/www/docs/n1570.pdf),
+  `_Atomic` keyword can be interpreted as a type specifier (e.g.,
+  `_Atomic(int) a;`) where `_Atomic` acts like `void`/`char`/`unsighed`/etc/.
+  It can also be interpreted as a type qualifier (e.g., `_Atomic int a`), where
+  `_Atomic` behaves like `const`/`volatile`/etc.
+
+- Section 5 of 5.1.2.4 and 7.17.3 of
+  [draft C11 standard](https://www.open-std.org/jtc1/sc22/wg14/www/docs/n1570.pdf)
+  seem to guarantee RMW atomicity of an `_Atomic` variable for "built-in
+  increment and decrement" operators (i.e., `++i`/`i++`) and "compound
+  assignment" (e.g., `a += 2`/`a /= 3`/etc).
+
+- Per this
+  [submission](https://www.open-std.org/jtc1/sc22/wg14/www/docs/n2741.htm),
+  C compilers should implement `_Atomic(T)` in the same way that C++ compilers
+  implement `std::atomic<T>`.
+  - But unfortunately this submission might not have been accepted and we
+    should be aware of the potential incompatibility between C and C++ in this
+    regard.
+
+## C++
+
+- As documented above, C++'s `std::atomic<T>` should do just the same thing
+  as C's `_Atomic(T)` with an OOP approach.
