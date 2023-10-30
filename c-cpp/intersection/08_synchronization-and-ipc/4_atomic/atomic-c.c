@@ -14,13 +14,15 @@ int is_sig_atomic_t_just_int() {
           __builtin_types_compatible_p(typeof(b), int));
 }
 
-_Atomic int acnt = 0;
+_Atomic int acnt_c = 0;
+_Atomic(int) acnt_cpp = 0;
 int cnt = 0;
 sig_atomic_t scnt = 0;
 
 void *adding(void *input) {
   for (int i = 0; i < 10000; i++) {
-    ++acnt;
+    ++acnt_c;
+    ++acnt_cpp;
     ++cnt;
     ++scnt;
   }
@@ -34,7 +36,8 @@ void test() {
   for (int i = 0; i < 10; i++)
     pthread_join(tid[i], NULL);
 
-  printf("the value of acnt is %d\n", acnt);
+  printf("the value of acnt_c is %d\n", acnt_c);
+  printf("the value of acnt_cpp is %d\n", acnt_cpp);
   printf("the value of cnt is %d\n", cnt);
   printf("the value of scnt is %d\n", scnt);
 }
