@@ -4,7 +4,7 @@ CFLAGS = -O2 -Wall -pedantic -Wextra -Wc++-compat
 
 RM = rm
 
-TARGETS = atomic-c
+TARGETS = atomic
 # Directory to store the built targets
 BUILD_DIR = build
 # The paths to the built targets
