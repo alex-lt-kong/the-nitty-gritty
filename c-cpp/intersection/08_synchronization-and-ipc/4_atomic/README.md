@@ -138,9 +138,38 @@
   [submission](https://www.open-std.org/jtc1/sc22/wg14/www/docs/n2741.htm),
   C compilers should implement `_Atomic(T)` in the same way that C++ compilers
   implement `std::atomic<T>`.
+
   - But unfortunately this submission might not have been accepted and we
     should be aware of the potential incompatibility between C and C++ in this
     regard.
+
+- It is important to note that `_Atomic` behaves differently from common mutex
+  in the sense that its "critical section" is rather narrow.
+
+  - The first snippet could give us expected result as the `_Atomic`
+    variable is access once only:
+
+  ```C
+  #define THREAD_NUM 5000
+  _Atomic size_t thread_counter = 0;
+  void *counting(void *pass) {
+    int execution_id = (thread_counter++) % THREAD_NUM;
+    return NULL;
+  }
+  ```
+
+  but this snippet will lead to data race (well actually
+  `(thread_counter++) + (thread_counter++)` may trigger undefined behaviors,
+  but let's leave that part alone in this section):
+
+  ```C
+  #define THREAD_NUM 5000
+  _Atomic size_t thread_counter = 0;
+  void *counting(void *pass) {
+    int execution_id = ((thread_counter++) + (thread_counter++)) % THREAD_NUM;
+    return NULL;
+  }
+  ```
 
 ## C++
 

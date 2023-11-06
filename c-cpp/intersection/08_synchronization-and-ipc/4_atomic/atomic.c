@@ -39,7 +39,6 @@ void test_concurrent_addition() {
     }
   for (int i = 0; i < 10; i++)
     pthread_join(tid[i], NULL);
-
   printf("the value of acnt_c is %d\n", cnt_atomic_qual);
   printf("the value of acnt_cpp is %d\n", cnt_atomic_spec);
   printf("the value of cnt is %d\n", cnt);
