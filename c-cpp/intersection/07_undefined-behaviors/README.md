@@ -11,7 +11,7 @@
   allowing the compiler to do anything it chooses, even "to make demons
   fly out of your nose".
 - It is common for programmers, even experienced ones, to rely on undefined
-  behavior either by mistake, or simply because they are not well-versed in
+  behavior either by mistake or simply because they are not well-versed in
   the rules of the language that can span hundreds of pages. This can result
   in bugs that are exposed when a different compiler or lead to security
   vulnerabilities in software.
@@ -21,8 +21,8 @@
       that this operation will never happen in a conforming program. This gives
       the compiler more information about the code and this information can lead to
       more optimization opportunities.
-  1.  For some ambiguious cases, different platforms/hardware designs
-      could strongly favor different outcomes, if C standard mandates one
+      For some ambiguous cases, different platforms/hardware designs
+      could strongly favor different outcomes, if the C standard mandates one
       outcome, it may impose a significant performance penalty on some
       platforms.
   1.  Simply put, the existence of undefined behaviors makes C fast!
@@ -31,7 +31,7 @@
 
 ### [1. Format specifier without argument](./01_format-specifier-without-argument/)
 
-- Source: para. 2 of section of 7.16.1.1 of [C11][1]:
+- Source: 7.16.1.1 §2 of [C11][1]:
 
   > If there is no actual next argument, or if type is not compatible with
   > the type of the actual next argument (as promoted according to
@@ -42,7 +42,7 @@
 
 ### [2. Signed integer overflow](./02_integer-overflow/)
 
-- Source: para. 3 of section 3.4.3 of [C11][1]:
+- Source: 3.4.3 §3 of [C11][1]:
 
   > An example of undefined behavior is the behavior on integer overflow.
 
@@ -72,12 +72,12 @@
 - Why don't we define it?
   - [One source][2] says that this originated because the underlying
     shift operations on various CPUs do different things with this: for example,
-    X86 truncates 32-bit shift amount to 5 bits (so a shift by 32-bits is
-    the same as a shift by 0-bits), but PowerPC truncates 32-bit shift amounts
+    X86 truncates a 32-bit shift amount to 5 bits (so a shift by 32 bits is
+    the same as a shift by 0 bits), but PowerPC truncates 32-bit shift amounts
     to 6 bits (so a shift by 32 produces zero). Because of these hardware
     differences, the behavior is completely undefined by C (thus shifting by
-    32-bits on PowerPC could format your hard drive, it is _not_ guaranteed
-    to produce zero)
+    32 bits on PowerPC could format your hard drive, but it is **not**
+    guaranteed to produce zero)
 
 ### 4. Pass a non-null-terminated C-string to `strlen()`
 
@@ -98,15 +98,15 @@
 ### [5. Use of uninitialized unsigned integer](./05_use-of-uninitialized-variable)
 
 - As unsigned integer types don't have trap representation (i.e., all possible
-  bit combinations are valid values), programers may think that using
-  uninitialized unsigned integer will be spared from undefined behaviors. The
-  implicit argument is that no matter what the uninitizlied memory blocks
-  contain, the wrost case scenario is we read some rubbish bits (yet still
+  bit combinations are valid values), programmers may think that using
+  uninitialized unsigned integers will be spared from undefined behaviors. The
+  implicit argument is that no matter what the uninitialized memory blocks
+  contain, the worst case scenario is we read some rubbish bits (yet still
   valid unsigned int) from it.
 
   - Unfortunately, the trust is misplaced. This is because compilers are
-    free to **not** reserving memory blocks for uninitilized variables, rendering
-    merely reading from them (i.e., non-existent memory) undefined.
+    free to **not** reserve memory blocks for uninitialized variables,
+    rendering merely reading from them (i.e., non-existent memory) undefined.
 
 - Source: para. 2 of section 6.3.2.1 of [C11][1]:
 
@@ -119,7 +119,7 @@
 - This is one of the more jargon-heavy definitions of undefined behaviors.
 
 - lvalue: this is a loaded concept. Long story short, if an expression can
-  appear on the left-hand side of `=`, it is an lvalue; otherwise it is an
+  appear on the left-hand side of `=`, it is an lvalue; otherwise, it is an
   rvalue. For example, we define `int a = 0, b = 1`:
   - Variable `a` is an lvalue, as we can do `a = 3;`
   - Expression `a + b` is an rvalue, as it doesn't make sense to have
@@ -144,7 +144,7 @@
   address taken" should mean the same.
 
 - One of gcc's possible behaviors: variables that are not explicitly
-  initialized are implictly initialized as `0`.
+  initialized are implicitly initialized as `0`.
 
 ### [6. Float to unsigned integer conversion](./06_float-to-uint-conversion/)
 
@@ -195,9 +195,9 @@
 - The footnote's "the range of portable real floating values is
   (−1, U*type*\_MAX+1)" is a bit more confusing. It means the following:
 
-  - Parenthesis (i.e., `(` and `)`) in (−1, U*type*\_MAX+1) just means that both
-    end of the range is exclusive. So for `uint8_t`, whose range is [0, 255],
-    a "portable" float's range is (-1, 255+1).
+  - Parenthesis (i.e., `(` and `)`) in (−1, U*type*\_MAX+1) just means that
+    both ends of the range are exclusive. So for `uint8_t`, whose range
+    is [0, 255], a "portable" float's range is (-1, 255+1).
   - But why this is the case? `-0.9` and `255.5` are beyond the range of
     `uint8_t` already, how come it doesn't cause UB?
   - One has to read the standard twice to get the gist--section 6.3.1.4
@@ -209,7 +209,7 @@
     as `-0.9` becomes `0` and `255.5` becomes `255`, they are still within
     the range and representable by `uint8_t`.
 
-- But why does C standard has two seemingly inconsistent way to handle
+- But why does the C standard have two seemingly inconsistent ways to handle
   `unsigned int`?
 
   - The reason for this apparent semantic inconsistency in the C Standard is
@@ -219,7 +219,7 @@
     architectures have used two's complement representation for signed integers
     for a long time, floating point numbers generally use sign + magnitude
     representations. The modulo semantics of signed integer to unsigned integer
-    conversions costs nothing on two's complement representations, but would
+    conversions costs nothing on two's complement representations but would
     require extra silicon for floating point values, which was not present on
     all current hardware implementations at the time. The Standard Committee
     decided to keep these cases undefined for `uint32_t = (uint32_t)-1.23;`
@@ -262,11 +262,11 @@
   even if we guarantee that `unsigned int` does not have any trap
   representation.
 
-  - Well this guarantee is not true either. C standard only guarantees
+  - Well, this guarantee is not true either. C standard only guarantees
     that `unsigned char` does not have any trap representation (in section
     6.2.6.2 §2 of [C11][1]).
 
-- Source: para. 1 of section 6.3.1.4 of [C11][1]:
+- Source: section 6.3.1.4 §2 of [C11][1]:
 
   > An object shall have its stored value accessed only by an lvalue
   > expression that has one of the following types: [88]
@@ -345,7 +345,7 @@
   }
   ```
 
-- These two functions differ by the type of `y` only. This trival difference
+- These two functions differ by the type of `y` only. This trivial difference
   results in different [machine code](./07_strict-aliasing-rule-violation/lib.asm):
 
   ```asm
@@ -397,20 +397,20 @@
      `arr` and `y` is of the same type, compilers can't rule out the possibility
      that `arr` and `y` refer to a common memory location.
   1. In the `short`'s version, it is added at `3c`, meaning that the calculation
-     is performed only once, before the loop. This is because per C standard
-     `arr` and `y` are not of compatible types, so that they can't be referring
-     to the same memory location.
+     is performed only once, before the loop. This is because per the C
+     standard `arr` and `y` are not of compatible types, so that they can't
+     be referring to the same memory location.
 
 - This rule has another very significant implication. There has long been a
   pain point in C that we don't have a proper `byte` type. Typically people
-  might use `uint8_t` as a more self-explanatory alternative of `byte` or use
+  might use `uint8_t` as a more self-explanatory alternative to `byte` or use
   the more common `unsigned char` type.
   - Using `uint8_t` is, strictly speaking, a violation of the strict aliasing
     rule. As 6.3.1.4 of [C11][1] provides, the standard-complain way to access
     a variable must be done via either a "compatible" type or a character type.
-    Usint `uint8_t` to access memory with known data type could lead to undefined
-    behaviors.
-  - Paragraph 15 of section 6.2.5 of [C11][1] stipualtes that types `char`,
+    Using `uint8_t` to access memory with known data type could lead to
+    undefined behaviors.
+  - Paragraph 15 of section 6.2.5 of C111 stipulates that types `char`,
     `signed char`, and `unsigned char` are collectively called the
     _character types_.
 
@@ -423,7 +423,7 @@
   size_t regionSize;
   ```
 
-  and suppose you want to check whether a pointers lies within that region.
+  and suppose you want to check whether a pointer lies within that region.
   You might be tempted to write:
 
   ```C
@@ -450,7 +450,7 @@
   > behavior is undefined.
 
 - This paragraph lays out a few scenarios where pointer-to-pointer comparisons
-  are defined, and left all other cases undefined.
+  are defined and left all other cases undefined.
 
   - Unfortunately, the use of
     `(p >= regionStart && p < regionStart + regionSize)` falls outside of the
@@ -489,11 +489,39 @@
 
 - `unsigned int` never overflow, for `unsigned int a = UINT_MAX;`, `a + 1`
   will be "wrapped around", i.e., to `(a + 1) % UINT_MAX == 0`.
+
   - However, `unsigned int a = 2147483646 * 2147483646;` may lead to undefined
     behaviors since `2147483646 * 2147483646` could be considered as signed
     multiplication before the signed result is cast and assigned to
     `unsigned int a`. To make sure it is unsigned, rewrite it as
     `2147483646U * 2147483646U`.
+
+- Constructs using pre and post-increment but wrap them in function calls:
+
+  ```C
+  int counter = 0;
+
+  int mul_func(int x) {
+    counter *= x;
+    x = counter;
+    return x;
+  }
+
+  int add_func(int x) {
+    counter += x;
+    x = counter;
+    return x;
+  }
+
+  int main(void) {
+    int sum = add_func(3) + mul_func(2);
+  }
+  ```
+
+  - This construct seems like **9. Constructs using pre and post-increment**,
+    but according to this [SO post](https://stackoverflow.com/questions/77401857/does-int-sum-func1-func2-cause-undefined-behavior-if-func-modifies-a-g)
+    its behavior is actually well defined given that a function call is a
+    sequence point.
 
 ## References
 
@@ -513,3 +541,7 @@
 [5]: https://blog.regehr.org/archives/213 "A Guide to Undefined Behavior in C and C++, Part 1"
 [6]: https://stackoverflow.com/questions/75578931/how-to-intrepret-paragraph-1-of-section-6-3-1-4-of-c11-standard-about-convertin/ "How to intrepret paragraph 1 of section 6.3.1.4 of C11 standard (about converting float to unsigned int)"
 [7]: https://devblogs.microsoft.com/oldnewthing/20170927-00/?p=97095 "How to check if a pointer is in a range of memory"
+
+```
+
+```
