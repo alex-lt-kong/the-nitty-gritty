@@ -5,7 +5,7 @@ RM = rm
 
 # Directory to store the built targets
 BUILD_DIR = ./build
-TARGETS = 01_naive-example 02_raw-pointers-with-raii
+TARGETS = 01_naive-example 02_raw-pointers-with-raii 03_unique-ptr-with-raii
 # The paths to the built targets
 TARGET_PATHS = $(addprefix $(BUILD_DIR)/,$(TARGETS))
 
