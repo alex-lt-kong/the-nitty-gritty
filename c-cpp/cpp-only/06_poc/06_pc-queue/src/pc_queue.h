@@ -29,7 +29,8 @@ public:
     }
   }
 
-  inline ~PcQueue() { wait(); }
+  inline ~PcQueue() { // wait();
+  }
 
   void enqueue(uint32_t *msg);
   inline size_t handled_msg_count() { return this->msg_count; };

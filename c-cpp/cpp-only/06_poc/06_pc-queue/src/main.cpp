@@ -3,6 +3,7 @@
 #include "pc_queue_impl/mutex_deque.h"
 #include "pc_queue_impl/ramalhete_queue.h"
 #include "pc_queue_impl/reader_writer_queue.h"
+#include "pc_queue_impl/reader_writer_ring_buffer.h"
 
 #include <chrono>
 #include <iostream>
@@ -81,6 +82,7 @@ void print_cpu_model() {
 
 int main(void) {
   print_cpu_model();
+  benchmark_executor<brwcb>("moodycamel::BlockingReaderWriterCircularBuffer");
   benchmark_executor<rwq>("moodycamel::ReaderWriterQueue");
   benchmark_executor<aqb>("max0x7ba/OptimistAtomicQueues");
   benchmark_executor<rq>("xenium/ramalhete_queue");
