@@ -56,9 +56,9 @@ inline void install_signal_handler() {
   }
 }
 
-inline float getCudaFrameChanges(cudacodec::GpuMat &prevFrame,
-                                 cudacodec::GpuMat &currFrame,
-                                 cudacodec::GpuMat &diffFrame) {
+inline float getCudaFrameChanges(cv::cuda::GpuMat &prevFrame,
+                                 cv::cuda::GpuMat &currFrame,
+                                 cv::cuda::GpuMat &diffFrame) {
   if (prevFrame.empty() || currFrame.empty()) {
     return -1;
   }
