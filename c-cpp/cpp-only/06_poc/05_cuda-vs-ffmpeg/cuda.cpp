@@ -16,16 +16,15 @@ int main(int argc, const char *argv[]) {
        << endl;
 
   cuda::GpuMat dFrameCurr, dFramePrev;
-  cudacodec::GpuMat diffFrame;
+  cv::cuda::GpuMat diffFrame;
   Mat hFrame;
+
   Ptr<cudacodec::VideoReader> dReader =
       cudacodec::createVideoReader(string(argv[1]));
-
   dReader->set(cv::cudacodec::ColorFormat::BGR);
-  VideoWriter hWriter = VideoWriter(
-      string(argv[2]), CAP_ANY, VideoWriter::fourcc('a', 'v', 'c', '1'), 25.0,
-      Size(1280, 720),
-      {VIDEOWRITER_PROP_HW_ACCELERATION, VIDEO_ACCELERATION_ANY});
+  Ptr<cudacodec::VideoWriter> dWriter = cudacodec::createVideoWriter(
+      string(argv[2]), Size(1280, 720), cudacodec::Codec::H264, 25.0,
+      cudacodec::ColorFormat::BGR);
   size_t frameCount = 0;
   while (!e_flag) {
     if (!dReader->nextFrame(dFrameCurr)) {
@@ -39,17 +38,19 @@ int main(int argc, const char *argv[]) {
     auto t2 = chrono::high_resolution_clock::now();
 
     if (!dFrameCurr.empty()) {
-      // cuda::GpuMat t = dFrameCurr.clone();
-      // cuda::rotate(t, dFrameCurr, dFrameCurr.size(), 180.0);
-      dFrameCurr.download(hFrame);
+      cuda::GpuMat t = dFrameCurr.clone();
+      // cuda::rotate(dFrameCurr, dFrameCurr, dFrameCurr.size(), 180);
       dFramePrev = dFrameCurr.clone();
+      dFrameCurr.download(hFrame);
       overlayDatetime(hFrame);
-      hWriter.write(hFrame);
+      // Need to emulate this download()/upload() cycle
+      dFrameCurr.upload(hFrame);
+      dWriter->write(dFrameCurr);
     } else {
       cerr << "frameCount: " << frameCount << " is empty" << endl;
     }
     auto t3 = chrono::high_resolution_clock::now();
-    if (!dFramePrev.empty() && frameCount % 1 == 0) {
+    if (!dFramePrev.empty() && frameCount % 100 == 0) {
       cout << "frameCount: " << frameCount << ", size(): " << dFrameCurr.size()
            << ", channels(): " << dFrameCurr.channels() << ", diff: " << fixed
            << setprecision(2) << diff << "% ("
@@ -59,7 +60,7 @@ int main(int argc, const char *argv[]) {
            << " ms" << endl;
     }
   }
-  hWriter.release();
-  cout << "hWriter.release()ed" << endl;
+  dWriter->release();
+  cout << "dWriter->release()ed" << endl;
   return 0;
 }
