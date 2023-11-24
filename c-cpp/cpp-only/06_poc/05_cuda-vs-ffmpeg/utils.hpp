@@ -1,3 +1,12 @@
+#include <opencv2/core.hpp>
+#include <opencv2/core/cuda.hpp>
+#include <opencv2/cudaarithm.hpp>
+#include <opencv2/cudacodec.hpp>
+#include <opencv2/cudaimgproc.hpp>
+#include <opencv2/cudawarping.hpp>
+#include <opencv2/highgui.hpp>
+#include <opencv2/highgui/highgui.hpp>
+#include <opencv2/imgproc/imgproc.hpp>
 
 #include <chrono>
 #include <iomanip>
@@ -8,16 +17,6 @@
 #include <string.h>
 #include <string>
 #include <thread>
-
-#include <opencv2/core.hpp>
-#include <opencv2/core/cuda.hpp>
-#include <opencv2/cudaarithm.hpp>
-#include <opencv2/cudacodec.hpp>
-#include <opencv2/cudaimgproc.hpp>
-#include <opencv2/cudawarping.hpp>
-#include <opencv2/highgui.hpp>
-#include <opencv2/highgui/highgui.hpp>
-#include <opencv2/imgproc/imgproc.hpp>
 
 using namespace std;
 using namespace cv;
@@ -50,7 +49,7 @@ inline void install_signal_handler() {
   again. `man sigaction` describes more possible sa_flags. */
   act.sa_flags = SA_RESETHAND;
   // act.sa_flags = 0;
-  if (sigaction(SIGINT, &act, 0) == -1) {
+  if (sigaction(SIGINT, &act, 0) == -1 || sigaction(SIGTERM, &act, 0) == -1) {
     perror("sigaction()");
     abort();
   }
