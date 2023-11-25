@@ -246,3 +246,17 @@ export OPENCV_FFMPEG_WRITER_OPTIONS="hw_encoders_any;cuda"
    `OPENCV_FFMPEG_WRITER_OPTIONS`. This envvar uses a special key/value pair
    format `key1;val1|key2;val2`. To use hardware encoder, we want to set it
    to `"hw_encoders_any;cuda"` \* It appears that OpenCV does not allow us to pick a specific encoder.
+
+## Results
+
+- CPU usage of cuda.cpp vs ffmpeg.cpp
+
+| Percentile | cuda.cpp | ffmppeg.cpp |
+| ---------- | -------- | ----------- |
+| 10th       | 0        | 0           |
+| 50th       | 6.7      | 26.7        |
+| 66th       | 6.7      | 40          |
+| 90th       | 13.3     | 73.3        |
+| 95th       | 13.3     | 86.7        |
+| 99th       | 20       | 93.3        |
+| 99.99th    | 26.31    | 100         |
