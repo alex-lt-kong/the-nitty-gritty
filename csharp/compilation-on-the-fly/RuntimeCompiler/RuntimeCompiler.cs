@@ -1,5 +1,5 @@
-﻿using System.Collections.Immutable;
-using Basic.Reference.Assemblies;
+﻿using Microsoft.Extensions.DependencyModel;
+using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Emit;
@@ -11,9 +11,14 @@ public static class RuntimeCompiler
     public static void Compile(string sourceCode, string outputPath, string assemblyName="MyAssembly")
     {
         var syntaxTree = CSharpSyntaxTree.ParseText(sourceCode);
+        MetadataReference[] _ref = 
+            DependencyContext.Default.CompileLibraries
+                .SelectMany(cl => cl.ResolveReferencePaths())
+                .Select(asm => MetadataReference.CreateFromFile(asm))
+                .ToArray();
         var compilation = CSharpCompilation.Create(assemblyName)
             .WithOptions(new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary))
-            .AddReferences(MetadataReference.CreateFromFile(typeof(object).Assembly.Location))
+            .AddReferences(_ref)
             .AddSyntaxTrees(syntaxTree);
     
         using var stream = new FileStream(outputPath, FileMode.Create);
