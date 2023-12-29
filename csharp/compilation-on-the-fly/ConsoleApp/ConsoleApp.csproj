@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>net6.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <RootNamespace>ConsoleApp3</RootNamespace>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\RuntimeCompiler\RuntimeCompiler.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Reference Include="ass3">
+        <HintPath>..\..\..\..\..\..\..\tmp\mylib3.dll</HintPath>
+      </Reference>
+    </ItemGroup>
+
+</Project>
