@@ -24,6 +24,6 @@ public static class StringLibrary
     }
 }";
         const string outputPath = @"/tmp/mylib3.dll";
-        RuntimeCompiler.Compile(sourceCode, outputPath, "ass3");
+        RuntimeCompiler.Compile(sourceCode, outputPath, "mylib3");
     }
 }

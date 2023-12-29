@@ -5,5 +5,6 @@ using UtilityLibraries;
 
 StringLibrary.StartsWithUpper("asdasd");
 Console.WriteLine("Hello, World!");
+Console.WriteLine(StringLibrary.StartsWithUpper("asdasd"));
 
 
