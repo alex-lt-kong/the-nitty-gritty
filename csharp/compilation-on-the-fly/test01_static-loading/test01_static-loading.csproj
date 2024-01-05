@@ -13,8 +13,8 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Reference Include="ass3">
-        <HintPath>..\..\..\..\..\..\..\tmp\mylib3.dll</HintPath>
+      <Reference Include="mylib">
+        <HintPath>mylib.dll</HintPath>
       </Reference>
     </ItemGroup>
 

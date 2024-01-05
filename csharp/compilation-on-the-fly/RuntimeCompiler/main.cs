@@ -1,29 +1,23 @@
-using System.Text;
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.Text;
-
 namespace RuntimeCompiler;
 
-public class main
+public class DriverClass
 {
     public static void Main()
     {
         const string sourceCode = @"
 namespace UtilityLibraries;
 
-public static class StringLibrary
+public static class NumberLibrary
 {
-    public static bool StartsWithUpper(this string? str)
+    public static bool IsEven(int number)
     {
-        if (string.IsNullOrWhiteSpace(str))
-            return false;
-
-        char ch = str[0];
-        return char.IsUpper(ch);
-    }
+        return number % 2 == 0;
+    }    
 }";
-        const string outputPath = @"/tmp/mylib3.dll";
-        RuntimeCompiler.Compile(sourceCode, outputPath, "mylib3");
+        const string assemblyName = "mylib";
+        var outputPath = Path.Combine(Path.GetTempPath(), $"{assemblyName}.dll");
+        var rc = new RuntimeCompiler();
+        rc.Compile(sourceCode, outputPath, assemblyName);
+        Console.WriteLine($"DLL written to {outputPath}");
     }
 }
