@@ -2,7 +2,11 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RuntimeCompiler", "RuntimeCompiler\RuntimeCompiler.csproj", "{00F6343B-A54C-4AE5-8BDE-C14D58F1B0A0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleApp", "ConsoleApp\ConsoleApp.csproj", "{B884E63A-83E7-4280-AF33-CC7CED555A4F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "test01_static-loading", "test01_static-loading\test01_static-loading.csproj", "{B884E63A-83E7-4280-AF33-CC7CED555A4F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "test02_dynamic-loading", "test02_dynamic-loading\test02_dynamic-loading.csproj", "{CBE3C7D4-2704-4179-85D5-935F76955B2E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "test03_implement_interface", "test03_implement_interface\test03_implement_interface.csproj", "{7F008C3F-540B-470A-B2C6-CE6299BC0954}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -18,5 +22,13 @@ Global
 		{B884E63A-83E7-4280-AF33-CC7CED555A4F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B884E63A-83E7-4280-AF33-CC7CED555A4F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B884E63A-83E7-4280-AF33-CC7CED555A4F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CBE3C7D4-2704-4179-85D5-935F76955B2E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CBE3C7D4-2704-4179-85D5-935F76955B2E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CBE3C7D4-2704-4179-85D5-935F76955B2E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CBE3C7D4-2704-4179-85D5-935F76955B2E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7F008C3F-540B-470A-B2C6-CE6299BC0954}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7F008C3F-540B-470A-B2C6-CE6299BC0954}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7F008C3F-540B-470A-B2C6-CE6299BC0954}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7F008C3F-540B-470A-B2C6-CE6299BC0954}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
