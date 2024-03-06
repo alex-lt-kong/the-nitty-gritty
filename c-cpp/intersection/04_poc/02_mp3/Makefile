@@ -1,1 +1,0 @@
-gcc main.c -o main.out -lao -lmpg123
