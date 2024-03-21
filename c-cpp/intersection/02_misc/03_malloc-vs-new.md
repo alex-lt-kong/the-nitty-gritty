@@ -7,4 +7,3 @@
    returns `NULL`.
 1. Reallocation of memory not handled by `new` while `malloc()` can
 1. `new` is an operator, while `malloc()` is a function.
-   /home/akong_yin/my-repos/the-nitty-gritty/c-cpp/intersection/11_posix-api
