@@ -1,20 +1,19 @@
 # Row-major and column-major traversal
 
-
 ## Introductions
 
-* Prefering row-major over column-major traversal is a relatively common optimization
-technique due to memory locality/vectorization/etc (well, at least in C and the sort of "C-series"
-languages like C++/Python/JavaScript/etc). However, it is not really trival to properly design
-an experiment that demonstrates this:
-* The most straightforward way to define a 2D array, `int arr[d][d]`, uses stack memory, which 
-imposes significant restrictions on array size (no more than a few KB in many cases).
-  * If the scale of the issue is limited to a few KB, row-major and column-major won't make a signficant difference
-  anyway
-* We may define the array by `int* arr = malloc(d * d * sizeof(int))` and access its element by `*(arr + i * d + j)`,
-but it obfuscates our purpose of testing a two-dimensional array. Compilers may not be able to recognize the pattern as
-2D array access, which could break the optimization.
-* We may also define the 2D array by defining an array of pointers:
+- Prefering row-major over column-major traversal is a relatively common optimization
+  technique due to memory locality/vectorization/etc (well, at least in C and the sort of "C-series"
+  languages like C++/Python/JavaScript/etc). However, it is not really trival to properly design
+  an experiment that demonstrates this:
+- The most straightforward way to define a 2D array, `int arr[d][d]`, uses stack memory, which
+  imposes significant restrictions on array size (no more than a few KB in many cases).
+  - If the scale of the issue is limited to a few KB, row-major and column-major won't make a signficant difference
+    anyway
+- We may define the array by `int* arr = malloc(d * d * sizeof(int))` and access its element by `*(arr + i * d + j)`,
+  but it obfuscates our purpose of testing a two-dimensional array. Compilers may not be able to recognize the pattern as
+  2D array access, which could break the optimization.
+- We may also define the 2D array by defining an array of pointers:
   ```
   int** arr = (int**)malloc(d * sizeof(int*));
   for (i = 0; i < d; i++)
@@ -22,7 +21,7 @@ but it obfuscates our purpose of testing a two-dimensional array. Compilers may 
   ```
   However, it means that we only guarantee that each sub-array is contiguous and the entire 2d array is most likely
   separate, which is not really the same as `int arr[d][d]`
-* In this project, we will take the second approach, `int* arr = malloc(d * d * sizeof(int))`
+- In this project, we will take the second approach, `int* arr = malloc(d * d * sizeof(int))`
 
 ## Results
 
@@ -47,29 +46,29 @@ Dim,	ArraySize(KB),	Row-Major Time,	RM Sample,	Col-Major Time,	CM Sample
 
 <img src="./1st.png">
 
-* The results aren't totally expected--by theory, row-major traversal should always be faster than column-major
-traversal, regardless of the array size.
+- The results aren't totally expected--by theory, row-major traversal should always be faster than column-major
+  traversal, regardless of the array size.
 
-* However, experiment results show that row-major traversal only outperforms
-column-major one after array size grows beyond 1MB.
+- However, experiment results show that row-major traversal only outperforms
+  column-major one after array size grows beyond 1MB.
 
-* Without digging deep into the internals of `malloc()` and other software/hardware components, there are a few
-possible explanations:
+- Without digging deep into the internals of `malloc()` and other software/hardware components, there are a few
+  possible explanations:
+
   0. `malloc()` may return a pointer as soon as it promises to provide the requested memory but these memory
-blocks may not be ready immediately after the pointer is returned. Memory blocks may only be ready right before they
-are first accessed.
-  0. Caching: since both traversals share the same memory blocks, if we run row-major traversal first and then col-major
-  traversal, it is possible that OS/hardware caches memory blocks before second loop, benefiting column-major traversal.
-  0. out-of-order execution: in `1st.c`, each iteration is independent from each other, meaning that the order of execution
-  doesn't really matter. As a result, if compliers/CPUs are smart enough, they can optimize the difference between
-  row-major and column-major traversals away without impacting the final result.
-
+     blocks may not be ready immediately after the pointer is returned. Memory blocks may only be ready right before they
+     are first accessed.
+  1. Caching: since both traversals share the same memory blocks, if we run row-major traversal first and then col-major
+     traversal, it is possible that OS/hardware caches memory blocks before second loop, benefiting column-major traversal.
+  2. out-of-order execution: in `1st.c`, each iteration is independent from each other, meaning that the order of execution
+     doesn't really matter. As a result, if compliers/CPUs are smart enough, they can optimize the difference between
+     row-major and column-major traversals away without impacting the final result.
 
 ### 2nd.c
 
-* We added a dummy loop which iterates over each element before we time row-major/column-major
-traversal, which can presumably avoid the first two possible issues.
-* The results are now consistent with the theory.
+- We added a dummy loop which iterates over each element before we time row-major/column-major
+  traversal, which can presumably avoid the first two possible issues.
+- The results are now consistent with the theory.
 
 ```
 Dim,	ArraySize(KB),	Row-Major Time,	RM Sample,	Col-Major Time,	CM Sample,	Diff
@@ -98,12 +97,12 @@ Dim,	ArraySize(KB),	Row-Major Time,	RM Sample,	Col-Major Time,	CM Sample,	Diff
 
 ### 3rd.c
 
-* `2nd.c`'s results are largely consistent with the theory. However, it can't answer the question we raised in `1st.c`:
-`malloc()` or caching, which breaks the assumption?
-* `3rd.c` is designed to answer this by accessing the first and last elements only. The argument is that, if we access
-the beginning and the end of the contiguous memory, most likely that `malloc()` has to make all blocks available.
-* As a result, if it is `malloc()` that causes the inconsistency in `1st.c`, such inconsistency shall disappear.
-* Results show that the inconsistency persists, implying that `malloc()` shouldn't be the cause of the issue.
+- `2nd.c`'s results are largely consistent with the theory. However, it can't answer the question we raised in `1st.c`:
+  `malloc()` or caching, which breaks the assumption?
+- `3rd.c` is designed to answer this by accessing the first and last elements only. The argument is that, if we access
+  the beginning and the end of the contiguous memory, most likely that `malloc()` has to make all blocks available.
+- As a result, if it is `malloc()` that causes the inconsistency in `1st.c`, such inconsistency shall disappear.
+- Results show that the inconsistency persists, implying that `malloc()` shouldn't be the cause of the issue.
 
 ```
 Dim,	ArraySize(KB),	Row-Major Time,	RM Sample,	Col-Major Time,	CM Sample,	Diff
@@ -128,14 +127,15 @@ Dim,	ArraySize(KB),	Row-Major Time,	RM Sample,	Col-Major Time,	CM Sample,	Diff
 30000,	    3515625,	0.926626444,	   21905,	 2.828975439,	119918101,	1.902348995
 
 ```
+
 <img src="./3rd.png">
 
 ### 4th.c
 
-* `4th.c` is designed to test the 2nd hypothesis by `malloc()`ing different memory to two loops so that even if
-the first loop caches data, it will not benefit the second loop.
-* The results are similar to `2nd.c`, implying that it is more likely that CPU caching is what causes the program
-to behave unexpectedly.
+- `4th.c` is designed to test the 2nd hypothesis by `malloc()`ing different memory to two loops so that even if
+  the first loop caches data, it will not benefit the second loop.
+- The results are similar to `2nd.c`, implying that it is more likely that CPU caching is what causes the program
+  to behave unexpectedly.
 
 ```
 Dim,	ArraySize(KB),	Row-Major Time,	RM Sample,	Col-Major Time,	CM Sample,	Diff
@@ -165,7 +165,7 @@ Dim,	ArraySize(KB),	Row-Major Time,	RM Sample,	Col-Major Time,	CM Sample,	Diff
 
 ### Miscellaneous
 
-* How about the tiny drop at around 1MB? My guess is that it is relevant to L1 cache, which is also 1MB in size.
-* How about the out-of-order execution? It seems to me that compilers aren't as smart as we think. OOO execution
-does not appears to be the cause of the issue. It may, however, cause issues when we
-[test the size of cache lines](../2_cache-line) though.
+- How about the tiny drop at around 1MB? My guess is that it is relevant to L1 cache, which is also 1MB in size.
+- How about the out-of-order execution? It seems to me that compilers aren't as smart as we think. OOO execution
+  does not appears to be the cause of the issue. It may, however, cause issues when we
+  [test the size of cache lines](../2_cache-line) though.
