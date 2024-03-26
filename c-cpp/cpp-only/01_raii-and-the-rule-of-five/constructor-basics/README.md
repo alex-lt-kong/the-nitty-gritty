@@ -111,7 +111,7 @@
   y * 2 = 4;
   ```
 
-  - Applying this principle, `5`, `"hello world!"`, etc. are also **l**value.
+  - Applying this principle, `5`, `"hello world!"`, etc. are also **r**value.
 
 - One should be aware that the dichotomy or lvalue and rvalue is from the C
   world but it is a misnomer in the context in C++. Consider the following code:
