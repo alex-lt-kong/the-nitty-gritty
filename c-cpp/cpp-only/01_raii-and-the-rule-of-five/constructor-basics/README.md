@@ -226,9 +226,9 @@ public:
   semantics. Without introducing `T&&`, this is impossible: `const T&`
   accepts rvalue but it must be read-only and `T&` rejects rvalues altogether.
 
-## Copy elision (a.k.a., return value optimization or RVO)
+## Copy/move elision (a.k.a., return value optimization or RVO)
 
-- Copy elision or RVO is a "minor" but very significant optimization.
+- Copy/move elision or RVO is a "minor" but very significant optimization.
 
 - Consider the following case (Let's ignore function inline, compile-time
   computation, etc.):
@@ -266,7 +266,7 @@ public:
 
 - This is because ISO C++ standard has something beyond (and before
   the introduction of) the move constructor (and to a large extent makes move
-  constructor much less common): copy elision.
+  constructor much less common): copy/move elision.
 
   - It means that a C++ compiler can simply skip copy/move
     constructors altogether and just set the value directly to the object.
