@@ -134,7 +134,7 @@
     ```
 
 - There are a few concrete differences between references and pointers, my
-  take is a that reference is a less flexible (i.e., less powerful) version
+  take is a that reference is a less flexible but more robust version
   of pointer. For example, a reference cannot:
 
   - be `NULL`/`nullptr`.

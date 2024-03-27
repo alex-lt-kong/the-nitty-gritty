@@ -86,9 +86,14 @@
   std::unique_ptr<int[], decltype([](void *p){std::free(p);})>
   ```
 
+## `unique_ptr` as argument or return value
+
 - As `unique_ptr` can not be copied, how can we pass it to a function as an
-  argument? There are at least three feasible ways, we pass it as a raw pointer,
-  pass it by reference or use `std::move()`:
+  argument? There are at least three feasible ways, we pass it:
+
+  - as a raw pointer,
+  - by reference, or
+  - use `std::move()`:
 
   ```C++
   void callee_func_raw_ptr(int *arg) {}
@@ -102,14 +107,27 @@
   callee_func_move(move(x));
   ```
 
+- It is legal to return a `unique_ptr` like the following:
+
+```C++
+unique_ptr<int> get_ptr() {
+  unique_ptr<int> x(new int(31415));
+  return x;
+}
+```
+
+- The exact mechanism of this may differ. The compiler may either apply copy/move
+  elision (a.k.a. RVO) or, without elisions, `move()` the ownership of the returning
+  `unique_ptr` to the new `unique_ptr` assigned with the return value.
+
 ## Is `unique_ptr` a zero-cost wrapper on top of raw pointer?
 
 - TL;NR: No.
 
 - When we say we "use" a pointer, we usually mean by using either `operator*`
-  or `operator->`. In this regard, `unique_ptr` IS a zero-cost wrapper. It is
-  trivial for a compiler to optimize the abstraction away and make the smart
-  pointer work as if it is a raw pointer.
+  or `operator->`. In this regard, `unique_ptr` is indeed a zero-cost wrapper.
+  It is trivial for a compiler to optimize the abstraction away and make
+  the smart pointer work as if it is a raw pointer.
 
 - The hidden cost arises when we want to enjoy the benefit of RAII (i.e., when
   we initialize or destory a `std::unique_ptr`).
