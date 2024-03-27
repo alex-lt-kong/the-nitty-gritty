@@ -129,11 +129,11 @@ Perhaps it is more intuitive to call it just "temporary value" or "unnamed value
 - It is rather natural that the following should work:
 
   ```C++
-  std::string hel = "hello ";
-  std::string wor = "world!";
-  // This seems fine, as hel + wor is a rvalue and
+  std::string s1 = "hello ";
+  std::string s2 = "world!";
+  // This seems fine, as s1 + s2 is a rvalue and
   // it rightfully appears on the rhs
-  std::string foobar = hel + wor;
+  std::string foobar = s1 + s2;
   std::cout << foobar << std::endl;
   // >> hello world!
   ```
@@ -141,13 +141,13 @@ Perhaps it is more intuitive to call it just "temporary value" or "unnamed value
   - The above is nothing but syntactic sugar on top of this:
 
   ```C++
-  std::string hel = std::string("hello ");
-  std::string wor = std::string("world!");
-  std::string foobar = std::string(hel + wor);
+  std::string s1 = std::string("hello ");
+  std::string s2 = std::string("world!");
+  std::string foobar = std::string(s1 + s2);
   std::cout << foobar << std::endl;
   ```
 
-- What does `hel` + `wor` return?
+- What does `s1` + `s2` return?
 
   - It returns a new anonymous `std::string` object that contains
     "hello world!". This unnamed new object is an rvalue.
@@ -155,7 +155,7 @@ Perhaps it is more intuitive to call it just "temporary value" or "unnamed value
     constructor, the copy constructor of `std:string` will be called, which
     makes a copy of the rvalue and return the new object to `foobar` by value.
 
-- But this is utterly wasteful--the anonymous `hel + wor`, as an rvalue (i.e.,
+- But this is utterly wasteful--the anonymous `s1 + s2`, as an rvalue (i.e.,
   an unnamed temporary object), will be thrown away very soon, so why bother
   making a copy of it? Let's just transfer, a.k.a., "move", its content from the
   rvalue to `foobar`. Isn't it wonderful?
@@ -166,11 +166,11 @@ Perhaps it is more intuitive to call it just "temporary value" or "unnamed value
 - There is a separate scenario where we want the move constructor to be called:
 
   ```C++
-  std::string hel = std::string("hello");
-  // using std::move, we explicity transfer the ownership of "hello " from hel
+  std::string s1 = std::string("hello");
+  // using std::move, we explicity transfer the ownership of "hello " from s1
   // to hell
-  std::string hell = std::move(hel);
-  cout << hel << endl; // UB!
+  std::string hell = std::move(s1);
+  cout << s1 << endl; // UB!
   cout << hell << endl; // prints "hello "
   ```
 
@@ -260,8 +260,9 @@ public:
   }
   ```
 
-  - But if we do try this and benchmark, we will see the performance dropping,
-    instead of going up. What happens?
+  - But if we do try this and benchmark, we will see the performance dropping
+    (compared with the navie version without `std::move()`), instead of going up.
+    What happens?
 
 - This is because ISO C++ standard has something beyond (and before
   the introduction of) the move constructor (and to a large extent makes move
