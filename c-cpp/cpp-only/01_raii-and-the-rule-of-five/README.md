@@ -88,7 +88,7 @@
   under the [constructor-basics](./constructor-basics/) directory.
 
 - So far, so good--playing in the C++ playground, things are nice and tidy.
-  However, as always, it becomes more interesting (or horrible if you wish) when
+  However, as always, it becomes more interesting (or horrible if you prefer) when
   C comes into play.
 
 - What if, for whatever reason, we need to `malloc()` two, instead of one, raw
