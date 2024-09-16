@@ -1,23 +1,4 @@
 #
-# === custom rules ===
-#
-*.csv.out
-*.out
-*.in
-*.bin
-# Python virtual environment
-.venv/
-venv/
-build/
-out/
-# swig wrapper files
-*/swig-files/*.cs
-*_wrap.cxx
-*_wrap.h
-# mypy cache
-.mypy_cache
-
-#
 # === Visual Studio ===
 #
 
@@ -984,3 +965,22 @@ modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
+
+#
+# === custom rules ===
+#
+*.csv.out
+*.out
+*.in
+*.bin
+# Python virtual environment
+.venv/
+venv/
+build/
+out/
+# swig wrapper files
+*/swig-files/*.cs
+*_wrap.cxx
+*_wrap.h
+# mypy cache
+.mypy_cache
