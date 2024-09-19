@@ -4,7 +4,8 @@ LDFLAGS = -lfmt
 CFLAGS = -O2 -Wall -pedantic -Wextra
 INC = #-I/usr/include/glib-2.0 -I/usr/lib/x86_64-linux-gnu/glib-2.0/include/
 
-TARGETS = 1_use 2_write
+TARGETS = 1_use 2_forward_iterator
+
 # Directory to store the built targets
 BUILD_DIR = build
 
