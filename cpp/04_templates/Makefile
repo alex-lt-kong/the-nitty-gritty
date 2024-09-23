@@ -1,26 +1,25 @@
-OPT = -O2 -Wall -pedantic -Wextra -g -Og
 CXX = g++
+CXXFLAGS = -O2 -Wall -pedantic -Wextra -g -Og
 
-main: 1_hello-world.out 2_dynamic-input.out 3_noinline.out 4_edge-cases.out 5_trait.out
-	$(CXX) --version > gpp.version
+RM = rm
 
-1_hello-world.out: 1_hello-world.cpp
-	$(CXX) -o 1_hello-world.out 1_hello-world.cpp $(OPT)
-	objdump --disassembler-options "intel" --disassemble=main --demangle --source 1_hello-world.out > 1_hello-world.asm
+# Directory to store the built targets
+BUILD_DIR = ./build
+TARGETS = 1_hello-world 2_dynamic-input 3_noinline 4_edge-cases 5_trait 6_parameter_pack
+# The paths to the built targets
+TARGET_PATHS = $(addprefix $(BUILD_DIR)/,$(TARGETS))
 
-2_dynamic-input.out: 2_dynamic-input.cpp
-	$(CXX) -o 2_dynamic-input.out 2_dynamic-input.cpp $(OPT)
-	objdump --disassembler-options "intel" --demangle --source 2_dynamic-input.out > 2_dynamic-input.asm
+all: $(TARGET_PATHS)
 
-3_noinline.out: 3_noinline.cpp
-	$(CXX) -o 3_noinline.out 3_noinline.cpp $(OPT)
-	objdump --disassembler-options "intel" --demangle --source 3_noinline.out > 3_noinline.asm
+$(BUILD_DIR)/%: %.cpp
+	@mkdir -p $(BUILD_DIR)
+# $@ is an automatic variable that represents target
+# $< is an automatic variable that represents dependency
+	$(CXX) $(CXXFLAGS) -o $@ $<
+	objdump --disassembler-options "intel" --disassemble=main --demangle --source $@ > $@.asm
+	$(CXX) --version > $(BUILD_DIR)/cxx.version
 	
-4_edge-cases.out: 4_edge-cases.cpp
-	$(CXX) -o 4_edge-cases.out 4_edge-cases.cpp $(OPT)
-
-5_trait.out: 5_trait.cpp
-	$(CXX) -o 5_trait.out 5_trait.cpp $(OPT)
-
+.PHONY: clean
 clean:
-	rm *.out
+	$(RM) -r $(BUILD_DIR)
+	
