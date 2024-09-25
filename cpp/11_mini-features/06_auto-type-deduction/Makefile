@@ -1,5 +1,5 @@
 CXX = g++
-CXXFLAGS = -O2 -Wall -pedantic -Wextra -g -Og
+CXXFLAGS = -O2 -Wall -pedantic -Wextra
 
 RM = rm
 
@@ -17,9 +17,6 @@ $(BUILD_DIR)/%: %.cpp
 # $@ is an automatic variable that represents target
 # $< is an automatic variable that represents dependency
 	$(CXX) $(CXXFLAGS) -o $@ $<
-	objdump --disassembler-options "intel" --disassemble=main --demangle --source $@ > $@.asm
-	$(CXX) --version > $(BUILD_DIR)/cxx.version
-	
 
 clean:
 	$(RM) -r $(BUILD_DIR)
