@@ -1,5 +1,5 @@
-CXX = g++
-CXXFLAGS = -O2 -Wall -pedantic -Wextra -g -Og
+CXX = clang++
+CXXFLAGS = -O2 -Wall -pedantic -Wextra -g -Og -std=c++20
 
 RM = rm
 
