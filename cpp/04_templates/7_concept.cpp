@@ -27,8 +27,8 @@ public:
   void meow() { std::cout << "meow!~\n"; };
 };
 
-template <is_shape T> float getVolume(T &t, float height) {
-  return t.area() * height;
+template <is_shape T> float getVolume(T &shape, float height) {
+  return shape.area() * height;
 }
 
 template <typename T>
