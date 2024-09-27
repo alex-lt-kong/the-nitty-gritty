@@ -41,7 +41,7 @@ public:
   private:
     pointer m_ptr;
   };
-
+  // IntegersCollection() { static_assert(std::forward_iterator<Iterator>); };
   Iterator begin() { return Iterator(&m_data[0]); }
   Iterator end() { return Iterator(&m_data[ARR_SIZE]); }
 
@@ -86,7 +86,8 @@ public:
   private:
     pointer m_ptr;
   };
-
+  // GenericCollection() { static_assert(std::random_access_iterator<Iterator>);
+  // };
   Iterator begin() { return Iterator(&m_data[0]); }
   Iterator end() { return Iterator(&m_data[ARR_SIZE]); }
 
