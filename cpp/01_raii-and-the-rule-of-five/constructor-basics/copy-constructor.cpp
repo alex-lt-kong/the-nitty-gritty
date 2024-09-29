@@ -34,7 +34,7 @@ public:
 
 int main() {
   Point p1(10, 15);                    // Normal constructor is called here
-  Point p2 = Point(3, 14);             // Normal constructor is called here
+  auto p2 = Point(3, 14);              // Normal constructor is called here
   Point p3 = pair<int, int>(123, 456); // Normal constructor is called here
   Point p4 = p1;                       // Copy constructor is called here
   p3 = p2; // assignment operator is called here (beyond the scope of this
