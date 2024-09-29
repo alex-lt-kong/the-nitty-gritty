@@ -27,10 +27,16 @@ public:
     iterator(pointer ptr) : m_ptr(ptr) {}
 
     reference operator*() const { return *m_ptr; }
+
+    // prefix increment operator, i.e, ++obj;
     iterator &operator++() {
       m_ptr++;
       return *this;
     }
+
+    // postfix increment operator, i.e., obj++;
+    // (int) is a dummy parameter:
+    // https://stackoverflow.com/questions/12740378/why-use-int-as-an-argument-for-post-increment-operator-overload
     iterator operator++(int) {
       iterator tmp = *this;
       ++(*this);
