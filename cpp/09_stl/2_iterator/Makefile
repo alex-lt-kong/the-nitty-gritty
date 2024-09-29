@@ -1,7 +1,7 @@
 CC = gcc
 CXX = g++
 LDFLAGS = -lfmt
-CFLAGS = -O2 -Wall -pedantic -Wextra
+CXXFLAGS = -O2 -Wall -pedantic -Wextra -std=c++20
 INC = #-I/usr/include/glib-2.0 -I/usr/lib/x86_64-linux-gnu/glib-2.0/include/
 
 RM = rm
@@ -17,7 +17,7 @@ prebuild:
 	@mkdir -p $(BUILD_DIR)
 
 $(BUILD_DIR)/%: %.cpp
-	$(CXX) $(INC) $(CFLAGS) -o $@ $< $(LDFLAGS)
+	$(CXX) $(INC) $(CXXFLAGS) -o $@ $< $(LDFLAGS)
 
 clean:
 	rm -rf $(BUILD_DIR)

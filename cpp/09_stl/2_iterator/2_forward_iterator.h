@@ -2,57 +2,60 @@
 #include <fmt/core.h>
 #include <iterator>
 
-#define ARR_SIZE 20
-
-class IntegersCollection {
+template <size_t N> class IntegersCollection {
 public:
+  IntegersCollection() {
+    // statically check whether intCollection has a proper forward_iterator
+    // https://en.cppreference.com/w/cpp/iterator/forward_iterator
+    static_assert(std::forward_iterator<IntegersCollection<1>::iterator>);
+  }
   // An iterator is usually declared inside the class it belongs to
-  class Iterator {
+  class iterator {
   public:
     // std::iterator_traits defines five expected traits of an iterator class:
     // https://en.cppreference.com/w/cpp/iterator/iterator_traits
     using iterator_category =
         std::forward_iterator_tag; // one of the six iterator categories
-    using difference_type = std::ptrdiff_t;
+                                   //  using difference_type = std::ptrdiff_t;
     using value_type = int;
     using pointer = value_type *;
     using reference = value_type &;
+    using difference_type = std::ptrdiff_t;
 
-    Iterator(pointer ptr) : m_ptr(ptr) {}
+    // Default constructor is required to pass forward_iterator assertion
+    iterator() { throw std::runtime_error("Not implemented"); }
+    iterator(pointer ptr) : m_ptr(ptr) {}
 
     reference operator*() const { return *m_ptr; }
-    pointer operator->() { return m_ptr; }
-    Iterator &operator++() {
+    iterator &operator++() {
       m_ptr++;
       return *this;
     }
-    Iterator operator++(int) {
-      Iterator tmp = *this;
+    iterator operator++(int) {
+      iterator tmp = *this;
       ++(*this);
       return tmp;
     }
-    friend bool operator==(const Iterator &a, const Iterator &b) {
+
+    friend bool operator==(const iterator &a, const iterator &b) {
       return a.m_ptr == b.m_ptr;
-    };
-    friend bool operator!=(const Iterator &a, const Iterator &b) {
-      return a.m_ptr != b.m_ptr;
     };
 
   private:
     pointer m_ptr;
   };
   // IntegersCollection() { static_assert(std::forward_iterator<Iterator>); };
-  Iterator begin() { return Iterator(&m_data[0]); }
-  Iterator end() { return Iterator(&m_data[ARR_SIZE]); }
+  iterator begin() { return iterator(&m_data[0]); }
+  iterator end() { return iterator(&m_data[N]); }
 
 private:
-  int m_data[ARR_SIZE];
+  int m_data[N];
 };
 
-template <class T> class GenericCollection {
+template <typename T, size_t N> class GenericCollection {
 public:
   // An iterator is usually declared inside the class it belongs to
-  class Iterator {
+  class iterator {
   public:
     // std::iterator_traits defines five expected traits of an iterator class:
     // https://en.cppreference.com/w/cpp/iterator/iterator_traits
@@ -63,23 +66,25 @@ public:
     using pointer = value_type *;
     using reference = value_type &;
 
-    Iterator(pointer ptr) : m_ptr(ptr) {}
+    // Default constructor is required to pass forward_iterator assertion
+    iterator() { throw std::runtime_error("Not implemented"); }
+    iterator(pointer ptr) : m_ptr(ptr) {}
 
     reference operator*() const { return *m_ptr; }
     pointer operator->() { return m_ptr; }
-    Iterator &operator++() {
+    iterator &operator++() {
       m_ptr++;
       return *this;
     }
-    Iterator operator++(int) {
-      Iterator tmp = *this;
+    iterator operator++(int) {
+      iterator tmp = *this;
       ++(*this);
       return tmp;
     }
-    friend bool operator==(const Iterator &a, const Iterator &b) {
+    friend bool operator==(const iterator &a, const iterator &b) {
       return a.m_ptr == b.m_ptr;
     };
-    friend bool operator!=(const Iterator &a, const Iterator &b) {
+    friend bool operator!=(const iterator &a, const iterator &b) {
       return a.m_ptr != b.m_ptr;
     };
 
@@ -88,9 +93,9 @@ public:
   };
   // GenericCollection() { static_assert(std::random_access_iterator<Iterator>);
   // };
-  Iterator begin() { return Iterator(&m_data[0]); }
-  Iterator end() { return Iterator(&m_data[ARR_SIZE]); }
+  iterator begin() { return iterator(&m_data[0]); }
+  iterator end() { return iterator(&m_data[N]); }
 
 private:
-  T m_data[ARR_SIZE];
+  T m_data[N];
 };
