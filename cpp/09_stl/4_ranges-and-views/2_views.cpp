@@ -31,7 +31,7 @@ void range_adaptors() {
   // Range adaptors create a view from a range.
   fmt::print("range_adaptors():\n");
   std::vector<int> input = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
-  fmt::print("input: {}\n", fmt::join(input, ", "));
+  fmt::print("input:               {}\n", fmt::join(input, ", "));
 
   auto divisible_by_three = [](const int n) { return n % 3 == 0; };
   // std::views::filter() is a range adaptor
@@ -40,11 +40,35 @@ void range_adaptors() {
 
   // std::views::reverse is another range adaptor
   auto output_reverse = input | std::views::reverse;
-  fmt::print("output_reverse: {}\n", fmt::join(output_reverse, ", "));
+  fmt::print("output_reverse:      {}\n", fmt::join(output_reverse, ", "));
 
   // std::views::output_take is another range adaptor
   auto output_take = input | std::views::take(5);
-  fmt::print("output_take: {}\n", fmt::join(output_take, ", "));
+  fmt::print("output_take:         {}\n", fmt::join(output_take, ", "));
+
+  auto output_transform =
+      input | std::views::transform([](int ele) { return ele * 2; });
+  fmt::print("output_transform:    {}\n", fmt::join(output_transform, ", "));
+
+  std::string string_input = "The|quick|brown|fox|jumps|over|the|lazy|dog";
+  std::string delim = "|";
+  auto output_split = string_input | std::views::split(delim);
+  for (const auto &part : output_split) {
+    fmt::print("{} ", std::string_view(part.begin(), part.end()));
+  }
+  fmt::print("\n");
+  // fmt::print("output_split:         {}\n", fmt::join(output_split, ", "));
+  fmt::print("\n");
+}
+
+void range_factories() {
+  // Range adaptors create a view from something that is NOT a range.
+  fmt::print("range_factories():\n");
+  auto numbers_view = std::views::iota(1, 11);
+  fmt::print("numbers_view:   {}\n", fmt::join(numbers_view, ", "));
+  // We need a vector to materialize the view...
+  std::vector<int> numbers_vec(numbers_view.begin(), numbers_view.end());
+  fmt::print("numbers_vec:    {}\n", fmt::join(numbers_vec, ", "));
 
   fmt::print("\n");
 }
@@ -56,5 +80,6 @@ int main() {
   //  a range but without a range as input)
   // https://brevzin.github.io/c++/2021/02/28/ranges-reference/#join
   range_adaptors();
+  range_factories();
   return 0;
 }
