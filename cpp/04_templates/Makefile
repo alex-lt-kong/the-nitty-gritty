@@ -1,5 +1,6 @@
 CXX = clang++
 CXXFLAGS = -O2 -Wall -pedantic -Wextra -g -Og -std=c++20
+LDFLAGS = -lfmt
 
 RM = rm
 
@@ -16,7 +17,7 @@ prebuild:
 $(BUILD_DIR)/%: %.cpp
 # $@ is an automatic variable that represents target
 # $< is an automatic variable that represents dependency
-	$(CXX) $(CXXFLAGS) -o $@ $<
+	$(CXX) $(CXXFLAGS) -o $@ $< $(LDFLAGS)
 	objdump --disassembler-options "intel" --disassemble=main --demangle --source $@ > $@.asm
 	$(CXX) --version > $(BUILD_DIR)/cxx.version
 	

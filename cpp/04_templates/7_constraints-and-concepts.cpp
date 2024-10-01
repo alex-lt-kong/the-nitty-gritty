@@ -1,3 +1,7 @@
+// A C++ 20 concept is a named predicate (true/false expression) that constrains
+// templates.
+// https://iamsorush.com/posts/concepts-cpp/
+
 #include <algorithm>
 #include <concepts>
 #include <iostream>
@@ -7,6 +11,20 @@
 #include <utility>
 #include <vector>
 
+template <typename T>
+constexpr T getMaxWithRequires(const T &a,
+                               const T &b) requires std::totally_ordered<T>
+/*
+ "requires std::totally_ordered<T>" is like
+ C#'s class EmployeeList<T> "where T : IComparable<T>"
+ It is called a constraint in C++
+ */
+{
+  return a > b ? a : b;
+};
+
+// We defined a concept "is_shape" that requires an object of type T has a
+// member function called area(), which returns a floating point variable
 template <typename T>
 concept is_shape = requires(T v) {
   { v.area() } -> std::floating_point;
@@ -30,18 +48,6 @@ public:
 template <is_shape T> float getVolume(T &shape, float height) {
   return shape.area() * height;
 }
-
-template <typename T>
-constexpr T getMaxWithRequires(const T &a,
-                               const T &b) requires std::totally_ordered<T>
-/*
- requires std::totally_ordered<T>
- is like
- C#'s class EmployeeList<T> where T : IComparable<T>
- */
-{
-  return a > b ? a : b;
-};
 
 class MyDummy {
 private:
