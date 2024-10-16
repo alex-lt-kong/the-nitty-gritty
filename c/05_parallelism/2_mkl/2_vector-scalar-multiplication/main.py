@@ -8,7 +8,7 @@ import pandas as pd
 import time
 
 
-so_file = "./func.so"
+so_file = "./build/libfunc.so"
 func = ctypes.CDLL(so_file)
 
 func.my_multiplication.argtypes = (POINTER(c_double), c_double, c_uint64)
