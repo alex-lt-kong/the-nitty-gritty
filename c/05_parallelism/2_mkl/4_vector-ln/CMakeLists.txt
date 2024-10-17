@@ -1,19 +1,24 @@
 cmake_minimum_required(VERSION 3.13)
-set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-project(1_sum LANGUAGES C)
-find_package(MKL CONFIG REQUIRED)
 
-set(CMAKE_CXX_FLAGS "-Wall -Wextra")
-#set(CMAKE_CXX_FLAGS_DEBUG "-g")
-set(CMAKE_CXX_FLAGS_RELEASE "-O3 -Ofast")
+project(4_vector-ln LANGUAGES C)
+
+find_package(MKL CONFIG REQUIRED PATHS $ENV{MKLROOT})
+
+if(MSVC)
+    set(CMAKE_C_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /O2")
+elseif(CMAKE_C_COMPILER_ID MATCHES "GNU|Clang")
+	set(CMAKE_C_FLAGS "-Wall -Wextra")
+    set(CMAKE_C_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3 -DNDEBUG")
+else()
+    message(WARNING "Unknown compiler: ${CMAKE_CXX_COMPILER_ID}")
+endif()
 
 add_library(
     func
     SHARED
     func.c
 )
-
 target_link_libraries(
-    func
-    PUBLIC $<LINK_ONLY:MKL::MKL>
+  func
+  PUBLIC MKL::MKL
 )

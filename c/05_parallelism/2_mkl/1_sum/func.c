@@ -1,9 +1,11 @@
+#include "../../utils.h"
+
 #include <mkl.h>
 
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <sys/time.h>
+
 
 double mkl_sum(double *arr, size_t arr_size) {
   // https://www.intel.com/content/www/us/en/develop/documentation/onemkl-developer-reference-c/top/blas-and-sparse-blas-routines/blas-routines/blas-level-1-routines-and-functions/cblas-asum.html
@@ -17,12 +19,6 @@ double my_sum(double *arr, size_t arr_size) {
     sum += arr[j];
   }
   return sum;
-}
-
-uint64_t get_timestamp_in_microsec() {
-  struct timeval tv;
-  gettimeofday(&tv, NULL);
-  return 1000000 * tv.tv_sec + tv.tv_usec;
 }
 
 int main() {
