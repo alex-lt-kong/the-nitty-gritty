@@ -1,17 +1,18 @@
+#include "../../utils.h"
+
 #include <mkl.h>
 
 #include <math.h>
 #include <stdint.h>
-#include <sys/time.h>
 
-uint64_t get_timestamp_in_microsec() {
-  struct timeval tv;
-  gettimeofday(&tv, NULL);
-  return 1000000 * tv.tv_sec + tv.tv_usec;
-}
+// Somehow this is needed on Linux...
+extern inline uint64_t get_timestamp_in_microsec();
 
-double mkl_pow(uint64_t arr_size, double *restrict vec_base,
-               double *restrict vec_exp, double *restrict vec_out) {
+#ifdef _WIN32
+__declspec(dllexport)
+#endif
+    double mkl_pow(uint64_t arr_size, double *restrict vec_base,
+                   double *restrict vec_exp, double *restrict vec_out) {
   uint64_t t0, t1;
   t0 = get_timestamp_in_microsec();
   // https://www.intel.com/content/www/us/en/develop/documentation/onemkl-developer-reference-c/top/vector-mathematical-functions/vm-mathematical-functions/power-and-root-functions/v-pow.html#v-pow
@@ -20,8 +21,11 @@ double mkl_pow(uint64_t arr_size, double *restrict vec_base,
   return (t1 - t0) / 1000.0;
 }
 
-double my_pow(uint64_t arr_size, double *restrict vec_base,
-              double *restrict vec_exp, double *restrict vec_out) {
+#ifdef _WIN32
+__declspec(dllexport)
+#endif
+    double my_pow(uint64_t arr_size, double *restrict vec_base,
+                  double *restrict vec_exp, double *restrict vec_out) {
   uint64_t t0, t1;
   t0 = get_timestamp_in_microsec();
 
