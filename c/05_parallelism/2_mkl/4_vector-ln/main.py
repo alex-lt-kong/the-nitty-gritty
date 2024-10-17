@@ -6,8 +6,8 @@ import numpy as np
 import time
 
 
-#so_file = "./build/libfunc.so"
-so_file = "./build/Release/func.dll"
+so_file = "./build/libfunc.so"
+#so_file = "./build/Release/func.dll"
 func = ctypes.CDLL(so_file)
 
 c_product = c_double(0)
