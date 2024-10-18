@@ -10,19 +10,18 @@
 struct JobPayload {
   double *vec_a;
   double *vec_b;
-  double sum;
   double *vec_c;
   int64_t arr_size;
   int64_t offset;
 };
 
-inline 
+inline
 #ifdef _WIN32
-DWORD
+    DWORD
 #else
-long
+    long
 #endif
-get_cpu_cores() {                                                                
+    get_cpu_cores() {
 #ifdef _WIN32
   SYSTEM_INFO sysInfo;
   GetSystemInfo(&sysInfo);
@@ -31,4 +30,3 @@ get_cpu_cores() {
   return sysconf(_SC_NPROCESSORS_ONLN);
 #endif
 }
-

@@ -5,20 +5,28 @@ import datetime as dt
 import random
 import numpy as np
 import pandas as pd
+import sys
 import time
 
-
-so_file = "./build/libfunc.so"
-func = ctypes.CDLL(so_file)
+if sys.platform == 'win32':
+  lib_file = "./build/Release/func.dll"
+else:
+  lib_file = "./build/libfunc.so"
+func = ctypes.CDLL(lib_file)
+func_cs = ctypes.cdll.LoadLibrary("./build/ClassLibrary1.dll")
 
 c_product = c_double(0)
+
 func.my_dot_product.argtypes = (POINTER(c_double), POINTER(c_double), POINTER(c_double), c_int64)
 func.my_dot_product.restype = c_double
 func.mkl_dot_product.argtypes = (POINTER(c_double), POINTER(c_double), POINTER(c_double), c_int64)
 func.mkl_dot_product.restype = c_double
 
+func_cs.MyDotProduct.argtypes = (POINTER(c_double), POINTER(c_double), POINTER(c_double), c_int64)
+func_cs.MyDotProduct.restype = c_double
+
 arr_sizes = np.array(
-    [100, 1_000, 10_000, 100_000, 1_000_000, 10_000_000, 100_000_000, 200_000_000, 300_000_000], dtype=np.int64
+    [100, 1_000, 10_000, 100_000, 1_000_000, 10_000_000, 100_000_000, 200_000_000, 400_000_000, 800_000_000], dtype=np.int64
 )
 
 for arr_size in arr_sizes:
