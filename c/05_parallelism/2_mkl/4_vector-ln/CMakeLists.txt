@@ -17,7 +17,7 @@ add_library(
     func
     SHARED
     func.c
-)
+ "func.h")
 target_link_libraries(
   func
   #PUBLIC

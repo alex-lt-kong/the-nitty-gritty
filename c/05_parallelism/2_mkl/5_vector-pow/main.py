@@ -3,11 +3,21 @@ from ctypes import POINTER, c_double, c_uint64
 import ctypes
 import random
 import numpy as np
+import sys
 import time
 
 
-so_file = "./build/libfunc.so"
-func = ctypes.CDLL(so_file)
+if sys.platform == 'win32':
+  lib_file = './build/Release/func.dll'
+  # Intel's icx compiler needs these:
+  #import win32api
+  #import win32con
+  #dll_handle = win32api.LoadLibraryEx(lib_file, 0, win32con.LOAD_WITH_ALTERED_SEARCH_PATH)  
+  #func = ctypes.WinDLL(lib_file, handle=dll_handle)     
+  func = ctypes.CDLL(lib_file)
+else:
+  lib_file = "./build/libfunc.so"
+  func = ctypes.CDLL(lib_file)
 
 c_product = c_double(0)
 func.my_pow.argtypes = (c_uint64, POINTER(c_double), POINTER(c_double), POINTER(c_double))

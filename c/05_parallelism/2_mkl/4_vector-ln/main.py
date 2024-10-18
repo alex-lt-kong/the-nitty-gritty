@@ -3,12 +3,16 @@ from ctypes import POINTER, c_double, c_uint64
 import ctypes
 import random
 import numpy as np
+import sys
 import time
 
 
-so_file = "./build/libfunc.so"
-#so_file = "./build/Release/func.dll"
-func = ctypes.CDLL(so_file)
+if sys.platform == 'win32':
+  lib_file = "./build/Release/func.dll"
+else:
+  lib_file = "./build/libfunc.so"
+func = ctypes.CDLL(lib_file)
+
 
 c_product = c_double(0)
 func.my_ln.argtypes = (c_uint64, POINTER(c_double), POINTER(c_double))
