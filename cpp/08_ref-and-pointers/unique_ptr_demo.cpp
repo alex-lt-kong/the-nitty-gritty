@@ -1,108 +1,114 @@
-#include <iostream>
+#include <gtest/gtest.h>
+#include <gmock/gmock.h>
+
+//#include <iostream>
 #include <memory>
+#include <print>
 
 using namespace std;
 
-void dumb_pointer_with_leak() {
-  cout << "dumb_pointer_with_leak() called\n";
-  int *valuePtr = new int(15);
-  int x = 45;
-
-  if (x == 45) {
-    cout << "dumb_pointer_with_leak() returned\n\n";
-    return; // here we have a memory leak, valuePtr is not deleted
-  }
-  delete valuePtr;
+TEST(UniquePtrTest, ConstructorAndDereference) {
+    unique_ptr<int> uptr(new int(42));
+    ASSERT_TRUE(uptr); // Check that the pointer is not null
+    EXPECT_EQ(*uptr, 42); // Check dereferenced value
 }
 
-void create_unique_ptr() {
-  cout << "create_unique_ptr() called\n";
-  unique_ptr<int> valuePtr(new int(15));
-  int x = 45;
-
-  if (x == 45) {
-    cout << "create_unique_ptr() returned\n\n";
-    // no memory leak anymore as unique_ptr's destructor is called to release
-    // the recource.
-    return;
-  }
+TEST(UniquePtrTest, DumbPtrLeaks) {
+    int *valuePtr = new int(15);
+    int x = 45;
+    if (x == 45) {
+        return; // here we have a memory leak, valuePtr is not deleted
+    }
+    delete valuePtr;
 }
 
-void unique_ptr_converted_from_dumb_ptr(size_t arr_size) {
-  cout << "unique_ptr_converted_from_dumb_ptr() called\n";
-  struct FreeDeleter {
-    void operator()(void *p) const { std::free(p); }
-  };
-
-  int *dynamic_int_arr = (int *)malloc(sizeof(int) * arr_size);
-  // In reality, malloc() should be some deep-rooted C functions,
-  // probably in a compiled so file. Here we simplify the scenario by
-  // directly using a malloc()
-  for (size_t i = 0; i < arr_size; i++) {
-    dynamic_int_arr[i] = i;
-  }
-  unique_ptr<int[], FreeDeleter> smart_int_ptr(dynamic_int_arr);
-
-  for (size_t i = 0; i < arr_size; ++i) {
-    cout << smart_int_ptr[i] << std::endl;
-  }
-  cout << "unique_ptr_converted_from_dumb_ptr() returned\n\n";
+TEST(UniquePtrTest, UniquePtrDoesNotLeak) {
+    unique_ptr<int> valuePtr(new int(15));
+    int x = 45;
+    if (x == 45) {
+        // no memory leak anymore as unique_ptr's destructor is called to release
+        // the recource.
+        return;
+    }
 }
+
+TEST(UniquePtrTest, MoveConstructor) {
+    unique_ptr<int> uptr1(new int(123));
+    unique_ptr<int> uptr2(std::move(uptr1)); // Move ownership
+    ASSERT_FALSE(uptr1); // Original pointer should be null
+    ASSERT_TRUE(uptr2); // New pointer should own the resource
+    EXPECT_EQ(*uptr2, 123);
+}
+
+class MockHelper {
+public:
+    MOCK_METHOD(void, Call, ());
+};
+
+TEST(UniquePtrTest, UniquePtrFromRawPtr) {
+    int arr_size = 32767;
+    MockHelper mockHelper;
+    auto deleter = [&mockHelper](int *ptr) {
+        std::free(ptr);
+        mockHelper.Call();
+    };
+    auto raw_ptr = (int *) malloc(sizeof(int) * arr_size);
+    for (int i = 0; i < arr_size; i++) {
+        raw_ptr[i] = i;
+    } {
+        unique_ptr<int[], decltype(deleter)> smart_int_ptr(raw_ptr, deleter);
+
+        for (size_t i = 0; i < arr_size; ++i) {
+            EXPECT_EQ(smart_int_ptr[i], i);
+        }
+
+        EXPECT_CALL(mockHelper, Call()).Times(1);
+    }
+    // An indirect way to check the memory is released.
+    ASSERT_DEATH({
+        for (int i = 0; i < arr_size; i++) {
+           std::println("{}", raw_ptr[i]);
+        }
+    }, ".*"); // The program should crash here, as the memory is already released.
+
+    // the below check wont work as raw_arr will still point to the previous location,
+    // even though the location is no long valid.
+    // EXPECT_EQ(*dynamic_int_arr, nullptr);
+}
+
 
 void callee_func_raw_ptr(int *arg) {
-  cout << "callee_func_raw_ptr() called\n";
-  cout << "Value of a: " << *arg << endl;
-  ++(*arg);
-  cout << "Value of a: " << *arg << endl;
-  cout << "callee_func_raw_ptr() returned\n";
+    ++(*arg);
 }
 
 void callee_func_ref(unique_ptr<int> &arg) {
-  cout << "callee_func_ref() called\n";
-  cout << "Value of a: " << *arg << endl;
-  ++(*arg);
-  cout << "Value of a: " << *arg << endl;
-  cout << "callee_func_ref() returned\n";
+    ++(*arg);
 }
 
 void callee_func_move(unique_ptr<int> arg) {
-  cout << "callee_func_move() called\n";
-  cout << "Value of a: " << *arg << endl;
-  ++(*arg);
-  cout << "Value of a: " << *arg << endl;
-  cout << "callee_func_move() returned\n";
+    ++(*arg);
 }
 
-void pass_unique_ptr_to_func() {
-  cout << "pass_unique_ptr_to_func() called\n";
-  unique_ptr<int> x(new int(0));
-  *x = 45;
-  callee_func_ref(x);
-  cout << "x is: " << *x << endl;
-  callee_func_raw_ptr(x.get());
-  cout << "x is: " << *x << endl;
-  callee_func_move(move(x));
-  cout << "x.get() == nullptr: " << (x.get() == nullptr) << endl;
-  cout << "pass_unique_ptr_to_func() returned\n\n";
+TEST(UniquePtrTest, PassUniquePtrToFunctions) {
+
+    constexpr int val = 45;
+    unique_ptr<int> x(new int(val));
+    callee_func_ref(x);
+    EXPECT_EQ(*x, val+1);
+    callee_func_raw_ptr(x.get());
+    EXPECT_EQ(*x, val+2);
+    callee_func_move(move(x));
+    EXPECT_FALSE(x.get());
 }
 
 unique_ptr<int> get_ptr() {
-  unique_ptr<int> x(new int(31415));
-  return x;
+    unique_ptr<int> x(new int(31415));
+    return x;
 }
 
 void return_unique_ptr_from_func() {
-  cout << "return_unique_ptr_from_func() called\n";
-  auto x = get_ptr();
-  cout << "x is" << *x << "\n";
-  cout << "return_unique_ptr_from_func() returned\n\n";
-}
-
-int main() {
-  dumb_pointer_with_leak();
-  create_unique_ptr();
-  unique_ptr_converted_from_dumb_ptr(12);
-  pass_unique_ptr_to_func();
-  return_unique_ptr_from_func();
-  return 0;
+    cout << "return_unique_ptr_from_func() called\n";
+    auto x = get_ptr();
+    cout << "x is" << *x << "\n";
+    cout << "return_unique_ptr_from_func() returned\n\n";
 }
