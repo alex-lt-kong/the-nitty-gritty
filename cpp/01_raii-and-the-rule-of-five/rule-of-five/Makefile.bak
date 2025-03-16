@@ -16,7 +16,7 @@ $(BUILD_DIR)/%: %.cpp
 # $@ is an automatic variable that represents target
 # $< is an automatic variable that represents dependency
 	$(CXX) $(CXXFLAGS) $(LDFLAGS) -o $@ $<
-move-constructor-noec: move-constructor.cpp
+move-constructor-noec: move-senamtics.cpp
 	$(CXX) $(CXXFLAGS) -fno-elide-constructors move-constructor.cpp -o $(BUILD_DIR)/move-constructor-noec
 
 .PHONY: clean

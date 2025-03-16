@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="BackendCodeEditorMiscSettings">
+    <option name="/Default/RiderDebugger/RiderRestoreDecompile/RestoreDecompileSetting/@EntryValue" value="false" type="bool" />
+    <option name="/Default/Housekeeping/GlobalSettingsUpgraded/IsUpgraded/@EntryValue" value="true" type="bool" />
+    <option name="/Default/Housekeeping/FeatureSuggestion/FeatureSuggestionManager/DisabledSuggesters/=SwitchToGoToActionSuggester/@EntryIndexedValue" value="true" type="bool" />
+    <option name="/Default/Housekeeping/FeatureSuggestion/FeatureSuggestionManager/DisabledSuggesters/=SwitchToGoToActionSuggester/@EntryIndexRemoved" />
+    <option name="/Default/Environment/Hierarchy/GeneratedFilesCacheKey/Timestamp/@EntryValue" value="3" type="long" />
+  </component>
+  <component name="CMakePresetLoader"><![CDATA[{
+  "useNewFormat": true
+}]]></component>
+  <component name="CMakeProjectFlavorService">
+    <option name="flavorId" value="CMakePlainProjectFlavor" />
+  </component>
+  <component name="CMakeReloadState">
+    <option name="reloaded" value="true" />
+  </component>
+  <component name="CMakeRunConfigurationManager">
+    <generated>
+      <config projectName="01_raii-and-the-rule-of-five" targetName="constructors" />
+    </generated>
+  </component>
+  <component name="CMakeSettings">
+    <configurations>
+      <configuration PROFILE_NAME="Debug" ENABLED="true" CONFIG_NAME="Debug" GENERATION_OPTIONS="-DCMAKE_TOOLCHAIN_FILE=/home/mamsds/bin/vcpkg/scripts/buildsystems/vcpkg.cmake" />
+    </configurations>
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="95422c8b-779d-4d62-a8e5-3bad1335c923" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/01_raii-and-the-rule-of-five.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/editor.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/material_theme_project_new.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/rule-of-five/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/01_naive-example.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/raii/01_naive-example.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/02_raw-pointers-with-raii.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/raii/02_raw-pointers-with-raii.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/03_unique-ptr-with-raii.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/raii/03_unique-ptr-with-raii.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Makefile" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/raii/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/constructor-basics/Makefile" beforeDir="false" afterPath="$PROJECT_DIR$/rule-of-five/Makefile.bak" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/constructor-basics/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/rule-of-five/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/constructor-basics/base-constructor.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/rule-of-five/base-constructor.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/constructor-basics/copy-constructor.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/rule-of-five/constructors.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/constructor-basics/copy-elision.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/rule-of-five/copy-elision.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/constructor-basics/lvalue-vs-rvalue.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/rule-of-five/lvalue-vs-rvalue.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/constructor-basics/move-constructor.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/rule-of-five/move-senamtics.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../08_ref-and-pointers/.idea/material_theme_project_new.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../08_ref-and-pointers/.idea/material_theme_project_new.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../08_ref-and-pointers/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../08_ref-and-pointers/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../08_ref-and-pointers/unique_ptr_impl.h" beforeDir="false" afterPath="$PROJECT_DIR$/../08_ref-and-pointers/unique_ptr_impl.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../08_ref-and-pointers/unique_ptr_impl_test.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../08_ref-and-pointers/unique_ptr_impl_test.cpp" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ExecutionTargetManager" SELECTED_TARGET="CMakeBuildProfile:Debug" />
+  <component name="FormatOnSaveOptions">
+    <option name="myRunOnSave" value="true" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../.." />
+  </component>
+  <component name="ProjectApplicationVersion">
+    <option name="ide" value="CLion" />
+    <option name="majorVersion" value="2024" />
+    <option name="minorVersion" value="3.2" />
+    <option name="productBranch" value="Classic" />
+  </component>
+  <component name="ProjectColorInfo"><![CDATA[{
+  "customColor": "",
+  "associatedIndex": 3
+}]]></component>
+  <component name="ProjectId" id="2uNurUf4v6vV3jdFGYenr0viM2u" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Google Test.constructors.executor": "Run",
+    "RunOnceActivity.RadMigrateCodeStyle": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.cidr.known.project.marker": "true",
+    "RunOnceActivity.readMode.enableVisualFormatting": "true",
+    "RunOnceActivity.west.config.association.type.startup.service": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "cf.advertisement.text.overridden": "true",
+    "cf.first.check.clang-format": "false",
+    "cidr.known.project.marker": "true",
+    "code.cleanup.on.save": "true",
+    "git-widget-placeholder": "main",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "preferences.lookFeel",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="RunManager">
+    <configuration default="true" type="CLionExternalRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true">
+      <method v="2">
+        <option name="CLION.EXTERNAL.BUILD" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="constructors" type="CMakeGoogleTestRunConfigurationType" factoryName="Google Test" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="01_raii-and-the-rule-of-five" TARGET_NAME="constructors" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="01_raii-and-the-rule-of-five" RUN_TARGET_NAME="constructors" TEST_MODE="SUITE_TEST">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+        <option name="BeforeTestRunTask" enabled="true" />
+      </method>
+    </configuration>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="95422c8b-779d-4d62-a8e5-3bad1335c923" name="Changes" comment="" />
+      <created>1742101553331</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1742101553331</updated>
+      <workItem from="1742101555584" duration="8926000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="VCPKGProject">
+    <isAutomaticCheckingOnLaunch value="false" />
+    <isAutomaticFoundErrors value="true" />
+    <isAutomaticReloadCMake value="true" />
+  </component>
+</project>
