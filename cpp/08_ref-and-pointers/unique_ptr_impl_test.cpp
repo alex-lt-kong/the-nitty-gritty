@@ -32,15 +32,12 @@ TEST(MyUniquePtrTest, UniquePtrDoesNotLeak) {
   int *rptr0;
   int *rptr1;
   constexpr int arr_size = 32767;
+  auto deleter = [](void *p) { delete[] static_cast<int *>(p); };
   {
-    unique_ptr<int> uptr(new int[arr_size]);
     // The T vs T[] is more a template programming issue, do not want to get too
     // involved in this section
-    my_unique_ptr<int> muptr(new int[arr_size], [](void *p) {
-      std::print("delete[] p;\n");
-      delete[] (int *)(p);
-      std::print("returned\n");
-    });
+    unique_ptr<int, decltype(deleter)> uptr(new int[arr_size], deleter);
+    my_unique_ptr<int> muptr(new int[arr_size], deleter);
     for (int i = 0; i < arr_size; ++i) {
       uptr.get()[i] = i;
       muptr.get()[i] = i;
@@ -74,8 +71,8 @@ TEST(MyUniquePtrTest, UniquePtrDoesNotLeak) {
 
 TEST(MyUniquePtrTest, MoveConstructor) {
   constexpr char text[] = "0xdeadbeef";
-  unique_ptr<string> uptr1(new string(text));
-  my_unique_ptr<string> muptr1(new string(text));
+  unique_ptr uptr1 = std::make_unique<string>(text);
+  my_unique_ptr muptr1 = my_make_unique<string>(text);
   EXPECT_EQ(strcmp(uptr1->data(), text), 0);
   EXPECT_EQ(strcmp(muptr1->data(), text), 0);
 

@@ -33,10 +33,7 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="95422c8b-779d-4d62-a8e5-3bad1335c923" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/rule-of-five/3_rule-of-five.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/rule-of-five/3_rule-of-five.cpp" afterDir="false" />
-    </list>
+    <list default="true" id="95422c8b-779d-4d62-a8e5-3bad1335c923" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -157,7 +154,7 @@
       <option name="presentableId" value="Default" />
       <updated>1742101553331</updated>
       <workItem from="1742101555584" duration="12189000" />
-      <workItem from="1742118041504" duration="8725000" />
+      <workItem from="1742118041504" duration="14422000" />
     </task>
     <servers />
   </component>
