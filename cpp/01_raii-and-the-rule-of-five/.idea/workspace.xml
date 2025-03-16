@@ -7,12 +7,12 @@
     <option name="/Default/RiderDebugger/RiderRestoreDecompile/RestoreDecompileSetting/@EntryValue" value="false" type="bool" />
     <option name="/Default/Housekeeping/GlobalSettingsUpgraded/IsUpgraded/@EntryValue" value="true" type="bool" />
     <option name="/Default/Housekeeping/FeatureSuggestion/FeatureSuggestionManager/DisabledSuggesters/=SwitchToGoToActionSuggester/@EntryIndexedValue" value="true" type="bool" />
-    <option name="/Default/Housekeeping/FeatureSuggestion/FeatureSuggestionManager/DisabledSuggesters/=SwitchToGoToActionSuggester/@EntryIndexRemoved" />
     <option name="/Default/Environment/Hierarchy/GeneratedFilesCacheKey/Timestamp/@EntryValue" value="3" type="long" />
+    <option name="/Default/Housekeeping/FeatureSuggestion/FeatureSuggestionManager/DisabledSuggesters/=SwitchToGoToActionSuggester/@EntryIndexRemoved" />
   </component>
-  <component name="CMakePresetLoader"><![CDATA[{
-  "useNewFormat": true
-}]]></component>
+  <component name="CMakePresetLoader">{
+  &quot;useNewFormat&quot;: true
+}</component>
   <component name="CMakeProjectFlavorService">
     <option name="flavorId" value="CMakePlainProjectFlavor" />
   </component>
@@ -21,36 +21,30 @@
   </component>
   <component name="CMakeRunConfigurationManager">
     <generated>
-      <config projectName="01_raii-and-the-rule-of-five" targetName="constructors" />
+      <config projectName="01_raii-and-the-rule-of-five" targetName="2_lvalue-vs-rvalue" />
+      <config projectName="01_raii-and-the-rule-of-five" targetName="1_rule-of-three" />
+      <config projectName="01_raii-and-the-rule-of-five" targetName="3_rule-of-five" />
     </generated>
   </component>
   <component name="CMakeSettings">
     <configurations>
       <configuration PROFILE_NAME="Debug" ENABLED="true" CONFIG_NAME="Debug" GENERATION_OPTIONS="-DCMAKE_TOOLCHAIN_FILE=/home/mamsds/bin/vcpkg/scripts/buildsystems/vcpkg.cmake" />
+      <configuration PROFILE_NAME="Release" ENABLED="true" CONFIG_NAME="Release" GENERATION_OPTIONS="-DCMAKE_TOOLCHAIN_FILE=/home/mamsds/bin/vcpkg/scripts/buildsystems/vcpkg.cmake" />
     </configurations>
   </component>
   <component name="ChangeListManager">
     <list default="true" id="95422c8b-779d-4d62-a8e5-3bad1335c923" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/01_raii-and-the-rule-of-five.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/editor.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/material_theme_project_new.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/rule-of-five/CMakeLists.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/01_naive-example.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/raii/01_naive-example.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/02_raw-pointers-with-raii.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/raii/02_raw-pointers-with-raii.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/03_unique-ptr-with-raii.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/raii/03_unique-ptr-with-raii.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Makefile" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/raii/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/constructor-basics/Makefile" beforeDir="false" afterPath="$PROJECT_DIR$/rule-of-five/Makefile.bak" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/constructor-basics/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/rule-of-five/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/constructor-basics/base-constructor.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/rule-of-five/base-constructor.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/constructor-basics/copy-constructor.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/rule-of-five/constructors.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/constructor-basics/copy-elision.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/rule-of-five/copy-elision.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/constructor-basics/lvalue-vs-rvalue.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/rule-of-five/lvalue-vs-rvalue.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/constructor-basics/move-constructor.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/rule-of-five/move-senamtics.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/rule-of-five/my-string-impl.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/rule-of-five/point-impl.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/editor.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/editor.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/material_theme_project_new.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/material_theme_project_new.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rule-of-five/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/rule-of-five/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rule-of-five/Makefile.bak" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/rule-of-five/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/rule-of-five/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rule-of-five/constructors.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/rule-of-five/1_rule-of-three.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rule-of-five/lvalue-vs-rvalue.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/rule-of-five/2_lvalue-vs-rvalue.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rule-of-five/move-senamtics.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/rule-of-five/3_rule-of-five.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../08_ref-and-pointers/.idea/material_theme_project_new.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../08_ref-and-pointers/.idea/material_theme_project_new.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../08_ref-and-pointers/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../08_ref-and-pointers/CMakeLists.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../08_ref-and-pointers/unique_ptr_impl.h" beforeDir="false" afterPath="$PROJECT_DIR$/../08_ref-and-pointers/unique_ptr_impl.h" afterDir="false" />
@@ -74,10 +68,10 @@
     <option name="minorVersion" value="3.2" />
     <option name="productBranch" value="Classic" />
   </component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "customColor": "",
-  "associatedIndex": 3
-}]]></component>
+  <component name="ProjectColorInfo">{
+  &quot;customColor&quot;: &quot;&quot;,
+  &quot;associatedIndex&quot;: 3
+}</component>
   <component name="ProjectId" id="2uNurUf4v6vV3jdFGYenr0viM2u" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
@@ -85,10 +79,17 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
+    "CMake Application.2_lvalue-vs-rvalue.executor": "Run",
+    "CMake Application.3_rule-of-five.executor": "Run",
+    "Google Test.1_rule-of-three.executor": "Run",
+    "Google Test.3_rule-of-five.executor": "Run",
+    "Google Test.Constructors.CopyInitialization.executor": "Run",
+    "Google Test.RuleOfFive.CopyInitialization.executor": "Run",
     "Google Test.constructors.executor": "Run",
     "RunOnceActivity.RadMigrateCodeStyle": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.cidr.known.project.marker": "true",
+    "RunOnceActivity.git.unshallow": "true",
     "RunOnceActivity.readMode.enableVisualFormatting": "true",
     "RunOnceActivity.west.config.association.type.startup.service": "true",
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
@@ -97,27 +98,68 @@
     "cidr.known.project.marker": "true",
     "code.cleanup.on.save": "true",
     "git-widget-placeholder": "main",
+    "last_opened_file_path": "/home/mamsds/repos/the-nitty-gritty/cpp/01_raii-and-the-rule-of-five/rule-of-five",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "preferences.lookFeel",
+    "settings.editor.selected.configurable": "CMakeSettings",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
-  <component name="RunManager">
-    <configuration default="true" type="CLionExternalRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true">
-      <method v="2">
-        <option name="CLION.EXTERNAL.BUILD" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="constructors" type="CMakeGoogleTestRunConfigurationType" factoryName="Google Test" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="01_raii-and-the-rule-of-five" TARGET_NAME="constructors" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="01_raii-and-the-rule-of-five" RUN_TARGET_NAME="constructors" TEST_MODE="SUITE_TEST">
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/rule-of-five" />
+    </key>
+  </component>
+  <component name="RunManager" selected="Google Test.3_rule-of-five">
+    <configuration name="1_rule-of-three" type="CMakeGoogleTestRunConfigurationType" factoryName="Google Test" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="01_raii-and-the-rule-of-five" TARGET_NAME="1_rule-of-three" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="01_raii-and-the-rule-of-five" RUN_TARGET_NAME="1_rule-of-three" TEST_MODE="SUITE_TEST">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
         <option name="BeforeTestRunTask" enabled="true" />
       </method>
     </configuration>
+    <configuration name="3_rule-of-five" type="CMakeGoogleTestRunConfigurationType" factoryName="Google Test" temporary="true" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="01_raii-and-the-rule-of-five" TARGET_NAME="3_rule-of-five" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="01_raii-and-the-rule-of-five" RUN_TARGET_NAME="3_rule-of-five" TEST_CLASS="RuleOfFive" TEST_MODE="SUITE_TEST">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+        <option name="BeforeTestRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="RuleOfFive.CopyInitialization" type="CMakeGoogleTestRunConfigurationType" factoryName="Google Test" temporary="true" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="01_raii-and-the-rule-of-five" TARGET_NAME="3_rule-of-five" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="01_raii-and-the-rule-of-five" RUN_TARGET_NAME="3_rule-of-five" TEST_CLASS="RuleOfFive" TEST_METHOD="CopyInitialization" TEST_MODE="SUITE_TEST">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+        <option name="BeforeTestRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="2_lvalue-vs-rvalue" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="01_raii-and-the-rule-of-five" TARGET_NAME="2_lvalue-vs-rvalue" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="01_raii-and-the-rule-of-five" RUN_TARGET_NAME="2_lvalue-vs-rvalue">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="3_rule-of-five" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="01_raii-and-the-rule-of-five" TARGET_NAME="3_rule-of-five" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="01_raii-and-the-rule-of-five" RUN_TARGET_NAME="3_rule-of-five">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <list>
+      <item itemvalue="CMake Application.2_lvalue-vs-rvalue" />
+      <item itemvalue="CMake Application.3_rule-of-five" />
+      <item itemvalue="Google Test.1_rule-of-three" />
+      <item itemvalue="Google Test.3_rule-of-five" />
+      <item itemvalue="Google Test.RuleOfFive.CopyInitialization" />
+    </list>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Google Test.3_rule-of-five" />
+        <item itemvalue="Google Test.RuleOfFive.CopyInitialization" />
+      </list>
+    </recent_temporary>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
@@ -127,7 +169,8 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1742101553331</updated>
-      <workItem from="1742101555584" duration="8926000" />
+      <workItem from="1742101555584" duration="12189000" />
+      <workItem from="1742118041504" duration="7310000" />
     </task>
     <servers />
   </component>
