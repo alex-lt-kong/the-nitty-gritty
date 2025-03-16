@@ -33,30 +33,84 @@ TEST(RuleOfFive, CopyInitialization) {
 }
 
 TEST(RuleOfFive, CopyAssignment) {
-  constexpr char text[] = "The quick brown fox jumps over the lazy dog";
-  std::string ss1 = text;
-  my_string ms1 = text;
-  auto ss2 = ss1; // Copy constructor is called here
-  auto ms2 = ms1; // Copy constructor is called here
-  std::string ss3;
-  my_string ms3 =
-      "THE QUICK BROWN FOX JUMPED OVER THE LAZY DOG'S BACK 1234567890";
-  ss3 = text;
-  ms3 = text;
+  // my_string only re-allocates when current size not big enough, so we want to
+  // test both cases
+  constexpr char text1[] = "The quick brown fox jumps over the lazy dog";
+  constexpr char text2[] =
+      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod "
+      "tempor incididunt ut labore et dolore magna aliqua.";
+  constexpr char text3[] = "0x0000000FF1CE";
+  std::string ss1 = text1;
+  my_string ms1 = text1;
 
+  std::string ss2 = text2;
+  my_string ms2 = text2;
+  ss2 = ss1;
+  ms2 = ms1;
+  EXPECT_EQ(ss1, ss2);
+  EXPECT_EQ(ms1, ms2);
+
+  std::string ss3 = text3;
+  my_string ms3 = text3;
+  ss3 = ss1;
+  ms3 = ms1;
+  EXPECT_EQ(ss1, ss3);
   EXPECT_EQ(ms1, ms3);
-  /*
-  EXPECT_EQ(p1.getY(), p2.getY());
-  Point p3; // Default constructor is called here
+  EXPECT_EQ(strcmp(ms3.c_str(), ss3.c_str()), 0);
+}
 
-  Point p4{3, 4};
-  Point p5(65535, -1234);
-  p3 = p1; // Copy assignment operator is called here
-  EXPECT_EQ(p2.getX(), p3.getX());
-  EXPECT_EQ(p2.getY(), p3.getY());
-  p5 = p4 = p3;
-  EXPECT_EQ(p3.getX(), p4.getX());
-  EXPECT_EQ(p3.getY(), p4.getY());
-  EXPECT_EQ(p4.getX(), p5.getX());
-  EXPECT_EQ(p4.getY(), p5.getY());*/
+TEST(RuleOfFive, MoveInitialization) {
+  constexpr char text[] = "The quick brown fox jumps over the lazy dog";
+  my_string ms1 = text;
+  std::string ss1 = text;
+  my_string ms2 = std::move(ms1);
+  std::string ss2 = std::move(ss1);
+  EXPECT_EQ(strcmp(ss2.c_str(), text), 0);
+  EXPECT_EQ(strcmp(ss2.c_str(), ms2.c_str()), 0);
+  EXPECT_EQ(ss1.size(), 0);
+  EXPECT_EQ(ms1.size(), 0);
+}
+
+TEST(RuleOfFive, MoveAssignment) {
+  constexpr char text1[] = "The quick brown fox jumps over the lazy dog";
+  constexpr char text2[] =
+      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod "
+      "tempor incididunt ut labore et dolore magna aliqua.";
+  std::string ss1 = text1;
+  my_string ms1 = text1;
+
+  std::string ss2 = text2;
+  my_string ms2 = text2;
+  ss2 = std::move(ss1);
+  ms2 = std::move(ms1);
+
+  EXPECT_EQ(strcmp(ss2.c_str(), text1), 0);
+  EXPECT_EQ(strcmp(ms2.c_str(), text1), 0);
+  EXPECT_EQ(ss1.size(), 0);
+  EXPECT_EQ(ms1.size(), 0);
+
+  ss2 = std::move(ss2);
+  ms2 = std::move(ms2);
+  // std::string does not have self-assignment protection??
+  // EXPECT_EQ(strcmp(ss2.c_str(), text1), 0);
+  EXPECT_EQ(strcmp(ms2.c_str(), text1), 0);
+}
+
+TEST(RuleOfFive, AdditionOperator) {
+  constexpr char text1[] = "Hello, ";
+  constexpr char text2[] = "World!";
+  std::string ss1 = text1;
+  my_string ms1 = text1;
+  std::string ss2 = text2;
+  my_string ms2 = text2;
+
+  auto ss3 = ss1 + ss2;
+  auto ms3 = ms1 + ms2;
+  EXPECT_EQ(strcmp(ms3.c_str(), ss3.c_str()), 0);
+  ss3 = ss3 + ss3 + ss1 + ss2;
+  ms3 = ms3 + ms3 + ms1 + ms2;
+  EXPECT_EQ(strcmp(ms3.c_str(), ss3.c_str()), 0);
+  ss3 = ss3 + ss1 + ss2;
+  ms3 = ms3 + ms1 + ms2;
+  EXPECT_EQ(strcmp(ms3.c_str(), ss3.c_str()), 0);
 }
