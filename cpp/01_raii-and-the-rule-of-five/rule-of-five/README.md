@@ -161,7 +161,7 @@ Perhaps it is more intuitive to call it just "temporary value" or "unnamed value
   rvalue to `foobar`. Isn't it wonderful?
 
   - This is how a move constructor is used in
-    [move-constructor.cpp](./move-constructor.cpp):
+    [move-constructor.cpp](./move-senamtics.cpp):
 
 - There is a separate scenario where we want the move constructor to be called:
 
