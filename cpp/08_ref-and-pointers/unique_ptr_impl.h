@@ -4,6 +4,7 @@
 template <typename T> class my_unique_ptr {
 private:
   T *m_ptr;
+  std::allocator<T> allocator = std::allocator<T>();
   std::function<void(T *)> m_deleter;
 
 public:
