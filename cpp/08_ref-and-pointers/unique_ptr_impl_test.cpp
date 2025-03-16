@@ -34,7 +34,13 @@ TEST(MyUniquePtrTest, UniquePtrDoesNotLeak) {
   constexpr int arr_size = 32767;
   {
     unique_ptr<int> uptr(new int[arr_size]);
-    my_unique_ptr<int> muptr(new int[arr_size]);
+    // The T vs T[] is more a template programming issue, do not want to get too
+    // involved in this section
+    my_unique_ptr<int> muptr(new int[arr_size], [](void *p) {
+      std::print("delete[] p;\n");
+      delete[] (int *)(p);
+      std::print("returned\n");
+    });
     for (int i = 0; i < arr_size; ++i) {
       uptr.get()[i] = i;
       muptr.get()[i] = i;
@@ -139,12 +145,13 @@ TEST(MyUniquePtrTest, UniquePtrFromRawPtr) {
   }
   auto raw_ptr2 = static_cast<int *>(malloc(sizeof(int) * arr_size));
 
-
   EXPECT_CALL(mockHelper, Call()).Times(2);
   memcpy(raw_ptr2, raw_ptr1, sizeof(int) * arr_size);
   {
     unique_ptr<int, decltype(deleter)> uptr(raw_ptr1, deleter);
     my_unique_ptr<int> muptr(raw_ptr2, deleter);
+    EXPECT_EQ(uptr.get(), raw_ptr1);
+    EXPECT_EQ(muptr.get(), raw_ptr2);
 
     for (size_t i = 0; i < arr_size; ++i) {
       EXPECT_EQ(uptr.get()[i], i);
@@ -152,9 +159,3 @@ TEST(MyUniquePtrTest, UniquePtrFromRawPtr) {
     }
   }
 }
-
-void callee_func_raw_ptr(int *arg) { ++(*arg); }
-
-void callee_func_ref(unique_ptr<int> &arg) { ++(*arg); }
-
-void callee_func_move(unique_ptr<int> arg) { ++(*arg); }

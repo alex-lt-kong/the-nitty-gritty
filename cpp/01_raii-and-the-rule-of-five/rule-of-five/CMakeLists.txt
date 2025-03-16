@@ -1,7 +1,9 @@
-add_executable(constructors constructors.cpp)
-target_link_libraries(constructors GTest::gtest GTest::gtest_main GTest::gmock)
+add_executable(1_rule-of-three 1_rule-of-three.cpp
+        point-impl.h)
+target_link_libraries(1_rule-of-three GTest::gtest GTest::gtest_main GTest::gmock)
 
-#add_executable(unique_ptr_impl_test unique_ptr_impl_test.cpp)
-#target_link_libraries(unique_ptr_impl_test GTest::gtest GTest::gtest_main GTest::gmock)
+add_executable(2_lvalue-vs-rvalue 2_lvalue-vs-rvalue.cpp)
 
+add_executable(3_rule-of-five 3_rule-of-five.cpp)
+target_link_libraries(3_rule-of-five GTest::gtest GTest::gtest_main GTest::gmock)
 #add_executable(value-ref-and-pointer value-ref-and-pointer.cpp)
