@@ -1,17 +1,23 @@
 #include <functional>
 #include <print>
 
-
 template <typename T> class my_unique_ptr {
 private:
   T *m_ptr;
   std::function<void(T *)> m_deleter;
 
 public:
-  my_unique_ptr() noexcept: m_ptr(nullptr), m_deleter([](const T *p) { delete p; }) {  };
+  my_unique_ptr() noexcept
+      : m_ptr(nullptr), m_deleter([](const T *p) {
+          std::print("delete p;\n");
+          delete p;
+        }) {};
 
   explicit my_unique_ptr(T *ptr)
-      : m_ptr(ptr), m_deleter([](const T *p) { delete p; }) {};
+      : m_ptr(ptr), m_deleter([](const T *p) {
+          std::print("delete p;\n");
+          delete p;
+        }) {};
 
   explicit my_unique_ptr(T *ptr, decltype(m_deleter) deleter)
       : m_ptr(ptr), m_deleter(deleter) {};
@@ -20,7 +26,7 @@ public:
   explicit my_unique_ptr(const my_unique_ptr<T> &other) = delete;
 
   // Move constructor
-  explicit my_unique_ptr(my_unique_ptr<T> &&other) noexcept
+  my_unique_ptr(my_unique_ptr<T> &&other) noexcept
       : m_ptr(other.m_ptr), m_deleter(other.m_deleter) {
     other.m_ptr = nullptr;
   }
@@ -49,19 +55,16 @@ public:
 
   T *get() { return m_ptr; }
 
-  ~my_unique_ptr() {
-    reset();
-  }
+  ~my_unique_ptr() { reset(); }
 
-  void swap(my_unique_ptr &other) noexcept
-  {
-   std::swap(m_ptr, other.m_ptr);
-   std::swap(m_deleter, other.m_deleter);
+  void swap(my_unique_ptr &other) noexcept {
+    std::swap(m_ptr, other.m_ptr);
+    std::swap(m_deleter, other.m_deleter);
   }
 
   explicit operator bool() const noexcept { return m_ptr != nullptr; }
 
-  void reset(T* ptr = nullptr) noexcept {
+  void reset(T *ptr = nullptr) noexcept {
     if (m_ptr) {
       m_deleter(m_ptr);
     }
@@ -70,6 +73,6 @@ public:
 };
 
 template <typename T, typename... Args>
-my_unique_ptr<T> my_make_unique(Args&&... args) {
+my_unique_ptr<T> my_make_unique(Args &&...args) {
   return my_unique_ptr<T>(new T(std::forward<Args>(args)...));
 }
