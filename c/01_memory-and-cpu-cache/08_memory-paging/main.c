@@ -1,11 +1,11 @@
-// #include <print>
 #include <stdio.h>
 #include <unistd.h>
 #include <stdlib.h>
 
 void split_address(void *ptr, long page_size) {
   unsigned long address = (unsigned long)ptr;  // Cast pointer to unsigned long
-  int offset_bits = __builtin_ctz(page_size);  // Calculate bits for offset
+  int offset_bits = __builtin_ctz(page_size);
+  printf("offset_bits: %d\n", offset_bits);
   unsigned long page_offset = address & ((1UL << offset_bits) - 1);  // Mask offset bits
   unsigned long page_index = address >> offset_bits;  // Shift out offset bits
 
