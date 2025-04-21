@@ -10,9 +10,9 @@ public:
   void showImpl() { std::println("CrtpBase::show() called."); }
 };
 
-class CtrpDummyDerived : public CrtpBase<CtrpDummyDerived> {};
+class CrtpDummyDerived : public CrtpBase<CrtpDummyDerived> {};
 
-class CtrpDerived : public CrtpBase<CtrpDerived> {
+class CrtpDerived : public CrtpBase<CrtpDerived> {
 public:
   void showImpl() { std::println("CrtpDerived::show() called."); }
 };
