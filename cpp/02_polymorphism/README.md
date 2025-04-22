@@ -75,4 +75,20 @@
 ## Curiously Recurring Template Pattern (CRTP)
 
 - But in C++ there is another way to avoid the overhead of vtable called CRTP (
-  Curiously Recurring Template Pattern)
+  Curiously Recurring Template Pattern).
+    - This is also known as static
+      polymorphism.[[4](https://en.wikipedia.org/wiki/Curiously_recurring_template_pattern#Static_polymorphism)]
+    - TIL: "Curiously" here means "strangely; in a way that is
+      unusual" [[5](https://dictionary.cambridge.org/dictionary/english/curiously)].
+
+- There is no vtable for my Base/Derived classes:
+
+  ```
+  >>>  objdump --syms --demangle crtp | grep vtable
+  0000000000018d88  w    O .data.rel.ro   0000000000000028              vtable for std::format_error
+  0000000000018ca8  w    O .data.rel.ro   0000000000000028              vtable for std::__format::_Iter_sink<char, std::__format::_Sink_iter<char> >
+  0000000000000000       O *UND*  0000000000000000              vtable for __cxxabiv1::__class_type_info@CXXABI_1.3
+  0000000000018cd0  w    O .data.rel.ro   0000000000000020              vtable for std::__format::_Formatting_scanner<std::__format::_Sink_iter<char>, char>
+  0000000000000000       O *UND*  0000000000000000              vtable for __cxxabiv1::__si_class_type_info@CXXABI_1.3
+  0000000000018c80  w    O .data.rel.ro   0000000000000028              vtable for std::__format::_Seq_sink<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >
+  ```
