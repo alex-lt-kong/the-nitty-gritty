@@ -40,12 +40,12 @@
 
 - Function overriding requires the use of virtual function: a virtual function
   is a member function that is declared within a base class and is re-defined (
+  i.e., overridden) by a derived class.
 
-- Unlike function overloading, function overriding indeed requires virtual
-  table (vtable). Note that vtable is not something specified in the C++
+- Unlike function overloading, function overriding does require a virtual
+  table (vtable). (Note that vtable is not something specified in the C++
   standard but is a common implementation of polymorphism in
   C++.[[2](https://dev.to/pgradot/vtables-under-the-surface-3foa)]
-  overridden) by a derived class.
 
 - C++'s does not have a stable Application Binary Interface (ABI), but "most
   major compilers (except MSVC) follow the Itanium C++
@@ -57,8 +57,8 @@
     - But we are not going to delve into the details of the ABI (as well as the
       vtable's layout) here.
     -
-- We can use `objdump` to reveal the existence of vtable in the binary
-  file.
+- We can use `objdump` to superficially reveal the existence of vtable in the
+  generated binary file.
 
 ```
 >>> objdump --syms --demangle function-overriding | grep vtable
