@@ -34,3 +34,4 @@
 
 - https://www.kernel.org/doc/html/v6.4/admin-guide/mm/concepts.html
 - https://docs.kernel.org/mm/page_tables.html
+- https://courses.grainger.illinois.edu/cs240/sp2021/notes/paging/pageTable.html
