@@ -1,3 +1,6 @@
 [submodule "cpp/05_qt/notepad-minus-minus"]
 	path = cpp/05_qt/notepad-minus-minus
 	url = https://github.com/alex-lt-kong/notepad-minus-minus.git
+[submodule "cpp/08_pointers/proofs-of-concept"]
+	path = cpp/08_pointers/proofs-of-concept
+	url = https://github.com/alex-lt-kong/proofs-of-concept.git
