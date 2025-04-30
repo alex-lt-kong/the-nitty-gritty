@@ -1,4 +1,4 @@
-# Smart pointer
+# Pointer Series: Ep. 2 - `std::unique_ptr`
 
 - Smart pointers is a much-hyped function in "modern" C++. They are included
   in the Standard Library and they are used to help ensure that programs are
