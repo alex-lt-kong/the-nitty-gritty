@@ -1,4 +1,4 @@
-#include "unique_ptr_impl.h"
+#include "2_unique-ptr-impl.h"
 
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
@@ -15,8 +15,10 @@ public:
   int m_data1;
   double m_data2;
   string m_data3;
+
   MyBoringClass(const int data1, const double data2, const string &data3)
-      : m_data1(data1), m_data2(data2), m_data3(data3) {}
+    : m_data1(data1), m_data2(data2), m_data3(data3) {
+  }
 };
 
 TEST(MyUniquePtrTest, ConstructorAndDereference) {
@@ -24,7 +26,7 @@ TEST(MyUniquePtrTest, ConstructorAndDereference) {
   my_unique_ptr<int> muptr(new int(42));
   ASSERT_TRUE(uptr != nullptr);
   ASSERT_TRUE(muptr != nullptr);
-  EXPECT_EQ(*uptr, 42);  // Check dereferenced value
+  EXPECT_EQ(*uptr, 42); // Check dereferenced value
   EXPECT_EQ(*muptr, 42); // Check dereferenced value
 }
 
@@ -32,8 +34,7 @@ TEST(MyUniquePtrTest, UniquePtrDoesNotLeak) {
   int *rptr0;
   int *rptr1;
   constexpr int arr_size = 32767;
-  auto deleter = [](void *p) { delete[] static_cast<int *>(p); };
-  {
+  auto deleter = [](void *p) { delete[] static_cast<int *>(p); }; {
     // The T vs T[] is more a template programming issue, do not want to get too
     // involved in this section
     unique_ptr<int, decltype(deleter)> uptr(new int[arr_size], deleter);
@@ -53,20 +54,20 @@ TEST(MyUniquePtrTest, UniquePtrDoesNotLeak) {
   }
 
   ASSERT_DEATH(
-      {
-        for (int i = 0; i < arr_size; i++) {
-          EXPECT_EQ(*(rptr0 + i), i);
-        }
-      },
-      ".*");
+    {
+    for (int i = 0; i < arr_size; i++) {
+    EXPECT_EQ(*(rptr0 + i), i);
+    }
+    },
+    ".*");
   ASSERT_DEATH(
-      {
-        for (int i = 0; i < arr_size; i++) {
+    {
+    for (int i = 0; i < arr_size; i++) {
 
-          EXPECT_EQ(*(rptr1 + i), i);
-        }
-      },
-      ".*");
+    EXPECT_EQ(*(rptr1 + i), i);
+    }
+    },
+    ".*");
 }
 
 TEST(MyUniquePtrTest, MoveConstructor) {
@@ -109,7 +110,6 @@ TEST(MyUniquePtrTest, MoveAssignmentOperator) {
 }
 
 TEST(MyUniquePtrTest, Swap) {
-
   const auto obj1 = MyBoringClass(1, 3.14, "HelloWorld");
   const auto obj2 = MyBoringClass(65535, 2.71, "0x1234");
   auto uptr1 = std::make_unique<MyBoringClass>(obj1);
@@ -143,8 +143,7 @@ TEST(MyUniquePtrTest, UniquePtrFromRawPtr) {
   auto raw_ptr2 = static_cast<int *>(malloc(sizeof(int) * arr_size));
 
   EXPECT_CALL(mockHelper, Call()).Times(2);
-  memcpy(raw_ptr2, raw_ptr1, sizeof(int) * arr_size);
-  {
+  memcpy(raw_ptr2, raw_ptr1, sizeof(int) * arr_size); {
     unique_ptr<int, decltype(deleter)> uptr(raw_ptr1, deleter);
     my_unique_ptr<int> muptr(raw_ptr2, deleter);
     EXPECT_EQ(uptr.get(), raw_ptr1);
