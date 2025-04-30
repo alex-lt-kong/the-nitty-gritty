@@ -1,5 +1,6 @@
 #include "./proofs-of-concept/cpp/09_lockfree/ringbuffer/ringbuffer-spsc-impl.h"
 
+#include <algorithm>
 #include <chrono>
 #include <memory>
 #include <print>
@@ -7,46 +8,71 @@
 #include <thread>
 #include <vector>
 
-struct Data {
-  int id;
+// Turn this on to examine result manually, or turn this off to check for
+// potential race condition
+constexpr bool debug_mode = false;
+
+struct Message {
+  size_t id;
   int value;
-  explicit Data(int value) : value(value) {
+  explicit Message(int value) : value(value) {
     id = m_id_counter++;
-    std::println("Data (id: {}) created, value: {}", id, value);
+    if constexpr (debug_mode)
+      std::println("Message (id: {}) created, value: {}", id, value);
   }
-  ~Data() { std::println("Data (id: {})  destroyed", id); }
+  ~Message() {
+    if constexpr (debug_mode)
+      std::println("Message (id: {}, value: {})  destroyed", id, value);
+  }
 
 private:
-  static inline int m_id_counter = 0;
+  static inline size_t m_id_counter = 0;
 };
 
 int main() {
-  constexpr int numDataPoints = 5;
+  size_t message_count = 0;
+  if constexpr (debug_mode)
+    message_count = 5;
+  else
+    message_count = 100'000'000;
   constexpr int consumer_count = 4;
-
-  using LockFreePcQueue = PoC::LockFree::RingBufferSPSC<std::shared_ptr<Data>>;
+  std::random_device rd;
+  std::mt19937 gen(rd());
+  using LockFreePcQueue =
+      PoC::LockFree::RingBufferSPSC<std::shared_ptr<Message>>;
   std::vector<std::unique_ptr<LockFreePcQueue>> queues;
   for (int i = 0; i < consumer_count; i++) {
-    queues.emplace_back(std::make_unique<LockFreePcQueue>(1024));
+    queues.emplace_back(std::make_unique<LockFreePcQueue>(
+        message_count > 100'000 ? 100'000 : message_count));
   }
 
-  auto consumer = [&](int id, LockFreePcQueue *q, const int max_delay_ms) {
-    std::random_device rd;
-    std::mt19937 gen(rd());
+  auto consumer = [&](int id, LockFreePcQueue *q, int max_delay_ms) {
     std::uniform_int_distribution dis(0, max_delay_ms);
-
-    for (int i = 0; i < numDataPoints; i++) {
-      // Introduce a random delay before processing each item.
-      int delay = dis(gen);
-      std::this_thread::sleep_for(std::chrono::milliseconds(delay));
-      std::shared_ptr<Data> data;
-      const auto res = q->dequeue(data);
-      if (!res)
+    size_t prev_msg_id = 0;
+    if constexpr (!debug_mode)
+      max_delay_ms = 0;
+    while (true) {
+      int delay = 0;
+      if constexpr (debug_mode) {
+        delay = dis(gen);
+        std::this_thread::sleep_for(std::chrono::milliseconds(delay));
+      }
+      std::shared_ptr<Message> msg;
+      if (!q->dequeue(msg)) {
+        // std::println("Queue is empty!");
         continue;
-      std::println("Consumer {} processing Data {} after {}ms delay", id,
-                   data->value, delay);
+      }
+      prev_msg_id = msg->id;
+      if constexpr (debug_mode)
+        std::println("Consumer {} processing Message (id: {}, value: {}) after "
+                     "{}ms delay",
+                     id, msg->id, msg->value, delay);
+      if (msg->value == '\0')
+        break;
     }
-    std::println("Consumer {} finished processing.", id);
+    std::println("Consumer {} exited as it reaches the end of the queue, "
+                 "prev_msg_id: {}",
+                 id, prev_msg_id);
   };
 
   std::vector<std::thread> consumers;
@@ -60,16 +86,26 @@ int main() {
   }
 
   auto producer = [&] {
-    for (int i = 1; i <= numDataPoints; i++) {
-      const auto data = std::make_shared<Data>(i);
-      std::println("Producer enqueuing Data {}", i);
-      for (int j = 0; j < consumer_count; j++) {
+    std::uniform_int_distribution dis(1, std::numeric_limits<int>::max());
+    for (int i = 0; i < message_count; ++i) {
+      // We also use NULL-termination to signal the end of the message series
+      const auto msg_ptr =
+          std::make_shared<Message>(i < message_count - 1 ? dis(gen) : '\0');
+      if constexpr (debug_mode)
+        std::println("Producing msg (id: {}, value: {})", msg_ptr->id,
+                     msg_ptr->value);
+      for (int j = 0; j < queues.size(); ++j) {
         // the SPSC queue's interface expects to take ownership...here we cant
-        // give it...so we make a copy first...
-        auto data_cpy = data;
+        // give it...so we make a copy first... But we are only copying the
+        // pointer, so hopefully it is not too bad
+        auto msg_ptr_cpy = msg_ptr;
         // std::move() is fine, but we did the copy before...
         // https://stackoverflow.com/questions/41871115/why-would-i-stdmove-an-stdshared-ptr
-        queues[j]->enqueue(std::move(data_cpy));
+        while (!queues[j]->enqueue(std::move(msg_ptr_cpy))) {
+          std::println("queues[{}] is full (id: {}, value: {})", j, msg_ptr->id,
+                       msg_ptr->value);
+          std::this_thread::sleep_for(std::chrono::microseconds(1));
+        }
       }
     }
   };
@@ -80,6 +116,6 @@ int main() {
   for (auto &t : consumers) {
     t.join();
   }
-
+  std::println("Program exited gracefully");
   return 0;
 }
