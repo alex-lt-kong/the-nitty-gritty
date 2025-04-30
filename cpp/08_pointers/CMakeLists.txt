@@ -6,7 +6,8 @@ set(CMAKE_CXX_STANDARD 23)
 find_package(GTest CONFIG REQUIRED COMPONENTS GTest GMock)
 include_directories(${GTEST_INCLUDE_DIRS})
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=address")
+#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=address")
+#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=thread")
 
 add_executable(unique_ptr_demo 2_unique-ptr-demo.cpp)
 target_link_libraries(unique_ptr_demo GTest::gtest GTest::gtest_main GTest::gmock)
