@@ -1,108 +1,85 @@
-#include <memory>
-#include <thread>
-#include <queue>
-#include <mutex>
-#include <vector>
-#include <print>     // C++23 printing header
+#include "./proofs-of-concept/cpp/09_lockfree/ringbuffer/ringbuffer-spsc-impl.h"
+
 #include <chrono>
+#include <memory>
+#include <print>
 #include <random>
+#include <thread>
+#include <vector>
 
-// Data structure representing an incoming object.
 struct Data {
-    int value;
-    Data(int v) : value(v) {
-        std::println("Data {} created", value);
-    }
-    ~Data() {
-        std::println("Data {} destroyed", value);
-    }
-};
+  int id;
+  int value;
+  explicit Data(int value) : value(value) {
+    id = m_id_counter++;
+    std::println("Data (id: {}) created, value: {}", id, value);
+  }
+  ~Data() { std::println("Data (id: {})  destroyed", id); }
 
-// A simple thread-safe queue that holds std::shared_ptr<Data>.
-template<typename T>
-class ThreadSafeQueue {
 private:
-    std::queue<T> queue_;
-    std::mutex mtx_;
-public:
-    // Enqueue an item.
-    void enqueue(T item) {
-        std::lock_guard<std::mutex> lock(mtx_);
-        queue_.push(item);
-    }
-
-    // Busy-wait dequeue: repeatedly polls until an item is available.
-    T dequeue() {
-        while (true) {
-            {
-                std::lock_guard<std::mutex> lock(mtx_);
-                if (!queue_.empty()) {
-                    T item = queue_.front();
-                    queue_.pop();
-                    return item;
-                }
-            }
-            // Yield to reduce the busy-wait overhead.
-            std::this_thread::yield();
-        }
-    }
+  static inline int m_id_counter = 0;
 };
 
 int main() {
-    constexpr int numDataPoints = 5;
-    constexpr int numConsumers = 4;
+  constexpr int numDataPoints = 5;
+  constexpr int consumer_count = 4;
 
-    // Create one queue per consumer thread.
-    ThreadSafeQueue<std::shared_ptr<Data>> queues[numConsumers];
+  using LockFreePcQueue = PoC::LockFree::RingBufferSPSC<std::shared_ptr<Data>>;
+  std::vector<std::unique_ptr<LockFreePcQueue>> queues;
+  for (int i = 0; i < consumer_count; i++) {
+    queues.emplace_back(std::make_unique<LockFreePcQueue>(1024));
+  }
 
-    // Consumer thread function with a maximum random delay parameter.
-    auto consumer = [&](int id, ThreadSafeQueue<std::shared_ptr<Data>>& queue, int maxDelayMs) {
-        // Set up a random engine for variable delays.
-        std::random_device rd;
-        std::mt19937 gen(rd());
-        std::uniform_int_distribution<> dis(0, maxDelayMs);
+  auto consumer = [&](int id, LockFreePcQueue *q, const int max_delay_ms) {
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_int_distribution dis(0, max_delay_ms);
 
-        for (int i = 0; i < numDataPoints; i++) {
-            // Introduce a random delay before processing each item.
-            int delay = dis(gen);
-            std::this_thread::sleep_for(std::chrono::milliseconds(delay));
-
-            auto data = queue.dequeue();
-            std::println("Consumer {} processing Data {} after {}ms delay", id, data->value, delay);
-        }
-        std::println("Consumer {} finished processing.", id);
-    };
-
-    // Launch consumer threads with a maximum random delay of 150 ms.
-    int maxDelayMs = 150;
-    std::vector<std::thread> consumers;
-    for (int i = 0; i < numConsumers; i++) {
-        consumers.emplace_back(consumer, i, std::ref(queues[i]), maxDelayMs);
+    for (int i = 0; i < numDataPoints; i++) {
+      // Introduce a random delay before processing each item.
+      int delay = dis(gen);
+      std::this_thread::sleep_for(std::chrono::milliseconds(delay));
+      std::shared_ptr<Data> data;
+      const auto res = q->dequeue(data);
+      if (!res)
+        continue;
+      std::println("Consumer {} processing Data {} after {}ms delay", id,
+                   data->value, delay);
     }
+    std::println("Consumer {} finished processing.", id);
+  };
 
-    // Producer thread function: produces numDataPoints items.
-    auto producer = [&]() {
-        for (int i = 1; i <= numDataPoints; i++) {
-            auto data = std::make_shared<Data>(i);
-            std::println("Producer enqueuing Data {}", i);
+  std::vector<std::thread> consumers;
+  for (int i = 0; i < consumer_count; i++) {
+    constexpr int max_delay_ms = 150;
+    consumers.emplace_back(consumer, i,
+                           // tricky: we cant std::move() and also we cant just
+                           // make a copy, and so we pass a raw pointer...
+                           queues[i].get(),
+                           max_delay_ms * (consumer_count - i));
+  }
 
-            // Enqueue the same data pointer to all consumer queues.
-            for (int j = 0; j < numConsumers; j++) {
-                queues[j].enqueue(data);
-            }
-            // Simulate a delay between productions.
-            std::this_thread::sleep_for(std::chrono::milliseconds(100));
-        }
-    };
-
-    std::thread prod(producer);
-    prod.join();
-
-    // Wait for all consumer threads to finish processing.
-    for (auto& t : consumers) {
-        t.join();
+  auto producer = [&] {
+    for (int i = 1; i <= numDataPoints; i++) {
+      const auto data = std::make_shared<Data>(i);
+      std::println("Producer enqueuing Data {}", i);
+      for (int j = 0; j < consumer_count; j++) {
+        // the SPSC queue's interface expects to take ownership...here we cant
+        // give it...so we make a copy first...
+        auto data_cpy = data;
+        // std::move() is fine, but we did the copy before...
+        // https://stackoverflow.com/questions/41871115/why-would-i-stdmove-an-stdshared-ptr
+        queues[j]->enqueue(std::move(data_cpy));
+      }
     }
+  };
 
-    std::println("All consumers have finished. Exiting main.");
-    return 0;
+  std::thread prod(producer);
+  prod.join();
+
+  for (auto &t : consumers) {
+    t.join();
+  }
+
+  return 0;
 }
