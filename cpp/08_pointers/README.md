@@ -3,7 +3,7 @@
 - Table of contents
     - [Ep. 1 - value, reference and pointer](1_value-ref-and-pointer.md)
     - [Ep. 2 - std::unique_ptr](2_unique-ptr.md)
-    - [Ep. 3 - std::shared_ptr](3_shared-ptr.md)
+    - [Ep. 3 - std::shared_ptr (and std::weak_ptr)](3_shared-ptr-and-weak-ptr.md)
 
 - Cheatsheet
     - Valgrind:

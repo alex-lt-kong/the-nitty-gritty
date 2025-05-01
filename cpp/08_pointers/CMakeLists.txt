@@ -16,7 +16,7 @@ add_executable(2_unique-ptr-impl-test 2_unique-ptr-impl-test.cpp)
 target_link_libraries(2_unique-ptr-impl-test GTest::gtest GTest::gtest_main GTest::gmock)
 
 add_executable(1_value-ref-and-pointer 1_value-ref-and-pointer.cpp)
-add_executable(observer-pattern 3_observer-pattern.cpp)
+add_executable(3_observer-pattern 3_observer-pattern.cpp)
 
 add_executable(3_pcqueue-pattern 3_pcqueue-pattern.cpp)
 

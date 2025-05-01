@@ -17,7 +17,7 @@
       principle, the smart pointer's destructor is called and memory gets
       automatically released.
 
-## `std::unique_ptr<>`
+## `std::unique_ptr`
 
 - This is the most basic type of smart pointer. As its name suggests, A
   `unique_ptr` does not share its pointer--meaning that its internal data buffer
@@ -62,7 +62,8 @@
     - Calling `delete` forcefully against a `malloc()`ed pointer results in
       undefined behaviors.
     - To properly handle this, C++ introduces yet another layer of complexity--
-      we need to explicitly let the smart pointer know, by passing it a `deleter`:
+      we need to explicitly let the smart pointer know, by passing it a
+      `deleter`:
 
   ```C++
   struct FreeDeleter
@@ -116,8 +117,10 @@ unique_ptr<int> get_ptr() {
 }
 ```
 
-- The exact mechanism of this may differ. The compiler may either apply copy/move
-  elision (a.k.a. RVO) or, without elisions, `move()` the ownership of the returning
+- The exact mechanism of this may differ. The compiler may either apply
+  copy/move
+  elision (a.k.a. RVO) or, without elisions, `move()` the ownership of the
+  returning
   `unique_ptr` to the new `unique_ptr` assigned with the return value.
 
 ## Is `unique_ptr` a zero-cost wrapper on top of raw pointer?
