@@ -35,7 +35,7 @@ int main() {
     message_count = 5;
   else
     message_count = 100'000'000;
-  constexpr int consumer_count = 4;
+  constexpr int consumer_count = 10;
   std::random_device rd;
   std::mt19937 gen(rd());
   using LockFreePcQueue =
@@ -45,10 +45,10 @@ int main() {
     queues.emplace_back(std::make_unique<LockFreePcQueue>(
         message_count > 100'000 ? 100'000 : message_count));
   }
-
+  const auto t0 = std::chrono::steady_clock::now();
   auto consumer = [&](int id, LockFreePcQueue *q, int max_delay_ms) {
     std::uniform_int_distribution dis(0, max_delay_ms);
-    size_t prev_msg_id = 0;
+    int64_t prev_msg_id = -1;
     if constexpr (!debug_mode)
       max_delay_ms = 0;
     while (true) {
@@ -61,6 +61,12 @@ int main() {
       if (!q->dequeue(msg)) {
         // std::println("Queue is empty!");
         continue;
+      }
+      if (msg->id != prev_msg_id + 1) {
+        std::println(
+            "Consumer {}: Message (id: {}, value: {}) is out of order, "
+            "prev_msg_id: {}",
+            id, msg->id, msg->value, prev_msg_id);
       }
       prev_msg_id = msg->id;
       if constexpr (debug_mode)
@@ -116,6 +122,13 @@ int main() {
   for (auto &t : consumers) {
     t.join();
   }
-  std::println("Program exited gracefully");
+
+  auto t1 = std::chrono::steady_clock::now();
+  auto elapsed =
+      std::chrono::duration_cast<std::chrono::milliseconds>(t1 - t0).count();
+
+  std::locale::global(std::locale("en_US.UTF-8"));
+  std::println("Program exited gracefully, {:L} msg / sec",
+               static_cast<size_t>(message_count / (elapsed / 1000.0)));
   return 0;
 }

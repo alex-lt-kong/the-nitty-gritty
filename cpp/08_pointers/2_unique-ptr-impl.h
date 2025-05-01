@@ -1,8 +1,8 @@
 #include <functional>
 #include <print>
+#include <utility>
 
-template<typename T>
-class my_unique_ptr {
+template <typename T> class my_unique_ptr {
 private:
   T *m_ptr;
   std::allocator<T> allocator = std::allocator<T>();
@@ -10,31 +10,39 @@ private:
 
 public:
   my_unique_ptr() noexcept
-    : m_ptr(nullptr), m_deleter([](const T *p) {
-      std::print("delete p;\n");
-      delete p;
-    }) {
-  }
+      : m_ptr(nullptr), m_deleter([](const T *p) {
+          std::print("delete p;\n");
+          delete p;
+        }) {}
 
   explicit my_unique_ptr(T *ptr)
-    : m_ptr(ptr), m_deleter([](const T *p) {
-      std::print("delete p;\n");
-      delete p;
-    }) {
-  }
+      : m_ptr(ptr), m_deleter([](const T *p) {
+          std::print("delete p;\n");
+          delete p;
+        }) {}
 
   explicit my_unique_ptr(T *ptr, decltype(m_deleter) deleter)
-    : m_ptr(ptr), m_deleter(deleter) {
-  }
+      : m_ptr(ptr), m_deleter(deleter) {}
 
   // Delete copy constructor
   explicit my_unique_ptr(const my_unique_ptr &other) = delete;
 
   // Move constructor
   my_unique_ptr(my_unique_ptr &&other) noexcept
-    : m_ptr(other.m_ptr), m_deleter(other.m_deleter) {
-    other.m_ptr = nullptr;
+      : m_ptr(std::exchange(other.m_ptr, nullptr)),
+        m_deleter(std::move(other.m_deleter)) {
+    // m_ptr(std::exchange(other.m_ptr, nullptr)); is equivalent to the
+    // following:
+    // T *temp = other.m_ptr;
+    // other.m_ptr = nullptr;
+    // m_ptr = temp;
   }
+  /*
+    Question, instead of doing:
+    `m_ptr(std::exchange(other.m_ptr, nullptr))`
+    can we just do:
+    `m_ptr(std::move(other.m_ptr))`?
+   */
 
   // Delete copy assignment operator
   my_unique_ptr &operator=(const my_unique_ptr &others) = delete;
@@ -77,7 +85,7 @@ public:
   }
 };
 
-template<typename T, typename... Args>
-my_unique_ptr<T> my_make_unique(Args &&... args) {
+template <typename T, typename... Args>
+my_unique_ptr<T> my_make_unique(Args &&...args) {
   return my_unique_ptr<T>(new T(std::forward<Args>(args)...));
 }
