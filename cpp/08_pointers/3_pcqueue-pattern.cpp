@@ -1,4 +1,5 @@
 #include "./proofs-of-concept/cpp/09_lockfree/ringbuffer/ringbuffer-spsc-impl.h"
+#include "2_unique-ptr-impl.h"
 
 #include <algorithm>
 #include <chrono>
@@ -40,9 +41,10 @@ int main() {
   std::mt19937 gen(rd());
   using LockFreePcQueue =
       PoC::LockFree::RingBufferSPSC<std::shared_ptr<Message>>;
-  std::vector<std::unique_ptr<LockFreePcQueue>> queues;
+  // Using my_unique_ptr instead of std::unique_ptr
+  std::vector<my_unique_ptr<LockFreePcQueue>> queues;
   for (int i = 0; i < consumer_count; i++) {
-    queues.emplace_back(std::make_unique<LockFreePcQueue>(
+    queues.emplace_back(my_make_unique<LockFreePcQueue>(
         message_count > 100'000 ? 100'000 : message_count));
   }
   const auto t0 = std::chrono::steady_clock::now();

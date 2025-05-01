@@ -5,7 +5,7 @@
 template <typename T> class my_unique_ptr {
 private:
   T *m_ptr;
-  std::allocator<T> allocator = std::allocator<T>();
+  // std::allocator<T> allocator = std::allocator<T>();
   std::function<void(T *)> m_deleter;
 
 public:
@@ -60,11 +60,14 @@ public:
 
   T *operator->() const noexcept { return m_ptr; }
 
-  T operator*() const noexcept { return *m_ptr; }
+  // Note: previously the return type I wrote is T, which is incorrect, it
+  // should be T& -- users expect dereference will let them get the value
+  // itself, not a copy of the value
+  T &operator*() const noexcept { return *m_ptr; }
 
-  bool operator==(T *ptr) { return m_ptr == ptr; }
+  bool operator==(T *ptr) const noexcept { return m_ptr == ptr; }
 
-  bool operator!=(T *ptr) { return !(m_ptr == ptr); }
+  bool operator!=(T *ptr) const noexcept { return !(m_ptr == ptr); }
 
   T *get() { return m_ptr; }
 
