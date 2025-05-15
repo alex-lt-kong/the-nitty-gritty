@@ -1,0 +1,11 @@
+{
+    "dependencies": [
+        {
+            "name": "gtest",
+            "version>=": "1.16.0#1"
+        }, "fmt"
+    ],
+    "builtin-baseline": "65be7019941e1401e02daaba0738cab2c8a4a355",
+    "version": "0.0.1",
+    "name": "binary-search-tree"
+}
