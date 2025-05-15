@@ -22,7 +22,8 @@ template <typename T> void perfectly_forwarding_func(T &&t) {
   g(std::forward<T>(t));
 }
 
-// A special class prepared to demo "universal reference"
+// A special class prepared to demo "forwarding reference" (a.k.a. "universal
+// reference")
 // https://stackoverflow.com/questions/39552272/is-there-a-difference-between-universal-references-and-forwarding-references
 template <typename T> class DummyClass {
 public:
