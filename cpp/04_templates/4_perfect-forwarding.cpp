@@ -29,7 +29,10 @@ template <typename T> class DummyClass {
 public:
   static void perfectly_forwarding_func_T(T &&t) { g(std::forward<T>(t)); }
 
-  template <typename U> static void perfectly_forwarding_func_U(U &&t) {
+  template <typename U>
+  // We dont really need both requirements, this is just for demo purpose
+    requires std::assignable_from<T &, U> || std::convertible_to<U, T>
+  static void perfectly_forwarding_func_U(U &&t) {
     g(std::forward<U>(t));
   }
 };
