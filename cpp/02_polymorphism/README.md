@@ -1,10 +1,10 @@
 # Polymorphism
 
 - The first point to note is that "polymorphism" comes
-  in [many forms](https://en.wikipedia.org/wiki/Polymorphism_(computer_science)#Forms).
+  in [many forms](<https://en.wikipedia.org/wiki/Polymorphism_(computer_science)#Forms>).
   Two popular forms are:
-    - Function overloading, a.k.a., ad hoc polymorphism
-    - Function overriding, a.k.a., subtyping
+  - Function overloading, a.k.a., ad hoc polymorphism
+  - Function overriding, a.k.a., subtyping
 
 ## Function overloading
 
@@ -25,8 +25,8 @@
   0000000000014b60  w    F .text	0000000000000664              _Z8my_printIJEEvDpT_
   ```
 
-    - And after turning on name demangling, we can see the function
-      signatures:
+  - And after turning on name demangling, we can see the function
+    signatures:
 
   ```
   >>> objdump --demangle  -t function-overloading | grep "F .text" | grep my_print
@@ -51,12 +51,13 @@
   major compilers (except MSVC) follow the Itanium C++
   ABI"[[3](https://dev.to/pgradot/vtables-under-the-surface-3foa)]
 
-    - Itanium C++ The ABI has a section about vtables, so using any compiler
-      following this ABI should yield similar implementation details.
+  - Itanium C++ The ABI has a section about vtables, so using any compiler
+    following this ABI should yield similar implementation details.
 
-    - But we are not going to delve into the details of the ABI (as well as the
-      vtable's layout) here.
-    -
+  - But we are not going to delve into the details of the ABI (as well as the
+    vtable's layout) here.
+  -
+
 - We can use `objdump` to superficially reveal the existence of vtable in the
   generated binary file.
 
@@ -76,10 +77,11 @@
 
 - But in C++ there is another way to avoid the overhead of vtable called CRTP (
   Curiously Recurring Template Pattern).
-    - This is also known as static
-      polymorphism.[[4](https://en.wikipedia.org/wiki/Curiously_recurring_template_pattern#Static_polymorphism)]
-    - TIL: "Curiously" here means "strangely; in a way that is
-      unusual" [[5](https://dictionary.cambridge.org/dictionary/english/curiously)].
+
+  - This is also known as static
+    polymorphism.[[4](https://en.wikipedia.org/wiki/Curiously_recurring_template_pattern#Static_polymorphism)]
+  - TIL: "Curiously" here means "strangely; in a way that is
+    unusual" [[5](https://dictionary.cambridge.org/dictionary/english/curiously)].
 
 - There is no vtable for my Base/Derived classes:
 
@@ -92,3 +94,7 @@
   0000000000000000       O *UND*  0000000000000000              vtable for __cxxabiv1::__si_class_type_info@CXXABI_1.3
   0000000000018c80  w    O .data.rel.ro   0000000000000028              vtable for std::__format::_Seq_sink<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >
   ```
+
+- CRTP is used in:
+  - [Order Book Programming Problem](https://github.com/alex-lt-kong/order-book-programming-problem) to implement different [order book](https://github.com/alex-lt-kong/order-book-programming-problem/tree/main/src/order-book) and [price level](https://github.com/alex-lt-kong/order-book-programming-problem/tree/main/src/price-level)
+  - [Lockfree toolkit](https://github.com/alex-lt-kong/lockfree-toolkit) to implement different queues against single interface
