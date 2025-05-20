@@ -35,4 +35,4 @@
 - Note that to have `rbegin()` and `rend()` methods, the container must
   implement "reverse_iterator". "reverse_iterator" is not a standalone type, it
   is just forward_iterator but goes
-  backwards <sup>[[Can I convert a reverse iterator to a forward iterator?](https://stackoverflow.com/a/2038101/19634193]</sup>
+  backwards <sup>[[Can I convert a reverse iterator to a forward iterator?](https://stackoverflow.com/a/2038101/19634193)]</sup>
