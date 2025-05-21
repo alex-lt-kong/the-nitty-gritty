@@ -15,7 +15,7 @@
 
       ![a vector's iterator, from https://www.programiz.com/sites/tutorial2program/files/vector-iterator.png](./assets/vector-iterator.png)
 
-- Modern C++ defines six types, with later types build upon eariler types:
+- Modern C++ defines six types, with later types build upon earlier types:
 
     1. Input Iterator: Can scan the container forward only once, can't change
        the value it points to (read-only);
