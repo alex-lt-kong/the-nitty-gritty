@@ -17,8 +17,8 @@ TEST(MyForwardIterator, BasicUsageShouldWork) {
         std::cout << *itr << " ";
     }
     std::cout << std ::endl;
-    const std::string stdout = buffer.str();
-    EXPECT_EQ(stdout, "3 1 4 1 5 9 2 6 \n");
+    const std::string stdout_str = buffer.str();
+    EXPECT_EQ(stdout_str, "3 1 4 1 5 9 2 6 \n");
     std::cout.rdbuf(old);
     // static_assert(std::forward_iterator<decltype(mc)::iterator>);
 }
@@ -32,8 +32,8 @@ TEST(MyForwardIterator, RangeBasedLoopShouldWork) {
         std::cout << itr << " ";
     }
     std::cout << std ::endl;
-    const std::string stdout = buffer.str();
-    EXPECT_EQ(stdout, "Lorem ipsum dolor sit amet \n");
+    const std::string stdout_str = buffer.str();
+    EXPECT_EQ(stdout_str, "Lorem ipsum dolor sit amet \n");
     std::cout.rdbuf(old);
 }
 
@@ -46,7 +46,7 @@ TEST(MyForwardIterator, BasicUsageShouldWork1) {
         std::cout << *itr << " ";
     }
     std::cout << std ::endl;
-    const std::string stdout = buffer.str();
-    EXPECT_EQ(stdout, "3 1 4 1 5 9 2 6 \n");
+    const std::string stdout_str = buffer.str();
+    EXPECT_EQ(stdout_str, "3 1 4 1 5 9 2 6 \n");
     std::cout.rdbuf(old);
 }

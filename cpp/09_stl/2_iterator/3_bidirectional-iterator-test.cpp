@@ -18,8 +18,8 @@ TEST(MyBidirectionalIterator, BasicUsageShouldWork) {
         std::cout << *itr << " ";
     }
     std::cout << std ::endl;
-    const std::string stdout = buffer.str();
-    EXPECT_EQ(stdout, "3 1 4 1 5 9 2 6 \n");
+    const std::string stdout_str = buffer.str();
+    EXPECT_EQ(stdout_str, "3 1 4 1 5 9 2 6 \n");
     std::cout.rdbuf(old);
     static_assert(std::bidirectional_iterator<decltype(mc)::iterator>);
 }
@@ -42,8 +42,8 @@ TEST(MyBidirectionalIterator,
         EXPECT_EQ(*itg, *itv);
     }
     std::cout << std ::endl;
-    const std::string stdout = buffer.str();
-    EXPECT_EQ(stdout, "6 2 9 5 1 4 1 3 \n");
+    const std::string stdout_str = buffer.str();
+    EXPECT_EQ(stdout_str, "6 2 9 5 1 4 1 3 \n");
     std::cout.rdbuf(old);
     // static_assert(std::bidirectional_iterator<decltype(gc)::iterator>);
 }
@@ -57,8 +57,8 @@ TEST(MyBidirectionalIterator, RangeBasedLoopShouldWork) {
         std::cout << itr << " ";
     }
     std::cout << std ::endl;
-    const std::string stdout = buffer.str();
-    EXPECT_EQ(stdout, "Lorem ipsum dolor sit amet \n");
+    const std::string stdout_str = buffer.str();
+    EXPECT_EQ(stdout_str, "Lorem ipsum dolor sit amet \n");
     std::cout.rdbuf(old);
 }
 
@@ -71,7 +71,7 @@ TEST(MyBidirectionalIterator, RangeBasedLoopShouldWorkInReverse) {
         std::cout << itr << " ";
     }
     std::cout << std ::endl;
-    const std::string stdout = buffer.str();
-    EXPECT_EQ(stdout, "amet sit dolor ipsum Lorem \n");
+    const std::string stdout_str = buffer.str();
+    EXPECT_EQ(stdout_str, "amet sit dolor ipsum Lorem \n");
     std::cout.rdbuf(old);
 }

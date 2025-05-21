@@ -14,8 +14,8 @@ TEST(IteratorUsage, BasicUsage) {
         std::cout << *itr << " ";
     }
     std::cout << std ::endl;
-    const std::string stdout = buffer.str();
-    EXPECT_EQ(stdout, "The quick brown fox jumps over the lazy dog \n");
+    const std::string stdout_str = buffer.str();
+    EXPECT_EQ(stdout_str, "The quick brown fox jumps over the lazy dog \n");
     std::cout.rdbuf(old);
 }
 
@@ -35,8 +35,8 @@ TEST(IteratorUsage, IterateOverTheOtherDirectionIsAwkwardButShouldWork) {
         }
     }
     std::cout << std ::endl;
-    const std::string stdout = buffer.str();
-    EXPECT_EQ(stdout, "dog lazy the over jumps fox brown quick The \n");
+    const std::string stdout_str = buffer.str();
+    EXPECT_EQ(stdout_str, "dog lazy the over jumps fox brown quick The \n");
     std::cout.rdbuf(old);
 }
 
@@ -51,9 +51,9 @@ TEST(IteratorUsage, RangeBasedLoopUsesIterator) {
         std::cout << word << " ";
     }
     std::cout << std ::endl;
-    const auto stdout = buffer.str();
+    const auto stdout_str = buffer.str();
 
-    EXPECT_EQ(stdout, "The quick brown fox jumps over the lazy dog \n");
+    EXPECT_EQ(stdout_str, "The quick brown fox jumps over the lazy dog \n");
     std::cout.rdbuf(old);
 }
 
@@ -69,9 +69,9 @@ TEST(IteratorUsage, BidirectionalIterator) {
         std::cout << word << " ";
     }
     std::cout << std ::endl;
-    const auto stdout = buffer.str();
+    const auto stdout_str = buffer.str();
 
-    EXPECT_EQ(stdout, "The quick brown fox jumps over the lazy dog \n");
+    EXPECT_EQ(stdout_str, "The quick brown fox jumps over the lazy dog \n");
     std::cout.rdbuf(old);
 }
 
