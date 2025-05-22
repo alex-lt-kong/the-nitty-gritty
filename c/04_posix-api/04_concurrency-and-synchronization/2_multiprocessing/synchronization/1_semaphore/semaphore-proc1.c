@@ -1,4 +1,3 @@
-/** Compilation: gcc -o memwriter memwriter.c -lrt -lpthread **/
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/mman.h>
@@ -13,13 +12,13 @@
 
 #include "common.h"
 
-volatile sig_atomic_t done = 0;
+volatile sig_atomic_t ev_flag = 0;
 sem_t* semptr;
 
 void signal_handler(int signum) {
   char msg[] = "Signal %d received by signal_handler(), press Enter to send the signal to event loop\n";
   printf(msg, signum);  
-  done = 1;
+  ev_flag = 1;
 }
 
 int main() {
@@ -36,9 +35,26 @@ int main() {
     perror("sem_open()");
     return 1;
   }
-  while (!done) {
+  while (!ev_flag) {
     printf("Press Enter to sem_wait() for the critical section...\n");
-    if (getchar() == '\n') {}
+    // if (getchar() == '\n') {}
+    fd_set fds;
+    FD_ZERO(&fds);
+    FD_SET(STDIN_FILENO, &fds);
+
+    struct timespec timeout = {5, 0}; // Wait up to 5 seconds (adjust as needed)
+
+    int ret = pselect(STDIN_FILENO + 1, &fds, NULL, NULL, &timeout, NULL);
+
+    if (ret > 0) {
+      if (getchar() == '\n') {}; // Normal input handling
+    } else if (ret == -1 && ev_flag) {
+      break; // Exit when signal received
+    } else
+      continue;
+
+
+
     printf("sem_wait()'ing\n");
     if (sem_wait(semptr) < 0) {
       perror("sem_wait()");

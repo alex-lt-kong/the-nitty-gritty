@@ -1,4 +1,3 @@
-/** Compilation: gcc -o memreader memreader.c -lrt -lpthread **/
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/mman.h>
@@ -12,13 +11,13 @@
 
 #include "common.h"
 
-volatile sig_atomic_t done = 0;
+volatile sig_atomic_t ev_flag = 0;
 sem_t* semptr;
 
 void signal_handler(int signum) {
   char msg[] = "Signal %d received by signal_handler(), the event loop will respond soon\n";
   printf(msg, signum);  
-  done = 1;
+  ev_flag = 1;
 }
 
 int main() {
@@ -39,7 +38,7 @@ int main() {
     perror("sem_open()");
     return 1;
   }
-  while (!done) {
+  while (!ev_flag) {
     printf("Waiting for mutex..\n");
     /* use semaphore as a mutex (lock) by waiting for writer to increment it */
     if (sem_wait(semptr) < 0) {
