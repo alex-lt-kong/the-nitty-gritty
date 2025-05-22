@@ -10,7 +10,7 @@ static void signal_handler(int signum) {
     char msg[] = "Signal [  ] caught\n";
     msg[8] = '0' + (char)(signum / 10);
     msg[9] = '0' + (char)(signum % 10);
-    write(STDIN_FILENO, msg, strlen(msg));
+    write(STDOUT_FILENO, msg, strlen(msg));
     e_flag = 1;
 }
 
