@@ -169,11 +169,11 @@ would be the expected result of `sizeof`?:
             ```
         * The case is the same if `CHAR_BIT == 24`, where there will only be
         a total of one byte:
-        ```
+            ```
             [         1st byte          ]
             [padding] [    value bits   ]
             0000 1111 0011 0000 0111 0000
-        ```
+            ```
         * `sizeof (unsigned shor)` would be equal to 1.
 
 
