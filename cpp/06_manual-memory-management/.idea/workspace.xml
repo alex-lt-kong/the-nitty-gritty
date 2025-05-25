@@ -36,11 +36,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="049aadbc-1da4-4237-96d3-a4975acbb046" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/2_my-class-scoped-new-and-delete-impl.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/2_my-class-scoped-new-and-delete-test.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/1_usage.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/1_usage.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -124,11 +120,6 @@
         <option name="BeforeTestRunTask" enabled="true" />
       </method>
     </configuration>
-    <configuration default="true" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true">
-      <method v="2">
-        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
-      </method>
-    </configuration>
     <list>
       <item itemvalue="Google Test.1_usage" />
       <item itemvalue="Google Test.2_test-my-new-and-delete" />
@@ -150,7 +141,8 @@
       <option name="presentableId" value="Default" />
       <updated>1748145870176</updated>
       <workItem from="1748145873081" duration="6801000" />
-      <workItem from="1748183644840" duration="6464000" />
+      <workItem from="1748183644840" duration="6861000" />
+      <workItem from="1748190636568" duration="4000" />
     </task>
     <servers />
   </component>

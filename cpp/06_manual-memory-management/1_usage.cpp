@@ -15,26 +15,6 @@ TEST(ManualMemoryManagementTest, TestNewAndDelete) {
 
         delete[] arr;
     }
-    {
-        std::allocator<int> alloc;
-        int *ptr = alloc.allocate(1);
-        *ptr = 43;
-        EXPECT_EQ(*ptr, 43);
-        alloc.deallocate(ptr, 1);
-    }
-    {
-        std::allocator<int> alloc;
-        constexpr size_t sz = 5;
-        int *ptr = alloc.allocate(sz);
-        ptr[0] = 3;
-        ptr[1] = 1;
-        ptr[2] = 4;
-        ptr[3] = 1;
-        ptr[4] = 5;
-        EXPECT_EQ(ptr[1], 1);
-        EXPECT_EQ(ptr[2], 4);
-        alloc.deallocate(ptr, sz);
-    }
 }
 
 TEST(ManualMemoryManagementTest, TestStdAllocator) {
