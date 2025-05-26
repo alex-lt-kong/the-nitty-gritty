@@ -11,12 +11,12 @@ namespace My {
 
         Allocator() = default;
 
-        T *allocate(std::size_t n) {
+        static T *allocate(const std::size_t n) {
             std::cout << "Allocating " << n << " objects\n";
             return static_cast<T *>(::operator new(n * sizeof(T)));
         }
 
-        void deallocate(T *p, std::size_t n) {
+        static void deallocate(T *p, const std::size_t n) {
             std::cout << "Deallocating " << n << " objects\n";
             ::operator delete(p);
         }
