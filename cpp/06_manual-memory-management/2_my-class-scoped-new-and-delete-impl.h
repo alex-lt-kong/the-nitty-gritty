@@ -1,5 +1,5 @@
-#ifndef INC_2_MY_NEW_AND_DELETE_H
-#define INC_2_MY_NEW_AND_DELETE_H
+#ifndef INC_2_MY_CLASS_SCOPED_NEW_AND_DELETE_H
+#define INC_2_MY_CLASS_SCOPED_NEW_AND_DELETE_H
 
 #include <cstddef>
 #include <cstdlib>
@@ -16,12 +16,14 @@
 
 // new/delete are just two operators that we can overload, similar to how we can
 // overload operator+ or operator[].
+// But also note that new/delete/new[]/deletes[] operators are static operators, i.e., this->new() will not make sense,
 class MyClass {
 
 public:
     static int m_new_delete_calls_diff;
     static int m_new_delete_array_calls_diff;
     int m_data;
+
     // Funny to note that in new and delete there is no reference to
     // constructor/destructor--they are not called in new/delete.
     // Also, new() takes a size argument, compiler decides what it should be
@@ -37,10 +39,13 @@ public:
         --m_new_delete_calls_diff;
     }
 
+    // Usually it is better to implement new[]/delete[] again, instead of forwarding them to new/delete,
+    // even if their underlying implementations are the same. The reason is that it is UB if you have new/delete mismatch
     void *operator new[](const std::size_t size) {
         ++m_new_delete_array_calls_diff;
         return std::malloc(size);
     }
+
 
     void operator delete[](void *ptr) noexcept {
         std::free(ptr);
@@ -48,9 +53,11 @@ public:
     }
 
     MyClass() : m_data(0) {}
+
     MyClass(const int data) : m_data(data) {}
 };
+
 int MyClass::m_new_delete_calls_diff = 0;
 int MyClass::m_new_delete_array_calls_diff = 0;
 
-#endif // INC_2_MY_NEW_AND_DELETE_H
+#endif // INC_2_MY_CLASS_SCOPED_NEW_AND_DELETE_H

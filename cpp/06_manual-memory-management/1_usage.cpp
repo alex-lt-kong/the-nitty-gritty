@@ -46,6 +46,7 @@ TEST(ManualMemoryManagementTest, TestStdAllocator) {
 class MyClass {
 public:
     int m_data = -1;
+
     MyClass() { m_data = 42; }
 };
 
@@ -59,14 +60,14 @@ TEST(ManualMemoryManagementTest, NewCallsConstructorButMallocDoesNot) {
         auto *raw_ptr = static_cast<MyClass *>(malloc(sizeof(MyClass)));
         EXPECT_NE(raw_ptr->m_data, 42);
         // This feature is called "placement new"
-        const auto ptr = new (raw_ptr) MyClass();
+        const auto ptr = new(raw_ptr) MyClass();
         EXPECT_EQ(ptr->m_data, 42);
         ptr->~MyClass();
         free(ptr);
         // delete raw_ptr;
     }
     {
-        auto *ptr = new (std::malloc(sizeof(MyClass))) MyClass();
+        auto *ptr = new(std::malloc(sizeof(MyClass))) MyClass();
         EXPECT_EQ(ptr->m_data, 42);
         ptr->~MyClass();
         free(ptr);
@@ -81,7 +82,7 @@ TEST(ManualMemoryManagementTest, StdAllocatorDoesNotCallConstructorEither) {
     std::allocator<MyClass> alloc;
     MyClass *ptr = alloc.allocate(1);
     EXPECT_NE(ptr->m_data, 42);
-    // Interally calls a fancy version of placement new, but available since
+    // Internally calls a fancy version of placement new, but available since
     // C++20 https://en.cppreference.com/w/cpp/memory/construct_at
     std::construct_at(ptr);
     EXPECT_EQ(ptr->m_data, 42);
