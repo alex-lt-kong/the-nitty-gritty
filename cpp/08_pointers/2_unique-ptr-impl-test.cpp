@@ -22,6 +22,7 @@ public:
 };
 
 TEST(MyUniquePtrTest, ConstructorAndDereference) {
+  std::to_chars();
   unique_ptr<int> uptr(new int(42));
   my_unique_ptr<int> muptr(new int(42));
   ASSERT_TRUE(uptr != nullptr);
