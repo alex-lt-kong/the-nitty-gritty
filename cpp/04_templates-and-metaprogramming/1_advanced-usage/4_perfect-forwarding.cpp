@@ -56,9 +56,12 @@ int main() {
                "leave the type T/U auto deduced";
   // This is used in lockfree SPSC Queue:
   // https://github.com/alex-lt-kong/lockfree-toolkit/blob/05f1cad4023f0c2f87335beb237e8d3efb768a04/ringbuffer/ringbuffer-spsc-impl.h#L49-L59
-  // Special case: these three wont work!
+  // Special case: these three statements won't work! Universal reference only works when its type is auto deduced.
+  // - Stmt1: DummyClass already deduced T, so for perfectly_forwarding_func_T() T is not auto deduced
   // DummyClass<std::string>::perfectly_forwarding_func_T(text);
+  // - Stmt2: DummyClass already deduced T, and we specified U, so for perfectly_forwarding_func_U() U is not auto deduced
   // DummyClass<std::string>::perfectly_forwarding_func_U<std::string>(text);
+  // - Stmt3: perfectly_forwarding_func's T is also specified, so it is not auto deduced
   // perfectly_forwarding_func<std::string>(text);
   DummyClass<std::string>::perfectly_forwarding_func_U(text);
   DummyClass<std::string>::perfectly_forwarding_func_U(std::move(text));

@@ -17,12 +17,7 @@
     <option name="reloaded" value="true" />
   </component>
   <component name="CMakeRunConfigurationManager">
-    <generated>
-      <config projectName="manual-memory-management" targetName="2_my-class-scoped-new-and-delete-test" />
-      <config projectName="manual-memory-management" targetName="1_usage" />
-      <config projectName="manual-memory-management" targetName="4_my-allocator-test" />
-      <config projectName="manual-memory-management" targetName="3_my-global-scoped-new-and-delete-test" />
-    </generated>
+    <generated />
   </component>
   <component name="CMakeSettings">
     <configurations>
@@ -32,10 +27,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="049aadbc-1da4-4237-96d3-a4975acbb046" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/editor.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/editor.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/4_my-allocator-impl.h" beforeDir="false" afterPath="$PROJECT_DIR$/4_my-allocator-impl.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/vcpkg.json" beforeDir="false" afterPath="$PROJECT_DIR$/vcpkg.json" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -45,7 +37,7 @@
   <component name="ClangdSettings">
     <option name="formatViaClangd" value="false" />
   </component>
-  <component name="ExecutionTargetManager" SELECTED_TARGET="CMakeBuildProfile:Debug" />
+  <component name="ExecutionTargetManager" SELECTED_TARGET="CMakeBuildProfile:Debug-Visual Studio" />
   <component name="FormatOnSaveOptions">
     <option name="myRunOnSave" value="true" />
   </component>
@@ -104,24 +96,7 @@
       <recent name="C:\Users\akong_yin\my-repos\the-nitty-gritty\cpp\06_manual-memory-management" />
     </key>
   </component>
-  <component name="RunManager" selected="Google Test.2_my-class-scoped-new-and-delete-test">
-    <configuration default="true" type="CLionExternalRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true">
-      <method v="2">
-        <option name="CLION.EXTERNAL.BUILD" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="1_usage" type="CMakeGoogleTestRunConfigurationType" factoryName="Google Test" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="manual-memory-management" TARGET_NAME="1_usage" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="manual-memory-management" RUN_TARGET_NAME="1_usage" TEST_MODE="SUITE_TEST">
-      <method v="2">
-        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
-        <option name="BeforeTestRunTask" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="2_my-class-scoped-new-and-delete-test" type="CMakeGoogleTestRunConfigurationType" factoryName="Google Test" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="manual-memory-management" TARGET_NAME="2_my-class-scoped-new-and-delete-test" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="manual-memory-management" RUN_TARGET_NAME="2_my-class-scoped-new-and-delete-test" TEST_MODE="SUITE_TEST">
-      <method v="2">
-        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
-        <option name="BeforeTestRunTask" enabled="true" />
-      </method>
-    </configuration>
+  <component name="RunManager">
     <configuration name="2_test-my-new-and-delete" type="CMakeGoogleTestRunConfigurationType" factoryName="Google Test" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="manual-memory-management" TARGET_NAME="2_test-my-new-and-delete" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="manual-memory-management" RUN_TARGET_NAME="2_test-my-new-and-delete" TEST_MODE="SUITE_TEST">
       <envs>
         <env name="ASAN_OPTIONS" value="alloc_dealloc_mismatch=0" />
@@ -131,25 +106,11 @@
         <option name="BeforeTestRunTask" enabled="true" />
       </method>
     </configuration>
-    <configuration name="3_my-global-scoped-new-and-delete-test" type="CMakeGoogleTestRunConfigurationType" factoryName="Google Test" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="manual-memory-management" TARGET_NAME="3_my-global-scoped-new-and-delete-test" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="manual-memory-management" RUN_TARGET_NAME="3_my-global-scoped-new-and-delete-test" TEST_MODE="SUITE_TEST">
+    <configuration default="true" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
-        <option name="BeforeTestRunTask" enabled="true" />
       </method>
     </configuration>
-    <configuration name="4_my-allocator-test" type="CMakeGoogleTestRunConfigurationType" factoryName="Google Test" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="manual-memory-management" TARGET_NAME="4_my-allocator-test" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="manual-memory-management" RUN_TARGET_NAME="4_my-allocator-test" TEST_MODE="SUITE_TEST">
-      <method v="2">
-        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
-        <option name="BeforeTestRunTask" enabled="true" />
-      </method>
-    </configuration>
-    <list>
-      <item itemvalue="Google Test.2_test-my-new-and-delete" />
-      <item itemvalue="Google Test.1_usage" />
-      <item itemvalue="Google Test.2_my-class-scoped-new-and-delete-test" />
-      <item itemvalue="Google Test.3_my-global-scoped-new-and-delete-test" />
-      <item itemvalue="Google Test.4_my-allocator-test" />
-    </list>
   </component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
@@ -165,6 +126,7 @@
       <workItem from="1748227487484" duration="2189000" />
       <workItem from="1748252643405" duration="842000" />
       <workItem from="1748268141668" duration="1428000" />
+      <workItem from="1748481237918" duration="348000" />
     </task>
     <servers />
   </component>

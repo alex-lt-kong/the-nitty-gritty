@@ -13,6 +13,7 @@
 using namespace std;
 
 // Define a concept for an iterable container
+/*
 template <typename T>
 concept Iterable = requires(T &t) {
   std::begin(t);
@@ -20,9 +21,10 @@ concept Iterable = requires(T &t) {
   typename T::value_type;
   { *std::begin(t) } -> std::convertible_to<typename T::value_type>;
 };
+ */
 
 // Template function that requires an Iterable type
-template <Iterable T> typename T::value_type findMax(const T &collection) {
+template <typename T> typename T::value_type findMax(const T &collection) {
   // std::numeric_limits<double>::min(); is a trait
   typename T::value_type largest =
       std::numeric_limits<typename T::value_type>::min();
@@ -83,8 +85,7 @@ template <> struct numeric_limits<std::string> {
 
 } // namespace my
 
-// Template function that requires an Iterable type
-template <Iterable T>
+template <typename T>
 typename T::value_type findMaxWithMyTrait(const T &collection) {
   // std::numeric_limits<double>::min(); is a trait
   typename T::value_type largest =
